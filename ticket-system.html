@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Deskline &mdash; Tickets</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root, .theme-light {
+    --bg: #F5F7F8; --surface: #FFFFFF; --surface-alt: #EEF1F3; --border: #E2E7EA;
+    --text: #16211F; --text-muted: #5C6B69; --text-faint: #8B9997;
+    --primary: #0B6E6E; --primary-hover: #095959; --primary-soft: #E3F1F1; --primary-contrast: #FFFFFF;
+    --ring: rgba(11,110,110,0.35);
+    --amber-bg: #FFF4D9; --amber-text: #8A5D00; --amber-dot:#E3A008;
+    --blue-bg: #E7EEFF; --blue-text: #1D4ED8; --blue-dot:#3B6BF0;
+    --green-bg: #E1F6EC; --green-text: #0F7A4C; --green-dot:#1E9E64;
+    --danger: #C4433B; --danger-soft: #FBE7E5;
+    --shadow-sm: 0 1px 2px rgba(20,30,29,0.06), 0 1px 1px rgba(20,30,29,0.04);
+    --shadow-md: 0 6px 16px rgba(20,30,29,0.08), 0 2px 6px rgba(20,30,29,0.06);
+    --shadow-lg: 0 20px 45px rgba(15,25,24,0.16);
+  }
+  .theme-dark {
+    --bg: #0F1414; --surface: #171F1E; --surface-alt: #1E2827; --border: #2B3736;
+    --text: #EAF1F0; --text-muted: #9DACAA; --text-faint: #71807E;
+    --primary: #2BB3A6; --primary-hover: #4FC7BB; --primary-soft: #16302E; --primary-contrast: #08201E;
+    --ring: rgba(43,179,166,0.35);
+    --amber-bg: #3A2E10; --amber-text: #F0C15C; --amber-dot:#F0C15C;
+    --blue-bg: #172642; --blue-text: #8CACFF; --blue-dot:#6C93FF;
+    --green-bg: #10301F; --green-text: #6FD6A4; --green-dot:#3FBE85;
+    --danger: #E27069; --danger-soft: #3A1917;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.35);
+    --shadow-md: 0 6px 18px rgba(0,0,0,0.45);
+    --shadow-lg: 0 20px 45px rgba(0,0,0,0.55);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin:0; padding:0; }
+  body {
+    background: var(--bg); color: var(--text); min-height:100vh;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    transition: background .25s ease, color .25s ease;
+  }
+  .df-display { font-family: 'Space Grotesk', 'Inter', sans-serif; letter-spacing: -0.01em; }
+  .df-mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; }
+  svg.ico { width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; vertical-align:-3px; }
+
+  .df-topbar { display:flex; align-items:center; justify-content:space-between; padding:14px 28px; border-bottom:1px solid var(--border); background:var(--surface); position:sticky; top:0; z-index:40; }
+  .df-brand { display:flex; align-items:center; gap:10px; font-weight:600; font-size:17px; cursor:pointer; }
+  .df-brand-mark { width:30px; height:30px; border-radius:8px; background:var(--primary); display:flex; align-items:center; justify-content:center; color:var(--primary-contrast); flex-shrink:0; }
+  .df-icon-btn { width:36px; height:36px; border-radius:9px; border:1px solid var(--border); background:var(--surface); color:var(--text-muted); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all .15s ease; }
+  .df-icon-btn:hover { background:var(--surface-alt); color:var(--text); }
+
+  .df-page { max-width:1180px; margin:0 auto; padding:28px 24px 64px; }
+
+  .df-stub { position:relative; display:inline-flex; align-items:center; gap:6px; padding:3px 12px 3px 10px; border-radius:999px; background:var(--surface-alt); border:1px dashed var(--border); font-size:12.5px; color:var(--text-muted); }
+  .df-stub::before, .df-stub::after { content:""; position:absolute; top:50%; width:8px; height:8px; border-radius:50%; background:var(--bg); transform:translateY(-50%); }
+  .df-stub::before { left:-4px; } .df-stub::after { right:-4px; }
+
+  .df-btn { display:inline-flex; align-items:center; gap:8px; font-weight:600; font-size:14px; padding:10px 16px; border-radius:10px; border:1px solid transparent; cursor:pointer; transition:transform .12s ease, background .15s ease; white-space:nowrap; font-family:inherit; }
+  .df-btn:active { transform:scale(0.97); }
+  .df-btn-primary { background:var(--primary); color:var(--primary-contrast); box-shadow:var(--shadow-sm); }
+  .df-btn-primary:hover { background:var(--primary-hover); }
+  .df-btn-ghost { background:transparent; color:var(--text); border-color:var(--border); }
+  .df-btn-ghost:hover { background:var(--surface-alt); }
+  .df-btn:disabled { opacity:.6; cursor:not-allowed; transform:none; }
+
+  .df-input, .df-select { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:9px 12px; font-size:14px; color:var(--text); outline:none; font-family:inherit; transition:border-color .15s ease, box-shadow .15s ease; }
+  .df-input::placeholder { color:var(--text-faint); }
+  .df-input:focus, .df-select:focus { border-color:var(--primary); box-shadow:0 0 0 3px var(--ring); }
+  .df-input.has-error { border-color: var(--danger); }
+
+  .df-card { background:var(--surface); border:1px solid var(--border); border-radius:16px; box-shadow:var(--shadow-sm); }
+
+  .df-badge { display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:999px; font-size:12.5px; font-weight:600; }
+  .df-badge-dot { width:6px; height:6px; border-radius:50%; }
+
+  .df-table-wrap { overflow-x:auto; border-radius:16px; }
+  table.df-table { width:100%; border-collapse:separate; border-spacing:0; min-width:760px; }
+  .df-table thead th { position:sticky; top:0; background:var(--surface-alt); z-index:5; text-align:left; font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-muted); padding:12px 16px; border-bottom:1px solid var(--border); user-select:none; }
+  .df-table th.sortable { cursor:pointer; }
+  .df-table th.sortable:hover { color:var(--text); }
+  .df-table tbody td { padding:14px 16px; border-bottom:1px solid var(--border); font-size:14px; vertical-align:middle; }
+  .df-table tbody tr:last-child td { border-bottom:none; }
+  .df-table tbody tr { transition:background .12s ease; }
+  .df-table tbody tr:hover { background:var(--surface-alt); }
+
+  .df-dropdown { position:relative; }
+  .df-dropdown-menu { position:absolute; right:0; top:calc(100% + 6px); background:var(--surface); border:1px solid var(--border); border-radius:10px; box-shadow:var(--shadow-md); min-width:150px; z-index:30; overflow:hidden; display:none; }
+  .df-dropdown-menu.open { display:block; }
+  .df-dropdown-item { padding:9px 14px; font-size:13.5px; cursor:pointer; color:var(--text); }
+  .df-dropdown-item:hover { background:var(--surface-alt); }
+
+  .df-editor-toolbar { display:flex; flex-wrap:wrap; gap:2px; padding:6px; border-bottom:1px solid var(--border); background:var(--surface-alt); border-radius:10px 10px 0 0; }
+  .df-editor-btn { width:30px; height:30px; border-radius:7px; border:none; background:transparent; color:var(--text-muted); display:flex; align-items:center; justify-content:center; cursor:pointer; }
+  .df-editor-btn:hover { background:var(--surface); color:var(--text); }
+  .df-editor-body { min-height:140px; padding:12px 14px; font-size:14px; line-height:1.6; outline:none; color:var(--text); border:1px solid var(--border); border-top:none; border-radius:0 0 10px 10px; background:var(--surface); }
+  .df-editor-body:empty:before { content:attr(data-placeholder); color:var(--text-faint); }
+  .df-editor-body ul { padding-left:22px; } .df-editor-body ol { padding-left:22px; }
+  .df-editor-body a { color:var(--primary); }
+  .df-editor-body.has-error { border-color: var(--danger); }
+
+  .df-dropzone { border:1.5px dashed var(--border); border-radius:14px; padding:28px 16px; text-align:center; background:var(--surface-alt); cursor:pointer; transition:border-color .15s ease, background .15s ease; }
+  .df-dropzone.drag-over { border-color:var(--primary); background:var(--primary-soft); }
+
+  .df-gallery { display:grid; grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); gap:12px; margin-top:14px; }
+  .df-gallery-card { position:relative; border:1px solid var(--border); border-radius:12px; overflow:hidden; background:var(--surface); }
+  .df-gallery-thumb { width:100%; height:100px; object-fit:cover; display:block; background:var(--surface-alt); cursor:default; }
+  .df-gallery-meta { padding:8px 10px; }
+  .df-gallery-name { font-size:12px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .df-gallery-size { font-size:11px; color:var(--text-muted); }
+  .df-gallery-x { position:absolute; top:6px; right:6px; width:22px; height:22px; border-radius:50%; background:rgba(20,20,20,0.55); color:#fff; border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+
+  .df-field-label { font-size:13.5px; font-weight:600; margin-bottom:6px; display:flex; gap:4px; }
+  .df-req { color:var(--danger); }
+  .df-error-text { color:var(--danger); font-size:12.5px; margin-top:6px; min-height:1px; }
+
+  .df-chat-row { display:flex; margin-bottom:16px; }
+  .df-chat-bubble { max-width:72%; padding:10px 14px; border-radius:14px; font-size:14px; line-height:1.55; }
+  .df-chat-admin { background:var(--surface-alt); border:1px solid var(--border); border-bottom-left-radius:4px; }
+  .df-chat-user { background:var(--primary); color:var(--primary-contrast); border-bottom-right-radius:4px; margin-left:auto; }
+  .df-chat-meta { font-size:11.5px; color:var(--text-muted); margin-bottom:4px; }
+  .df-chat-user .df-chat-meta { color:rgba(255,255,255,0.75); text-align:right; }
+
+  .df-lightbox { position:fixed; inset:0; background:rgba(8,12,12,0.82); z-index:100; display:flex; align-items:center; justify-content:center; padding:40px; }
+  .df-empty { text-align:center; padding:72px 20px; }
+  .df-spin { animation:df-spin .8s linear infinite; }
+  @keyframes df-spin { to { transform:rotate(360deg); } }
+  ::selection { background:var(--ring); }
+
+  @media (max-width:720px) {
+    .df-page { padding:18px 14px 48px; }
+    .df-filters-row { flex-direction:column; align-items:stretch !important; }
+    .df-filters-left { flex-direction:column; align-items:stretch !important; width:100%; }
+    .df-filters-left > * { width:100% !important; }
+  }
+</style>
+</head>
+<body class="theme-light">
+<div id="app"></div>
+
+<script>
+/* ==================================================================
+   ICONS — small hand-rolled inline SVGs, generic UI glyphs
+================================================================== */
+const ICONS = {
+  search: '<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>',
+  calendar: '<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  chevronDown: '<path d="M6 9l6 6 6-6"/>',
+  chevronUp: '<path d="M18 15l-6-6-6 6"/>',
+  chevronsUpDown: '<path d="M8 9l4-4 4 4M8 15l4 4 4-4"/>',
+  moreVertical: '<circle cx="12" cy="5" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="12" cy="19" r="1.4"/>',
+  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  moon: '<path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/>',
+  arrowLeft: '<path d="M19 12H5M12 19l-7-7 7-7"/>',
+  bold: '<path d="M7 4h6a3.5 3.5 0 010 7H7zM7 11h7a3.5 3.5 0 010 7H7z"/>',
+  italic: '<path d="M11 4h6M5 20h6M13 4L9 20"/>',
+  underline: '<path d="M6 4v6a6 6 0 0012 0V4M4 20h16"/>',
+  list: '<circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/><path d="M9 6h11M9 12h11M9 18h11"/>',
+  listOrdered: '<path d="M9 6h11M9 12h11M9 18h11M4 5h1v3M4 11h2l-2 2h2M4 17h2M4 19h2"/>',
+  link: '<path d="M9 15l6-6M8.5 12.5L6 15a3 3 0 004.2 4.2l2.5-2.5M15.5 11.5L18 9a3 3 0 00-4.2-4.2l-2.5 2.5"/>',
+  undo: '<path d="M9 7L4 12l5 5M4 12h11a5 5 0 010 10h-1"/>',
+  redo: '<path d="M15 7l5 5-5 5M20 12H9a5 5 0 000 10h1"/>',
+  upload: '<path d="M12 16V4M7 9l5-5 5 5M4 20h16"/>',
+  x: '<path d="M6 6l12 12M18 6L6 18"/>',
+  send: '<path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/>',
+  ticket: '<path d="M3 8a2 2 0 012-2h14a2 2 0 012 2v2a2 2 0 000 4v2a2 2 0 01-2 2H5a2 2 0 01-2-2v-2a2 2 0 000-4z"/>',
+  loader: '<path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/>',
+  inbox: '<path d="M3 8l2-4h14l2 4M3 8v10a2 2 0 002 2h14a2 2 0 002-2V8M3 8h5l1 3h6l1-3h5"/>'
+};
+function ico(name, size) {
+  size = size || 16;
+  return `<svg class="ico" style="width:${size}px;height:${size}px" viewBox="0 0 24 24">${ICONS[name] || ''}</svg>`;
+}
+
+/* ==================================================================
+   MOCK DATA
+================================================================== */
+const STATUS_META = {
+  'Pending': { bg:'var(--amber-bg)', text:'var(--amber-text)', dot:'var(--amber-dot)' },
+  'In Progress': { bg:'var(--blue-bg)', text:'var(--blue-text)', dot:'var(--blue-dot)' },
+  'Completed': { bg:'var(--green-bg)', text:'var(--green-text)', dot:'var(--green-dot)' }
+};
+const sampleImg = (seed, w, h) => `https://picsum.photos/seed/${seed}/${w||400}/${h||300}`;
+
+let tickets = [
+  { id:'TKT-1042', title:'Unable to reset password from mobile app',
+    description:'<p>Whenever I try to reset my password from the iOS app it just spins forever and never sends the email. Tried three times with two different accounts.</p>',
+    createdDate:'2026-07-22', status:'In Progress',
+    images:[{url:sampleImg('t1042a'), name:'screenshot-error.png', size:842000}],
+    conversation:[
+      {sender:'User', role:'user', timestamp:'2026-07-22 09:14', content:'<p>Any update on this? It\'s blocking me from logging in at all.</p>'},
+      {sender:'Admin', role:'admin', timestamp:'2026-07-22 11:02', content:'<p>Thanks for flagging — we\'ve reproduced the issue on iOS 18 and are pushing a fix. Should be resolved within 24 hours.</p>'}
+    ]},
+  { id:'TKT-1041', title:'Invoice PDF shows incorrect tax amount for EU customers',
+    description:'<p>Two customers from Germany reported their invoice PDFs show 0% VAT instead of the expected 19%. Please check the tax calculation logic.</p>',
+    createdDate:'2026-07-21', status:'Pending', images:[],
+    conversation:[{sender:'User', role:'user', timestamp:'2026-07-21 15:40', content:'<p>Attaching nothing yet, will send the invoice number shortly.</p>'}]},
+  { id:'TKT-1040', title:'Feature request: dark mode for the analytics dashboard',
+    description:'<p>Loving the product so far! It would be great to have a dark mode option specifically for the analytics dashboard since we keep it open on a wall monitor overnight.</p>',
+    createdDate:'2026-07-20', status:'Completed',
+    images:[{url:sampleImg('t1040a'), name:'dashboard-mock.png', size:1240000}, {url:sampleImg('t1040b'), name:'dashboard-mock-2.png', size:980000}],
+    conversation:[
+      {sender:'Admin', role:'admin', timestamp:'2026-07-20 10:00', content:'<p>Great suggestion — added to our roadmap for next quarter.</p>'},
+      {sender:'Admin', role:'admin', timestamp:'2026-07-24 16:20', content:'<p>Shipped! You can toggle it from account settings now.</p>'}
+    ]},
+  { id:'TKT-1039', title:'Bulk export stuck at 92 percent for large workspaces',
+    description:'<p>Our workspace has around 40k records. The CSV export progress bar reaches 92% and then never completes. Smaller workspaces export fine.</p>',
+    createdDate:'2026-07-19', status:'In Progress',
+    images:[{url:sampleImg('t1039a'), name:'export-stuck.jpg', size:512000}], conversation:[]},
+  { id:'TKT-1038', title:'Cannot invite teammates using a custom domain email',
+    description:'<p>Trying to invite a colleague using our custom domain email address, but the invite form rejects it as invalid even though it\'s a valid address.</p>',
+    createdDate:'2026-07-18', status:'Pending', images:[], conversation:[]},
+  { id:'TKT-1037', title:'Billing page throws 500 error after upgrading plan',
+    description:'<p>Right after upgrading from Starter to Pro, the billing page started returning a server error. Downgrading and re-upgrading did not help.</p>',
+    createdDate:'2026-07-16', status:'Completed', images:[],
+    conversation:[
+      {sender:'Admin', role:'admin', timestamp:'2026-07-17 09:00', content:'<p>This was caused by a stale billing cache — fixed and deployed. Please refresh and let us know.</p>'},
+      {sender:'User', role:'user', timestamp:'2026-07-17 09:40', content:'<p>Confirmed working now, thank you!</p>'}
+    ]}
+];
+
+/* ==================================================================
+   HELPERS
+================================================================== */
+function stripHtml(html) { const d=document.createElement('div'); d.innerHTML=html; return d.textContent||d.innerText||''; }
+function escapeHtml(s){ return s.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function truncateWords(text, n) { n=n||6; const w=text.trim().split(/\s+/); if (w.length<=n) return text.trim(); return w.slice(0,n).join(' ')+'...'; }
+function formatBytes(b){ if(b<1024) return b+' B'; if(b<1024*1024) return (b/1024).toFixed(1)+' KB'; return (b/(1024*1024)).toFixed(2)+' MB'; }
+function formatDateDisplay(iso){ const d=new Date(iso+'T00:00:00'); return d.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'}); }
+function nextTicketId(){ const nums=tickets.map(t=>parseInt(t.id.replace('TKT-',''),10)).filter(n=>!isNaN(n)); const max=nums.length?Math.max(...nums):1000; return 'TKT-'+(max+1); }
+function todayIso(){ return new Date().toISOString().slice(0,10); }
+function uid(){ return Math.random().toString(36).slice(2)+Date.now().toString(36); }
+
+/* ==================================================================
+   ROUTER (hash-based, no framework)
+================================================================== */
+function parseHash() {
+  const h = location.hash.replace(/^#\/?/, '');
+  const parts = h.split('/').filter(Boolean);
+  if (parts[0] !== 'tickets' || parts.length === 1) return { page:'list', ticketId:null };
+  if (parts[1] === 'create') return { page:'create', ticketId:null };
+  return { page:'detail', ticketId: decodeURIComponent(parts[1]) };
+}
+function navigate(path) { location.hash = path; }
+window.addEventListener('hashchange', renderPage);
+window.addEventListener('DOMContentLoaded', () => {
+  if (!location.hash) location.hash = '#/tickets';
+  else renderPage();
+});
+
+/* ==================================================================
+   THEME
+================================================================== */
+let theme = 'theme-light';
+function toggleTheme() {
+  theme = theme === 'theme-light' ? 'theme-dark' : 'theme-light';
+  document.body.className = theme;
+}
+
+/* ==================================================================
+   RICH TEXT EDITOR (contentEditable + execCommand)
+================================================================== */
+function editorToolbarHtml(minimal) {
+  const btn = (icon, cmd, title) => `<button type="button" class="df-editor-btn" data-cmd="${cmd||''}" title="${title}">${ico(icon,15)}</button>`;
+  let html = '<div class="df-editor-toolbar">';
+  html += btn('bold','bold','Bold');
+  html += btn('italic','italic','Italic');
+  html += btn('underline','underline','Underline');
+  if (!minimal) html += btn('list','insertUnorderedList','Bullet list');
+  if (!minimal) html += btn('listOrdered','insertOrderedList','Numbered list');
+  html += btn('link','link','Insert link');
+  if (!minimal) html += btn('undo','undo','Undo');
+  if (!minimal) html += btn('redo','redo','Redo');
+  html += '</div>';
+  return html;
+}
+function wireEditor(container, bodyId, onChangeCb) {
+  const body = container.querySelector('#'+bodyId);
+  container.querySelectorAll('.df-editor-btn').forEach(btn => {
+    btn.addEventListener('mousedown', e => e.preventDefault());
+    btn.addEventListener('click', () => {
+      const cmd = btn.getAttribute('data-cmd');
+      if (cmd === 'link') {
+        const url = window.prompt('Enter URL');
+        if (url) document.execCommand('createLink', false, url);
+      } else {
+        document.execCommand(cmd, false, null);
+      }
+      body.focus();
+      if (onChangeCb) onChangeCb(body.innerHTML);
+    });
+  });
+  if (onChangeCb) body.addEventListener('input', () => onChangeCb(body.innerHTML));
+}
+
+/* ==================================================================
+   RENDER: ROOT SHELL
+================================================================== */
+const app = document.getElementById('app');
+
+function renderPage() {
+  const route = parseHash();
+  app.innerHTML = `
+    <div class="df-topbar">
+      <div class="df-brand df-display" id="brandHome">
+        <span class="df-brand-mark">${ico('ticket',16)}</span> Deskline
+      </div>
+      <button class="df-icon-btn" id="themeToggle" aria-label="Toggle dark mode">${ico(theme==='theme-light'?'moon':'sun',17)}</button>
+    </div>
+    <div id="pageRoot"></div>
+  `;
+  document.getElementById('brandHome').addEventListener('click', () => navigate('#/tickets'));
+  document.getElementById('themeToggle').addEventListener('click', () => { toggleTheme(); document.getElementById('themeToggle').innerHTML = ico(theme==='theme-light'?'moon':'sun',17); });
+
+  const root = document.getElementById('pageRoot');
+  if (route.page === 'list') renderTicketsPage(root);
+  else if (route.page === 'create') renderCreateTicketPage(root);
+  else renderTicketDetailPage(root, route.ticketId);
+}
+
+/* ==================================================================
+   PAGE 1: TICKETS LIST
+================================================================== */
+let listState = { search:'', date:'', status:'All', sortBy:'date', sortDir:'desc' };
+
+function renderTicketsPage(root) {
+  root.innerHTML = `
+    <div class="df-page">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:22px;gap:16px;flex-wrap:wrap;">
+        <div>
+          <h1 class="df-display" style="font-size:26px;font-weight:700;margin:0;">Tickets</h1>
+          <p id="ticketCountLine" style="color:var(--text-muted);font-size:14px;margin:4px 0 0;"></p>
+        </div>
+      </div>
+      <div class="df-filters-row" style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap;">
+        <div class="df-filters-left" style="display:flex;gap:10px;flex:1;flex-wrap:wrap;">
+          <div style="position:relative;flex:1 1 220px;max-width:320px;">
+            <span style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-faint);">${ico('search',15)}</span>
+            <input id="searchInput" class="df-input" style="width:100%;padding-left:34px;" placeholder="Search by ID, title, or description" value="${escapeHtml(listState.search)}" />
+          </div>
+          <div style="position:relative;">
+            <span style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-faint);pointer-events:none;">${ico('calendar',15)}</span>
+            <input id="dateInput" type="date" class="df-input" style="padding-left:34px;" value="${listState.date}" />
+          </div>
+          <select id="statusSelect" class="df-select">
+            ${['All','Pending','In Progress','Completed'].map(s=>`<option ${listState.status===s?'selected':''}>${s}</option>`).join('')}
+          </select>
+        </div>
+        <button class="df-btn df-btn-primary" id="addTicketBtn">${ico('plus',16)} Add Ticket</button>
+      </div>
+      <div id="tableContainer"></div>
+    </div>
+  `;
+  document.getElementById('addTicketBtn').addEventListener('click', () => navigate('#/tickets/create'));
+  document.getElementById('searchInput').addEventListener('input', e => { listState.search = e.target.value; renderTable(); });
+  document.getElementById('dateInput').addEventListener('change', e => { listState.date = e.target.value; renderTable(); });
+  document.getElementById('statusSelect').addEventListener('change', e => { listState.status = e.target.value; renderTable(); });
+  renderTable();
+}
+
+function getFilteredSortedTickets() {
+  let result = tickets.filter(t => {
+    const q = listState.search.toLowerCase();
+    const matchesSearch = !q || t.id.toLowerCase().includes(q) || t.title.toLowerCase().includes(q) || stripHtml(t.description).toLowerCase().includes(q);
+    const matchesDate = !listState.date || t.createdDate === listState.date;
+    const matchesStatus = listState.status === 'All' || t.status === listState.status;
+    return matchesSearch && matchesDate && matchesStatus;
+  });
+  result.sort((a,b) => {
+    let av = listState.sortBy === 'date' ? a.createdDate : a.status;
+    let bv = listState.sortBy === 'date' ? b.createdDate : b.status;
+    if (av < bv) return listState.sortDir === 'asc' ? -1 : 1;
+    if (av > bv) return listState.sortDir === 'asc' ? 1 : -1;
+    return 0;
+  });
+  return result;
+}
+
+function sortIcon(col) {
+  if (listState.sortBy !== col) return ico('chevronsUpDown', 13);
+  return listState.sortDir === 'asc' ? ico('chevronUp',13) : ico('chevronDown',13);
+}
+
+function renderTable() {
+  const container = document.getElementById('tableContainer');
+  const countLine = document.getElementById('ticketCountLine');
+  const filtered = getFilteredSortedTickets();
+  countLine.textContent = `${tickets.length} total \u00B7 ${filtered.length} shown`;
+
+  if (filtered.length === 0) {
+    if (tickets.length === 0) {
+      container.innerHTML = `
+        <div class="df-card df-empty">
+          <div style="font-size:40px;margin-bottom:10px;">\u{1F4ED}</div>
+          <h3 class="df-display" style="margin:0 0 6px;font-size:18px;">No tickets found</h3>
+          <p style="color:var(--text-muted);margin:0 0 18px;font-size:14px;">Nothing has come in yet — create the first one to get started.</p>
+          <button class="df-btn df-btn-primary" id="emptyCreateBtn" style="margin:0 auto;">${ico('plus',16)} Create Your First Ticket</button>
+        </div>`;
+      document.getElementById('emptyCreateBtn').addEventListener('click', () => navigate('#/tickets/create'));
+    } else {
+      container.innerHTML = `
+        <div class="df-card df-empty">
+          <div style="font-size:40px;margin-bottom:10px;">\u{1F50E}</div>
+          <h3 class="df-display" style="margin:0 0 6px;font-size:18px;">No tickets match your filters</h3>
+          <p style="color:var(--text-muted);margin:0;font-size:14px;">Try adjusting the search, date, or status filter.</p>
+        </div>`;
+    }
+    return;
+  }
+
+  container.innerHTML = `
+    <div class="df-card df-table-wrap">
+      <table class="df-table">
+        <thead>
+          <tr>
+            <th>ID</th><th>Title</th><th>Description</th>
+            <th class="sortable" data-sort="date"><span style="display:inline-flex;align-items:center;gap:4px;">Created Date ${sortIcon('date')}</span></th>
+            <th class="sortable" data-sort="status"><span style="display:inline-flex;align-items:center;gap:4px;">Status ${sortIcon('status')}</span></th>
+            <th style="width:60px;"></th>
+          </tr>
+        </thead>
+        <tbody>
+          ${filtered.map(t => `
+            <tr>
+              <td><span class="df-stub df-mono">${t.id}</span></td>
+              <td style="font-weight:600;max-width:220px;">${escapeHtml(t.title)}</td>
+              <td style="color:var(--text-muted);max-width:260px;">${escapeHtml(truncateWords(stripHtml(t.description),6))}</td>
+              <td class="df-mono" style="color:var(--text-muted);font-size:13px;">${formatDateDisplay(t.createdDate)}</td>
+              <td>${badgeHtml(t.status)}</td>
+              <td>
+                <div class="df-dropdown">
+                  <button class="df-icon-btn row-menu-btn" style="width:30px;height:30px;" data-id="${t.id}">${ico('moreVertical',16)}</button>
+                  <div class="df-dropdown-menu" data-menu-for="${t.id}">
+                    <div class="df-dropdown-item view-ticket-item" data-id="${t.id}">View Ticket</div>
+                  </div>
+                </div>
+              </td>
+            </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+
+  container.querySelectorAll('th.sortable').forEach(th => th.addEventListener('click', () => {
+    const col = th.getAttribute('data-sort');
+    if (listState.sortBy === col) listState.sortDir = listState.sortDir === 'asc' ? 'desc' : 'asc';
+    else { listState.sortBy = col; listState.sortDir = 'desc'; }
+    renderTable();
+  }));
+  container.querySelectorAll('.row-menu-btn').forEach(btn => btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const id = btn.getAttribute('data-id');
+    const menu = container.querySelector(`.df-dropdown-menu[data-menu-for="${id}"]`);
+    const wasOpen = menu.classList.contains('open');
+    container.querySelectorAll('.df-dropdown-menu').forEach(m => m.classList.remove('open'));
+    if (!wasOpen) menu.classList.add('open');
+  }));
+  container.querySelectorAll('.view-ticket-item').forEach(item => item.addEventListener('click', () => {
+    navigate('#/tickets/' + encodeURIComponent(item.getAttribute('data-id')));
+  }));
+  document.addEventListener('click', closeMenusOnce, { once:true });
+  function closeMenusOnce() { container.querySelectorAll('.df-dropdown-menu').forEach(m => m.classList.remove('open')); }
+}
+
+function badgeHtml(status) {
+  const m = STATUS_META[status] || STATUS_META['Pending'];
+  return `<span class="df-badge" style="background:${m.bg};color:${m.text};"><span class="df-badge-dot" style="background:${m.dot};"></span>${status}</span>`;
+}
+
+/* ==================================================================
+   PAGE 2: CREATE TICKET
+================================================================== */
+const ACCEPTED_TYPES = ['image/jpeg','image/jpg','image/png','image/webp'];
+const MAX_SIZE = 5 * 1024 * 1024;
+let createFormImages = [];
+
+function renderCreateTicketPage(root) {
+  createFormImages = [];
+  root.innerHTML = `
+    <div class="df-page" style="max-width:760px;">
+      <button class="df-btn df-btn-ghost" style="margin-bottom:18px;" id="backBtn">${ico('arrowLeft',16)} Back</button>
+      <h1 class="df-display" style="font-size:26px;font-weight:700;margin:0 0 4px;">Create Ticket</h1>
+      <p style="color:var(--text-muted);font-size:14px;margin:0 0 28px;">Submit a new support request.</p>
+      <form id="createForm" class="df-card" style="padding:26px;">
+        <div style="margin-bottom:22px;">
+          <label class="df-field-label">Ticket Title <span class="df-req">*</span></label>
+          <input id="titleInput" class="df-input" style="width:100%;" placeholder="Enter ticket title" />
+          <div class="df-error-text" id="titleError"></div>
+        </div>
+        <div style="margin-bottom:22px;">
+          <label class="df-field-label">Description <span class="df-req">*</span></label>
+          ${editorToolbarHtml(false)}
+          <div id="descEditor" class="df-editor-body" contenteditable="true" data-placeholder="Describe your issue in detail..."></div>
+          <div class="df-error-text" id="descError"></div>
+        </div>
+        <div style="margin-bottom:8px;">
+          <label class="df-field-label">Attachments</label>
+          <div class="df-dropzone" id="dropzone">
+            <div style="color:var(--primary);margin-bottom:8px;">${ico('upload',26)}</div>
+            <div style="font-weight:600;font-size:14px;">Click to browse or drag and drop images</div>
+            <div style="color:var(--text-muted);font-size:12.5px;margin-top:4px;">JPG, JPEG, PNG or WEBP &middot; up to 5 MB each</div>
+            <input id="fileInput" type="file" multiple accept=".jpg,.jpeg,.png,.webp" style="display:none;" />
+          </div>
+          <div class="df-error-text" id="fileError"></div>
+          <div class="df-gallery" id="gallery"></div>
+        </div>
+        <div style="display:flex;justify-content:flex-end;margin-top:26px;">
+          <button class="df-btn df-btn-primary" type="submit" id="submitBtn" style="min-width:150px;justify-content:center;">Submit Ticket</button>
+        </div>
+      </form>
+    </div>
+  `;
+
+  document.getElementById('backBtn').addEventListener('click', () => navigate('#/tickets'));
+  wireEditor(document.getElementById('createForm'), 'descEditor', () => document.getElementById('descError').textContent = '');
+  document.getElementById('titleInput').addEventListener('input', () => { document.getElementById('titleError').textContent=''; document.getElementById('titleInput').classList.remove('has-error'); });
+
+  const dropzone = document.getElementById('dropzone');
+  const fileInput = document.getElementById('fileInput');
+  dropzone.addEventListener('click', () => fileInput.click());
+  dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('drag-over'); });
+  dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
+  dropzone.addEventListener('drop', e => { e.preventDefault(); dropzone.classList.remove('drag-over'); addFiles(e.dataTransfer.files); });
+  fileInput.addEventListener('change', e => { addFiles(e.target.files); e.target.value = ''; });
+
+  document.getElementById('createForm').addEventListener('submit', handleCreateSubmit);
+  renderGallery();
+}
+
+function addFiles(fileList) {
+  const files = Array.from(fileList);
+  let err = '';
+  files.forEach(file => {
+    if (!ACCEPTED_TYPES.includes(file.type)) { err = `"${file.name}" is not a supported format. Use JPG, PNG, or WEBP.`; return; }
+    if (file.size > MAX_SIZE) { err = `"${file.name}" exceeds the 5 MB limit.`; return; }
+    createFormImages.push({ id: uid(), file, url: URL.createObjectURL(file), name: file.name, size: file.size });
+  });
+  document.getElementById('fileError').textContent = err;
+  renderGallery();
+}
+
+function renderGallery() {
+  const gallery = document.getElementById('gallery');
+  gallery.innerHTML = createFormImages.map(img => `
+    <div class="df-gallery-card">
+      <img src="${img.url}" alt="${escapeHtml(img.name)}" class="df-gallery-thumb" />
+      <button type="button" class="df-gallery-x" data-id="${img.id}" aria-label="Remove image">${ico('x',13)}</button>
+      <div class="df-gallery-meta">
+        <div class="df-gallery-name" title="${escapeHtml(img.name)}">${escapeHtml(img.name)}</div>
+        <div class="df-gallery-size">${formatBytes(img.size)}</div>
+      </div>
+    </div>`).join('');
+  gallery.querySelectorAll('.df-gallery-x').forEach(btn => btn.addEventListener('click', () => {
+    createFormImages = createFormImages.filter(i => i.id !== btn.getAttribute('data-id'));
+    renderGallery();
+  }));
+}
+
+function handleCreateSubmit(e) {
+  e.preventDefault();
+  const titleInput = document.getElementById('titleInput');
+  const descEditor = document.getElementById('descEditor');
+  const title = titleInput.value.trim();
+  const descHtml = descEditor.innerHTML;
+  let valid = true;
+  if (!title) { document.getElementById('titleError').textContent = 'Ticket title is required.'; titleInput.classList.add('has-error'); valid = false; }
+  if (!stripHtml(descHtml).trim()) { document.getElementById('descError').textContent = 'Description is required.'; descEditor.classList.add('has-error'); valid = false; }
+  if (!valid) return;
+
+  const submitBtn = document.getElementById('submitBtn');
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = `<span class="df-spin" style="display:inline-flex;">${ico('loader',16)}</span> Submitting...`;
+
+  setTimeout(() => {
+    const newTicket = {
+      id: nextTicketId(), title, description: descHtml, createdDate: todayIso(), status: 'Pending',
+      images: createFormImages.map(i => ({ url:i.url, name:i.name, size:i.size })),
+      conversation: []
+    };
+    tickets.unshift(newTicket);
+    navigate('#/tickets');
+  }, 1100);
+}
+
+/* ==================================================================
+   PAGE 3: TICKET DETAILS / CONVERSATION
+================================================================== */
+function renderTicketDetailPage(root, ticketId) {
+  const ticket = tickets.find(t => t.id === ticketId);
+  if (!ticket) {
+    root.innerHTML = `
+      <div class="df-page df-empty">
+        <p>Ticket not found.</p>
+        <button class="df-btn df-btn-ghost" id="backBtn2">${ico('arrowLeft',16)} Back to tickets</button>
+      </div>`;
+    document.getElementById('backBtn2').addEventListener('click', () => navigate('#/tickets'));
+    return;
+  }
+
+  root.innerHTML = `
+    <div class="df-page" style="max-width:820px;">
+      <button class="df-btn df-btn-ghost" style="margin-bottom:18px;" id="backBtn">${ico('arrowLeft',16)} Back</button>
+      <div class="df-card" style="padding:24px;margin-bottom:22px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+          <div>
+            <span class="df-stub df-mono">${ticket.id}</span>
+            <h1 class="df-display" style="font-size:22px;font-weight:700;margin:10px 0 6px;">${escapeHtml(ticket.title)}</h1>
+            <div class="df-mono" style="color:var(--text-muted);font-size:13px;">Created ${formatDateDisplay(ticket.createdDate)}</div>
+          </div>
+          ${badgeHtml(ticket.status)}
+        </div>
+        <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);font-size:14.5px;line-height:1.7;color:var(--text);">${ticket.description}</div>
+        ${ticket.images.length ? `
+          <div style="margin-top:20px;">
+            <div class="df-field-label" style="margin-bottom:10px;">Uploaded Images</div>
+            <div class="df-gallery" style="grid-template-columns:repeat(auto-fill, minmax(120px,1fr));">
+              ${ticket.images.map((img,i) => `<img src="${img.url}" alt="${escapeHtml(img.name||'attachment')}" class="df-gallery-thumb lightbox-trigger" data-src="${img.url}" style="height:100px;border-radius:10px;cursor:zoom-in;border:1px solid var(--border);" />`).join('')}
+            </div>
+          </div>` : ''}
+      </div>
+
+      <h3 class="df-display" style="font-size:16px;margin:0 0 12px;">Conversation</h3>
+      <div class="df-card" style="padding:20px;margin-bottom:18px;" id="conversationBox">
+        ${renderConversationHtml(ticket)}
+      </div>
+
+      <h3 class="df-display" style="font-size:16px;margin:0 0 12px;">Reply</h3>
+      <div class="df-card" style="padding:20px;" id="replyForm">
+        ${editorToolbarHtml(true)}
+        <div id="replyEditor" class="df-editor-body" contenteditable="true" data-placeholder="Write your reply..."></div>
+        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px;">
+          <button class="df-btn df-btn-ghost" type="button" id="cancelReplyBtn">Cancel</button>
+          <button class="df-btn df-btn-primary" type="button" id="sendReplyBtn">${ico('send',15)} Send Reply</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('backBtn').addEventListener('click', () => navigate('#/tickets'));
+  wireEditor(document.getElementById('replyForm'), 'replyEditor', null);
+  document.getElementById('cancelReplyBtn').addEventListener('click', () => { document.getElementById('replyEditor').innerHTML = ''; });
+  document.getElementById('sendReplyBtn').addEventListener('click', () => handleSendReply(ticket));
+  wireLightbox(root);
+}
+
+function renderConversationHtml(ticket) {
+  if (ticket.conversation.length === 0) {
+    return `<p style="color:var(--text-muted);font-size:14px;margin:0;">No replies yet — write the first message below.</p>`;
+  }
+  return ticket.conversation.map(m => `
+    <div class="df-chat-row" style="justify-content:${m.role==='user'?'flex-end':'flex-start'};">
+      <div class="df-chat-bubble ${m.role==='user'?'df-chat-user':'df-chat-admin'}">
+        <div class="df-chat-meta">${escapeHtml(m.sender)} &middot; ${m.timestamp}</div>
+        <div>${m.content}</div>
+      </div>
+    </div>`).join('');
+}
+
+function handleSendReply(ticket) {
+  const editor = document.getElementById('replyEditor');
+  const html = editor.innerHTML;
+  if (!stripHtml(html).trim()) return;
+  const sendBtn = document.getElementById('sendReplyBtn');
+  sendBtn.disabled = true;
+  sendBtn.innerHTML = `<span class="df-spin" style="display:inline-flex;">${ico('loader',16)}</span>`;
+  setTimeout(() => {
+    ticket.conversation.push({
+      sender: 'You', role: 'user',
+      timestamp: new Date().toLocaleString(undefined, { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }),
+      content: html
+    });
+    editor.innerHTML = '';
+    document.getElementById('conversationBox').innerHTML = renderConversationHtml(ticket);
+    sendBtn.disabled = false;
+    sendBtn.innerHTML = `${ico('send',15)} Send Reply`;
+  }, 500);
+}
+
+function wireLightbox(root) {
+  root.querySelectorAll('.lightbox-trigger').forEach(img => img.addEventListener('click', () => {
+    const overlay = document.createElement('div');
+    overlay.className = 'df-lightbox';
+    overlay.innerHTML = `
+      <img src="${img.getAttribute('data-src')}" alt="preview" style="max-width:100%;max-height:100%;border-radius:12px;box-shadow:var(--shadow-lg);" />
+      <button class="df-icon-btn" id="closeLightbox" style="position:absolute;top:24px;right:24px;background:rgba(255,255,255,0.1);color:#fff;border-color:rgba(255,255,255,0.3);">${ico('x',18)}</button>
+    `;
+    overlay.addEventListener('click', (e) => { if (e.target === overlay || e.target.id === 'closeLightbox' || e.target.closest('#closeLightbox')) overlay.remove(); });
+    document.body.appendChild(overlay);
+  }));
+}
+</script>
+</body>
+</html>

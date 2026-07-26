@@ -3,26 +3,25 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Symfony\Component\HttpFoundation\Response;
 
 class SetLocale
 {
     /**
-     * Handle an incoming request.
-     *
      * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $seesion = session("locale", config('app.locale'));
-        if (!in_array($seesion, ['en', 'ar'])) {
-            $session = 'ar';
+        $locale = session('locale', config('app.locale'));
+
+        if (! in_array($locale, ['en', 'ar'], true)) {
+            $locale = config('app.fallback_locale', 'ar');
         }
 
-        App::setLocale($seesion);
+        App::setLocale($locale);
+
         return $next($request);
     }
 }
