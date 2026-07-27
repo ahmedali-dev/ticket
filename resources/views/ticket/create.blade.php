@@ -10,11 +10,10 @@
                     Fill out the form below to submit a support ticket.
                 </p>
             </div>
-            <a
-                href="{{ route('ticket.index') }}"
-                class="inline-flex items-center gap-2 self-start rounded-xl border border-gray-300 bg-white px-3.5 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
-            >
-                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <a href="{{ route('ticket.index') }}"
+                class="inline-flex items-center gap-2 self-start rounded-xl border border-gray-300 bg-white px-3.5 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
+                    aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
                 </svg>
                 Back
@@ -22,196 +21,288 @@
         </div>
     </x-slot>
 
-    <div
-        class="py-8"
-        x-data="createTicketForm()"
-        x-init="
-            title = @js(old('title', ''));
-            description = @js(old('description', ''));
-            $nextTick(() => autoResize());
-        "
-        x-cloak
-    >
+    <div class="py-8">
         <div class="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8">
-            <div class="overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
-                <form
-                    method="POST"
-                    action="{{ route('ticket.store') }}"
-                    enctype="multipart/form-data"
-                    class="space-y-6 p-6 sm:p-8"
-                    @submit="submit($event)"
-                    novalidate
-                >
-                    @csrf
+            <div
+                class="overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
+                <div class="df-page" style="max-width:760px;">
 
-                    {{-- Title --}}
-                    <div>
-                        <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Ticket Title <span class="text-red-500" aria-hidden="true">*</span>
-                        </label>
-                        <input
-                            id="title"
-                            type="text"
-                            name="title"
-                            x-model="title"
-                            required
-                            maxlength="255"
-                            placeholder="Enter ticket title"
-                            aria-required="true"
-                            :aria-invalid="!!errors.title"
-                            class="mt-1.5 block w-full rounded-xl border-gray-300 shadow-sm transition focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:placeholder-gray-500 sm:text-sm"
-                            @blur="errors.title = title.trim() ? '' : 'Please enter a ticket title.'"
-                        />
-                        <p x-show="errors.title" x-cloak class="mt-1.5 text-sm text-red-600 dark:text-red-400" x-text="errors.title" role="alert"></p>
-                        @error('title')
-                            <p class="mt-1.5 text-sm text-red-600 dark:text-red-400" role="alert">{{ $message }}</p>
-                        @enderror
-                    </div>
 
-                    {{-- Description --}}
-                    <div>
-                        <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Description <span class="text-red-500" aria-hidden="true">*</span>
-                        </label>
-                        <textarea
-                            id="description"
-                            name="description"
-                            x-ref="description"
-                            x-model="description"
-                            @input="autoResize(); errors.description = description.trim() ? '' : errors.description"
-                            @blur="errors.description = description.trim() ? '' : 'Please describe your issue.'"
-                            required
-                            rows="4"
-                            maxlength="5000"
-                            placeholder="Describe your issue..."
-                            aria-required="true"
-                            class="mt-1.5 block w-full resize-none overflow-hidden rounded-xl border-gray-300 shadow-sm transition focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:placeholder-gray-500 sm:text-sm"
-                        ></textarea>
-                        <p x-show="errors.description" x-cloak class="mt-1.5 text-sm text-red-600 dark:text-red-400" x-text="errors.description" role="alert"></p>
-                        @error('description')
-                            <p class="mt-1.5 text-sm text-red-600 dark:text-red-400" role="alert">{{ $message }}</p>
-                        @enderror
-                    </div>
 
-                    {{-- Image upload (optional) — status is never shown here --}}
-                    <div>
-                        <span class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Image <span class="font-normal text-gray-400">(optional)</span>
-                        </span>
-                        <p class="mt-0.5 text-xs text-gray-500 dark:text-gray-400">JPG, JPEG, PNG, or WEBP · Max 5 MB</p>
+                    <!-- Page Header -->
+                    <h1 class="df-display" style="font-size:26px;font-weight:700;margin:0 0 4px;">
+                        Create Ticket
+                    </h1>
 
-                        <input
-                            type="file"
-                            name="image"
-                            x-ref="fileInput"
-                            accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
-                            class="sr-only"
-                            @change="onBrowse($event)"
-                        />
+                    <p style="color:var(--text-muted);font-size:14px;margin:0 0 28px;">
+                        Submit a new support request.
+                    </p>
 
-                        {{-- Dropzone --}}
-                        <div
-                            x-show="!previewUrl"
-                            role="button"
-                            tabindex="0"
-                            @click="$refs.fileInput.click()"
-                            @keydown.enter.prevent="$refs.fileInput.click()"
-                            @keydown.space.prevent="$refs.fileInput.click()"
-                            @dragenter.prevent="dragOver = true"
-                            @dragover.prevent="dragOver = true"
-                            @dragleave.prevent="dragOver = false"
-                            @drop.prevent="onDrop($event)"
-                            :class="dragOver
-                                ? 'border-indigo-500 bg-indigo-50 dark:border-indigo-400 dark:bg-indigo-950/40'
-                                : 'border-gray-300 bg-gray-50 hover:border-indigo-400 hover:bg-indigo-50/50 dark:border-gray-600 dark:bg-gray-900/40 dark:hover:border-indigo-500 dark:hover:bg-indigo-950/30'"
-                            class="mt-2 flex min-h-[11rem] cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed px-4 py-8 text-center transition duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
-                        >
-                            <div class="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-600">
-                                <svg class="h-6 w-6 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                </svg>
-                            </div>
-                            <p class="text-sm font-medium text-gray-800 dark:text-gray-100">Drag &amp; Drop an image here</p>
-                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">or</p>
-                            <p class="mt-1 text-sm font-semibold text-indigo-600 dark:text-indigo-400">Click to browse</p>
+                    <!-- Form -->
+                    <form id="createForm" style="padding:26px;">
+
+                        <!-- Ticket Title -->
+                        <div style="margin-bottom:22px;">
+                            <label class="df-field-label">
+                                Ticket Title <span class="df-req">*</span>
+                            </label>
+
+                            <input id="titleInput" class="df-input" type="text" style="width:100%;"
+                                placeholder="Enter ticket title">
+
+                            <div class="df-error-text" id="titleError"></div>
                         </div>
 
-                        {{-- Preview --}}
-                        <div
-                            x-show="previewUrl"
-                            x-cloak
-                            class="mt-2 overflow-hidden rounded-2xl border border-gray-200 bg-gray-50 dark:border-gray-600 dark:bg-gray-900/50"
-                        >
-                            <div class="relative aspect-video bg-gray-100 dark:bg-gray-900">
-                                <img :src="previewUrl" :alt="fileName" class="h-full w-full object-contain" />
-                            </div>
-                            <div class="flex items-center justify-between gap-3 px-4 py-3">
-                                <div class="min-w-0">
-                                    <p class="truncate text-sm font-medium text-gray-900 dark:text-gray-100" x-text="fileName"></p>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400" x-text="fileSize"></p>
+                        <!-- Description -->
+                        <div style="margin-bottom:22px;">
+                            <label class="df-field-label">
+                                Description <span class="df-req">*</span>
+                            </label>
+
+                            <textarea name="" id="editor"></textarea>
+                        </div>
+
+                        <!-- Attachments -->
+                        <div style="margin-bottom:8px;">
+                            <label class="df-field-label">
+                                Attachments
+                            </label>
+
+                            <div class="df-dropzone" id="dropzone">
+
+                                <div style="color:var(--primary);margin-bottom:8px;">
+                                    📤
                                 </div>
-                                <button
-                                    type="button"
-                                    @click="clearFile()"
-                                    class="inline-flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-medium text-red-600 transition hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/40"
-                                >
-                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                    Remove
-                                </button>
+
+                                <div style="font-weight:600;font-size:14px;">
+                                    Click to browse or drag and drop images
+                                </div>
+
+                                <div style="color:var(--text-muted);font-size:12.5px;margin-top:4px;">
+                                    JPG, JPEG, PNG or WEBP · up to 5 MB each
+                                </div>
+
+                                <input id="fileInput" type="file" multiple accept=".jpg,.jpeg,.png,.webp"
+                                    style="display:none;">
                             </div>
 
-                            {{-- Upload progress (async submit with image) --}}
-                            <div x-show="showProgress" x-cloak class="border-t border-gray-200 px-4 py-3 dark:border-gray-700">
-                                <div class="mb-1 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-                                    <span>Uploading…</span>
-                                    <span x-text="uploadProgress + '%'"></span>
-                                </div>
-                                <div class="h-2 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
-                                    <div
-                                        class="h-full rounded-full bg-indigo-600 transition-all duration-150"
-                                        :style="`width: ${uploadProgress}%`"
-                                    ></div>
-                                </div>
+                            <div class="df-error-text" id="fileError"></div>
+
+                            <!-- Uploaded Images -->
+                            <div class="df-gallery" id="gallery">
+                                <!-- Uploaded image previews will appear here -->
                             </div>
                         </div>
 
-                        <p x-show="errors.image" x-cloak class="mt-1.5 text-sm text-red-600 dark:text-red-400" x-text="errors.image" role="alert"></p>
-                        @error('image')
-                            <p class="mt-1.5 text-sm text-red-600 dark:text-red-400" role="alert">{{ $message }}</p>
-                        @enderror
-                    </div>
+                        <!-- Submit Button -->
+                        <div style="display:flex;justify-content:flex-end;margin-top:26px;">
+                            <button class="df-btn df-btn-primary" id="submitBtn" type="submit"
+                                style="min-width:150px;justify-content:center;">
+                                Submit Ticket
+                            </button>
+                        </div>
 
-                    {{-- Actions --}}
-                    <div class="flex flex-col-reverse gap-3 border-t border-gray-100 pt-6 dark:border-gray-700 sm:flex-row sm:justify-end">
-                        <a
-                            href="{{ route('ticket.index') }}"
-                            class="inline-flex items-center justify-center rounded-xl border border-gray-300 px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
-                        >
-                            Cancel
-                        </a>
-                        <button
-                            type="submit"
-                            :disabled="submitting"
-                            class="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition duration-200 hover:bg-indigo-500 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 dark:focus:ring-offset-gray-800"
-                        >
-                            <svg
-                                x-show="submitting"
-                                x-cloak
-                                class="h-4 w-4 animate-spin"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
-                            >
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                            <span x-text="submitting ? 'Submitting…' : 'Submit Ticket'"></span>
-                        </button>
-                    </div>
-                </form>
+                    </form>
+
+                </div>
             </div>
         </div>
     </div>
+
+
+    {{--
+    <script>
+
+        function addFiles(fileList) {
+            const files = Array.from(fileList);
+            let err = '';
+            files.forEach(file => {
+                if (!ACCEPTED_TYPES.includes(file.type)) { err = `"${file.name}" is not a supported format. Use JPG, PNG, or WEBP.`; return; }
+                if (file.size > MAX_SIZE) { err = `"${file.name}" exceeds the 5 MB limit.`; return; }
+                createFormImages.push({ id: uid(), file, url: URL.createObjectURL(file), name: file.name, size: file.size });
+            });
+        }
+
+        function renderGallery() {
+            const gallery = document.getElementById('gallery');
+            gallery.innerHTML = createFormImages.map(img => `
+    <div class="df-gallery-card">
+      <img src="${img.url}" alt="${escapeHtml(img.name)}" class="df-gallery-thumb" />
+      <button type="button" class="df-gallery-x" data-id="${img.id}" aria-label="Remove image">${ico('x', 13)}</button>
+      <div class="df-gallery-meta">
+        <div class="df-gallery-name" title="${escapeHtml(img.name)}">${escapeHtml(img.name)}</div>
+        <div class="df-gallery-size">${formatBytes(img.size)}</div>
+      </div>
+    </div>`).join('');
+            gallery.querySelectorAll('.df-gallery-x').forEach(btn => btn.addEventListener('click', () => {
+                createFormImages = createFormImages.filter(i => i.id !== btn.getAttribute('data-id'));
+                renderGallery();
+            }));
+        }
+
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('fileInput');
+        dropzone.addEventListener('click', () => fileInput.click());
+        dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('drag-over'); });
+        dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
+        dropzone.addEventListener('drop', e => { e.preventDefault(); dropzone.classList.remove('drag-over'); addFiles(e.dataTransfer.files); });
+        fileInput.addEventListener('change', e => { addFiles(e.target.files); e.target.value = ''; });
+        renderGallery();
+
+
+
+    </script> --}}
+
+    <script>
+        const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+        const ACCEPTED_TYPES = [
+            'image/jpeg',
+            'image/png',
+            'image/webp'
+        ];
+
+        let createFormImages = [];
+
+        function uid() {
+            return Date.now().toString() + Math.random().toString(36).substring(2);
+        }
+
+        function formatBytes(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / 1024 / 1024).toFixed(1) + ' MB';
+        }
+
+        function addFiles(fileList) {
+            Array.from(fileList).forEach(file => {
+
+                if (!ACCEPTED_TYPES.includes(file.type)) {
+                    alert(file.name + ' is not a supported image.');
+                    return;
+                }
+
+                if (file.size > MAX_SIZE) {
+                    alert(file.name + ' exceeds 5 MB.');
+                    return;
+                }
+
+                createFormImages.push({
+                    id: uid(),
+                    file,
+                    url: URL.createObjectURL(file),
+                    name: file.name,
+                    size: file.size
+                });
+            });
+
+            renderGallery();
+        }
+
+        function renderGallery() {
+            const gallery = document.getElementById('gallery');
+
+            gallery.innerHTML = '';
+
+            createFormImages.forEach(img => {
+
+                const card = document.createElement('div');
+                card.className = 'df-gallery-card';
+
+                card.innerHTML = `
+                <img src="${img.url}" class="df-gallery-thumb" alt="${img.name}">
+
+                <button
+                    type="button"
+                    class="df-gallery-x"
+                    data-id="${img.id}">
+                    ✕
+                </button>
+
+                <div class="df-gallery-meta">
+                    <div class="df-gallery-name">${img.name}</div>
+                    <div class="df-gallery-size">${formatBytes(img.size)}</div>
+                </div>
+            `;
+
+                gallery.appendChild(card);
+            });
+
+            document.querySelectorAll('.df-gallery-x').forEach(btn => {
+                btn.onclick = function () {
+                    const id = this.dataset.id;
+
+                    const img = createFormImages.find(i => i.id === id);
+                    if (img) URL.revokeObjectURL(img.url);
+
+                    createFormImages = createFormImages.filter(i => i.id !== id);
+                    renderGallery();
+                };
+            });
+        }
+
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('fileInput');
+
+        dropzone.addEventListener('click', () => fileInput.click());
+
+        dropzone.addEventListener('dragover', e => {
+            e.preventDefault();
+            dropzone.classList.add('drag-over');
+        });
+
+        dropzone.addEventListener('dragleave', () => {
+            dropzone.classList.remove('drag-over');
+        });
+
+        dropzone.addEventListener('drop', e => {
+            e.preventDefault();
+            dropzone.classList.remove('drag-over');
+            addFiles(e.dataTransfer.files);
+        });
+
+        fileInput.addEventListener('change', e => {
+            addFiles(e.target.files);
+            fileInput.value = '';
+        });
+
+        function editorToolbarHtml(minimal) {
+            const btn = (icon, cmd, title) => `<button type="button" class="df-editor-btn" data-cmd="${cmd || ''}" title="${title}">${ico(icon, 15)}</button>`;
+            let html = '<div class="df-editor-toolbar">';
+            html += btn('bold', 'bold', 'Bold');
+            html += btn('italic', 'italic', 'Italic');
+            html += btn('underline', 'underline', 'Underline');
+            if (!minimal) html += btn('list', 'insertUnorderedList', 'Bullet list');
+            if (!minimal) html += btn('listOrdered', 'insertOrderedList', 'Numbered list');
+            html += btn('link', 'link', 'Insert link');
+            if (!minimal) html += btn('undo', 'undo', 'Undo');
+            if (!minimal) html += btn('redo', 'redo', 'Redo');
+            html += '</div>';
+            return html;
+        }
+        function wireEditor(container, bodyId, onChangeCb) {
+            const body = container.querySelector('#' + bodyId);
+            container.querySelectorAll('.df-editor-btn').forEach(btn => {
+                btn.addEventListener('mousedown', e => e.preventDefault());
+                btn.addEventListener('click', () => {
+                    const cmd = btn.getAttribute('data-cmd');
+                    if (cmd === 'link') {
+                        const url = window.prompt('Enter URL');
+                        if (url) document.execCommand('createLink', false, url);
+                    } else {
+                        document.execCommand(cmd, false, null);
+                    }
+                    body.focus();
+                    if (onChangeCb) onChangeCb(body.innerHTML);
+                });
+            });
+            if (onChangeCb) body.addEventListener('input', () => onChangeCb(body.innerHTML));
+        }
+
+        ClassicEditor
+            .create(document.querySelector('#editor'))
+            .catch(error => {
+                console.error(error);
+            });
+    </script>
+
 </x-app-layout>

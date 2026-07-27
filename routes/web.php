@@ -25,9 +25,15 @@ Route::get('/lang/{locale}', function ($locale) {
 
 
 ROUTE::middleware(['auth'])->group(function () {
-    Route::get('/ticket', function () {
-        return view('ticket.dashborad');
-    })->name('ticket.index');
+    Route::get('/ticket', [TicketController::class, 'index'])->name('ticket.index');
+
+    Route::get('/ticket/{ticket}/reply', function () {
+        return view('ticket.reply');
+    })->name('ticket.reply');
+
+    route::get('/ticket/create', function () {
+        return view('ticket.create');
+    })->name('ticket.create');
 });
 
 Route::get('/dashboard', function () {

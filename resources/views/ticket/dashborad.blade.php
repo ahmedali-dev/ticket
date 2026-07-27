@@ -31,8 +31,9 @@ Create lives on /tickets/create. Update / Delete / status changes are admin-only
                 style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap;">
                 <div class="df-filters-left" style="display:flex;gap:10px;flex:1;flex-wrap:wrap;">
                     <div style="position:relative;flex:1 1 220px;max-width:320px;">
-                        <span
+                        {{-- <span
                             style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-faint);">search</span>
+                        --}}
                         <input id="searchInput" class="df-input" style="width:100%;padding-left:34px;"
                             placeholder="Search by ID, title, or description" value="" />
                     </div>
@@ -45,9 +46,98 @@ Create lives on /tickets/create. Update / Delete / status changes are admin-only
                         <option value="">hello</option>
                     </select>
                 </div>
-                <button class="df-btn df-btn-primary" id="addTicketBtn">Add Ticket</button>
+                <a href="{{ route('ticket.create') }}" class="df-btn df-btn-primary" id="addTicketBtn">Add Ticket</a>
             </div>
-            <div id="tableContainer"></div>
+            <div id="tableContainer">
+
+
+                <div class="df-card df-table-wrap">
+                    <table class="df-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th class="sortable" data-sort="date">
+                                    <span style="display:inline-flex;align-items:center;gap:4px;">
+                                        Created Date
+                                        <!-- Sort Icon -->
+                                    </span>
+                                </th>
+                                <th class="sortable" data-sort="status">
+                                    <span style="display:inline-flex;align-items:center;gap:4px;">
+                                        Status
+                                        <!-- Sort Icon -->
+                                    </span>
+                                </th>
+                                <th style="width:60px;"></th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr>
+                                <td><span class="df-stub df-mono">12345</span></td>
+                                <td style="font-weight:600;max-width:220px;">Sample Ticket Title</td>
+                                <td style="color:var(--text-muted);max-width:260px;">
+                                    Sample ticket description...
+                                </td>
+                                <td class="df-mono" style="color:var(--text-muted);font-size:13px;">
+                                    Jan 15, 2026
+                                </td>
+                                <td>
+                                    <span class="badge badge-success">Open</span>
+                                </td>
+                                <td>
+                                    <div class="df-dropdown">
+                                        <button class="df-icon-btn row-menu-btn" style="width:30px;height:30px;"
+                                            data-id="12345">
+                                            ⋮
+                                        </button>
+
+                                        <div class="df-dropdown-menu" data-menu-for="12345">
+                                            <a href="{{ route('ticket.reply', ['ticket' => 'asdfas']) }}"
+                                                class="df-dropdown-item view-ticket-item" data-id="12345">
+                                                View Ticket
+                                            </a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Repeat <tr> for additional rows -->
+                        </tbody>
+                    </table>
+
+                    <div class="df-pagination" style="border-top:1px solid var(--border);">
+                        <div class="df-pagination-info">
+                            Showing 1–10 of 50
+                        </div>
+
+                        <div class="df-pagination-controls" id="paginationControls">
+
+
+                            <button class="df-page-btn" data-page="prev" disabled>&laquo;</button>
+                            <button class="df-page-btn active" data-page="1">1</button>
+                            <button class="df-page-btn " data-page="1">2</button>
+                            <button class="df-page-btn " data-page="1">3</button>
+                            <button class="df-page-btn" data-page="next" disabled>&raquo;</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+
+    <script>
+        const container = document.getElementById('tableContainer');
+
+        container.querySelectorAll('.row-menu-btn').forEach(btn => btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const id = btn.getAttribute('data-id');
+            const menu = container.querySelector(`.df-dropdown-menu[data-menu-for="${id}"]`);
+            const wasOpen = menu.classList.contains('open');
+            container.querySelectorAll('.df-dropdown-menu').forEach(m => m.classList.remove('open'));
+            if (!wasOpen) menu.classList.add('open');
+        }));
+    </script>
 </x-app-layout>

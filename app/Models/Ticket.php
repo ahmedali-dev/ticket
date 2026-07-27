@@ -27,14 +27,7 @@ class Ticket extends Model
 
     /**
      * @var list<string>
-     */
-    protected $fillable = [
-        'user_id',
-        'title',
-        'description',
-        'status',
-        'image',
-    ];
+     *
 
     /**
      * @var list<string>
@@ -59,7 +52,7 @@ class Ticket extends Model
 
     public function getImageUrlAttribute(): ?string
     {
-        if (! $this->image) {
+        if (!$this->image) {
             return null;
         }
 
