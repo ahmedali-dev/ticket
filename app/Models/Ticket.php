@@ -13,6 +13,14 @@ class Ticket extends Model
     /** @use HasFactory<\Database\Factories\TicketFactory> */
     use HasFactory;
 
+
+    protected $fillable = [
+        'title',
+        'descr
+        iption',
+        'image',
+        'id'
+    ];
     public const STATUS_PENDING = 'pending';
 
     public const STATUS_IN_PROGRESS = 'in_progress';

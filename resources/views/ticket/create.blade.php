@@ -39,8 +39,9 @@
                     </p>
 
                     <!-- Form -->
-                    <form id="createForm" style="padding:26px;">
-
+                    <form method="post" action="{{ route('ticket.store') }}" enctype="multipart/form-data"
+                        id="createForm" style="padding:26px;">
+                        @csrf
                         <!-- Ticket Title -->
                         <div style="margin-bottom:22px;">
                             <label class="df-field-label">
@@ -48,9 +49,14 @@
                             </label>
 
                             <input id="titleInput" class="df-input" type="text" style="width:100%;"
-                                placeholder="Enter ticket title">
+                                placeholder="Enter ticket title" name="title">
 
-                            <div class="df-error-text" id="titleError"></div>
+                            @error('title')
+                                <div class="df-error-text" id="fileError">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+
                         </div>
 
                         <!-- Description -->
@@ -59,7 +65,13 @@
                                 Description <span class="df-req">*</span>
                             </label>
 
-                            <textarea name="" id="editor"></textarea>
+                            <textarea class="w-full h-[10rem]" name="description" id=""></textarea>
+                            {{-- <div name="description" id="editor"></div> --}}
+                            @error('description')
+                                <div class="df-error-text" id="fileError">
+                                    {{ $message }}
+                                </div>
+                            @enderror
                         </div>
 
                         <!-- Attachments -->
@@ -83,15 +95,21 @@
                                 </div>
 
                                 <input id="fileInput" type="file" multiple accept=".jpg,.jpeg,.png,.webp"
-                                    style="display:none;">
+                                    style="display:none;" name="images[]">
                             </div>
 
-                            <div class="df-error-text" id="fileError"></div>
+
 
                             <!-- Uploaded Images -->
                             <div class="df-gallery" id="gallery">
                                 <!-- Uploaded image previews will appear here -->
                             </div>
+
+                            @error('images')
+                                <div class="df-error-text" id="fileError">
+                                    {{ $message }}
+                                </div>
+                            @enderror
                         </div>
 
                         <!-- Submit Button -->
@@ -173,30 +191,6 @@
             return (bytes / 1024 / 1024).toFixed(1) + ' MB';
         }
 
-        function addFiles(fileList) {
-            Array.from(fileList).forEach(file => {
-
-                if (!ACCEPTED_TYPES.includes(file.type)) {
-                    alert(file.name + ' is not a supported image.');
-                    return;
-                }
-
-                if (file.size > MAX_SIZE) {
-                    alert(file.name + ' exceeds 5 MB.');
-                    return;
-                }
-
-                createFormImages.push({
-                    id: uid(),
-                    file,
-                    url: URL.createObjectURL(file),
-                    name: file.name,
-                    size: file.size
-                });
-            });
-
-            renderGallery();
-        }
 
         function renderGallery() {
             const gallery = document.getElementById('gallery');

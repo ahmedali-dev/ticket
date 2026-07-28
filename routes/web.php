@@ -31,9 +31,8 @@ ROUTE::middleware(['auth'])->group(function () {
         return view('ticket.reply');
     })->name('ticket.reply');
 
-    route::get('/ticket/create', function () {
-        return view('ticket.create');
-    })->name('ticket.create');
+    Route::get('/ticket/create', [TicketController::class, 'create'])->name('ticket.create');
+    Route::post('/ticket', [TicketController::class, 'store'])->name('ticket.store');
 });
 
 Route::get('/dashboard', function () {
