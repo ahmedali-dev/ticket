@@ -16,8 +16,7 @@ class Ticket extends Model
 
     protected $fillable = [
         'title',
-        'descr
-        iption',
+        'description',
         'image',
         'id'
     ];
@@ -72,6 +71,15 @@ class Ticket extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function media(): hasMany
+    {
+        return $this->hasMany(Media::class, 'ticket_id', 'id');
+    }
+
+    public function ticketView(): HasMany
+    {
+        return $this->hasMany(TicketView::class);
+    }
     public function replies(): HasMany
     {
         return $this->hasMany(TicketReply::class)->oldest();

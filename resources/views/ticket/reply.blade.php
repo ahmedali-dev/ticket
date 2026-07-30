@@ -21,6 +21,21 @@
         </div>
     </x-slot>
 
+
+    @php
+        $status = [
+            'pending' => 'background:var(--amber-bg);color:var(--amber-text);',
+            'in_progress' => 'background:var(--blue-bg);color:var(--blue-text);',
+            'completed' => 'background:var(--green-bg);color:var(--green-text);'
+        ];
+
+        $status_dot = [
+            'pending' => 'background:var(--amber-dot);',
+            'in_progress' => 'background:var(--blue-dot);',
+            'completed' => 'background:color:var(--green-dot);'
+        ];
+    @endphp
+
     <div class="df-page" style="max-width:820px;">
 
 
@@ -30,64 +45,83 @@
             <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">
 
                 <div>
-                    <span class="df-stub df-mono">TKT-000123</span>
+                    <span class="df-stub df-mono">{{ $ticket->id }}</span>
 
                     <h1 class="df-display" style="font-size:22px;font-weight:700;margin:10px 0 6px;">
-                        Unable to access my account
+                        {{ $ticket->titile }}
                     </h1>
 
                     <div class="df-mono" style="color:var(--text-muted);font-size:13px;">
-                        Created Jan 15, 2026
+                        Created {{ $ticket->created_at->format('y/M/d h:m') }}
                     </div>
                 </div>
 
                 <!-- Status Badge -->
-                <span class="df-badge df-badge-open" style="background:var(--blue-bg);color:var(--blue-text);">
-                    <span class="df-badge-dot" style="background:var(--blue-dot);"></span>
-                    Open
+                <span class="df-badge df-badge-open" style="{{ $status[$ticket->status] }}">
+                    <span class="df-badge-dot" style="{{ $status_dot[$ticket->status] }}"></span>
+                    {{ Str::replace('_', " ", $ticket->status) }}
                 </span>
+
+
 
             </div>
 
             <!-- Progress -->
+            @php
+                $statuses = ['pending', 'in_progress', 'completed'];
+                $currentIndex = array_search($ticket->status, $statuses);
+                $currentIndex = $currentIndex === false ? 0 : $currentIndex;
+            @endphp
+
             <div id="stepperSlot">
                 <div class="df-stepper">
+                    @foreach ($statuses as $index => $status)
+                        @php
+                            $isDone = $index < $currentIndex;
+                            $isCurrent = $index === $currentIndex;
+                            $isActive = $index <= $currentIndex; // used for label styling
+                        @endphp
 
-                    <div class="df-step">
-                        <div class="df-step-line "></div>
-                        <div class="df-step-dot done"><svg class="ico" style="width:14px;height:14px"
-                                viewBox="0 0 24 24">
-                                <path d="M5 12l5 5L20 7"></path>
-                            </svg></div>
-                        <div class="df-step-label active">Pending</div>
-                    </div>
-                    <div class="df-step">
-                        <div class="df-step-line filled"></div>
-                        <div class="df-step-dot current">2</div>
-                        <div class="df-step-label active">In Progress</div>
-                    </div>
-                    <div class="df-step">
-                        <div class="df-step-line "></div>
-                        <div class="df-step-dot ">3</div>
-                        <div class="df-step-label ">Completed</div>
-                    </div>
+                        <div class="df-step">
+                            <div class="df-step-line {{ $index > 0 && $isActive ? 'filled' : '' }}"></div>
+
+                            <div class="df-step-dot {{ $isDone ? 'done' : ($isCurrent ? 'current' : '') }}">
+                                @if ($isDone)
+                                    <svg class="ico" style="width:14px;height:14px" viewBox="0 0 24 24">
+                                        <path d="M5 12l5 5L20 7"></path>
+                                    </svg>
+                                @else
+                                    {{ $index + 1 }}
+                                @endif
+                            </div>
+
+                            <div class="df-step-label {{ $isActive ? 'active' : '' }}">
+                                {{ ucfirst(str_replace('_', ' ', $status)) }}
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
             </div>
+
+            @dd($ticket->ticketView)
 
             <!-- Description -->
             <div
                 style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);font-size:14.5px;line-height:1.7;color:var(--text);">
-                <p>Whenever I try to reset my password from the iOS app it just spins forever and never sends the email.
-                    Tried three times with two different accounts.</p>
+                <p> {{ $ticket->description }}.</p>
             </div>
+
+
 
             <!-- Uploaded Images -->
             <div style="margin-top:20px;">
                 <div class="df-field-label" style="margin-bottom:10px;">Uploaded Images</div>
                 <div class="df-gallery" style="grid-template-columns:repeat(auto-fill, minmax(120px,1fr));">
-                    <img src="https://picsum.photos/seed/t1042a/400/300" alt="screenshot-error.png"
-                        class="df-gallery-thumb lightbox-trigger" data-src="https://picsum.photos/seed/t1042a/400/300"
-                        style="height:100px;border-radius:10px;cursor:zoom-in;border:1px solid var(--border);">
+                    @foreach ($ticket->media as $media)
+                        <img src="{{ Storage::url($media->path) }}" alt="screenshot-error.png"
+                            class="df-gallery-thumb lightbox-trigger" data-src="https://picsum.photos/seed/t1042a/400/300"
+                            style="height:100px;border-radius:10px;cursor:zoom-in;border:1px solid var(--border);">
+                    @endforeach
                 </div>
             </div>
 
@@ -164,14 +198,27 @@
 
 
             <!-- Editor -->
-            <div class="df-editor-body" contenteditable="true" id="editor">
+            <!-- Description -->
+            <div style="margin-bottom:22px;">
+                <label class="df-field-label">
+                    Description <span class="df-req">*</span>
+                </label>
+
+                <textarea class="df-input w-full h-[10rem]" name="description" id=""></textarea>
+                {{-- <div name="description" id="editor"></div> --}}
+                @error('description')
+                    <div class="df-error-text" id="fileError">
+                        {{ $message }}
+                    </div>
+                @enderror
             </div>
 
             <!-- Buttons -->
             <div
                 style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:14px;flex-wrap:wrap;">
 
-                <button class="df-btn df-btn-danger" type="button">
+                <button class="df-btn df-btn-danger" type="button"
+                    style="color:var(--danger);border-color:var(--border);">
                     Close Ticket
                 </button>
 
@@ -190,6 +237,8 @@
             </div>
 
         </div>
+
+
 
     </div>
 

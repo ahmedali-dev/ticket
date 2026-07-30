@@ -15,7 +15,6 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
         rel="stylesheet">
-    <script src="https://cdn.ckeditor.com/ckeditor5/11.0.1/classic/ckeditor.js"></script>
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -23,6 +22,7 @@
 </head>
 
 <body class="font-sans antialiased h-full bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
+    <div class="m-3 text-xl">{{ auth()->user()->type }}</div>
     <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
         @include('layouts.navigation')
 

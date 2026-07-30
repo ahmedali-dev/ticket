@@ -27,9 +27,7 @@ Route::get('/lang/{locale}', function ($locale) {
 ROUTE::middleware(['auth'])->group(function () {
     Route::get('/ticket', [TicketController::class, 'index'])->name('ticket.index');
 
-    Route::get('/ticket/{ticket}/reply', function () {
-        return view('ticket.reply');
-    })->name('ticket.reply');
+    Route::get('/ticket/{ticket}/reply', [TicketController::class, 'show'])->name('ticket.reply');
 
     Route::get('/ticket/create', [TicketController::class, 'create'])->name('ticket.create');
     Route::post('/ticket', [TicketController::class, 'store'])->name('ticket.store');

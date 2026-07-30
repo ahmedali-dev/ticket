@@ -65,7 +65,7 @@
                                 Description <span class="df-req">*</span>
                             </label>
 
-                            <textarea class="w-full h-[10rem]" name="description" id=""></textarea>
+                            <textarea class="df-input w-full h-[10rem]" name="description" id=""></textarea>
                             {{-- <div name="description" id="editor"></div> --}}
                             @error('description')
                                 <div class="df-error-text" id="fileError">
@@ -94,8 +94,9 @@
                                     JPG, JPEG, PNG or WEBP · up to 5 MB each
                                 </div>
 
-                                <input id="fileInput" type="file" multiple accept=".jpg,.jpeg,.png,.webp"
-                                    style="display:none;" name="images[]">
+                                <input id="fileInput" type="file" multiple
+                                    accept=".jpg,.jpeg,.png,.webp,.pdf,.mp4,.mp3,.mov" style="display:none;"
+                                    name="images[]">
                             </div>
 
 
@@ -106,10 +107,18 @@
                             </div>
 
                             @error('images')
-                                <div class="df-error-text" id="fileError">
+                                <div class="df-error-text">
                                     {{ $message }}
                                 </div>
                             @enderror
+
+                            @foreach ($errors->get('images.*') as $messages)
+                                @foreach ($messages as $message)
+                                    <div class="df-error-text">
+                                        {{ $message }}
+                                    </div>
+                                @endforeach
+                            @endforeach
                         </div>
 
                         <!-- Submit Button -->
@@ -172,70 +181,68 @@
     </script> --}}
 
     <script>
-        const MAX_SIZE = 5 * 1024 * 1024; // 5MB
-        const ACCEPTED_TYPES = [
-            'image/jpeg',
-            'image/png',
-            'image/webp'
-        ];
-
-        let createFormImages = [];
-
-        function uid() {
-            return Date.now().toString() + Math.random().toString(36).substring(2);
-        }
-
-        function formatBytes(bytes) {
-            if (bytes < 1024) return bytes + ' B';
-            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-            return (bytes / 1024 / 1024).toFixed(1) + ' MB';
-        }
-
-
-        function renderGallery() {
-            const gallery = document.getElementById('gallery');
-
-            gallery.innerHTML = '';
-
-            createFormImages.forEach(img => {
-
-                const card = document.createElement('div');
-                card.className = 'df-gallery-card';
-
-                card.innerHTML = `
-                <img src="${img.url}" class="df-gallery-thumb" alt="${img.name}">
-
-                <button
-                    type="button"
-                    class="df-gallery-x"
-                    data-id="${img.id}">
-                    ✕
-                </button>
-
-                <div class="df-gallery-meta">
-                    <div class="df-gallery-name">${img.name}</div>
-                    <div class="df-gallery-size">${formatBytes(img.size)}</div>
-                </div>
-            `;
-
-                gallery.appendChild(card);
-            });
-
-            document.querySelectorAll('.df-gallery-x').forEach(btn => {
-                btn.onclick = function () {
-                    const id = this.dataset.id;
-
-                    const img = createFormImages.find(i => i.id === id);
-                    if (img) URL.revokeObjectURL(img.url);
-
-                    createFormImages = createFormImages.filter(i => i.id !== id);
-                    renderGallery();
-                };
-            });
-        }
+        function escapeHtml(s) { return s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+        function formatBytes(b) { if (b < 1024) return b + ' B'; if (b < 1024 * 1024) return (b / 1024).toFixed(1) + ' KB'; return (b / (1024 * 1024)).toFixed(2) + ' MB'; }
 
         const dropzone = document.getElementById('dropzone');
         const fileInput = document.getElementById('fileInput');
+
+        let galleryItems = [];
+
+        function addFiles(files) {
+            const dt = new DataTransfer();
+
+            // Keep existing files
+            // Array.from(fileInput.files).forEach(file => dt.items.add(file));
+
+            // Add newly dropped/selected files
+            Array.from(files).forEach(file => dt.items.add(file));
+
+            // Update the input
+            fileInput.files = dt.files;
+            renderGallery();
+        }
+        function renderGallery() {
+            const gallery = document.getElementById('gallery');
+
+            gallery.innerHTML = Array.from(fileInput.files).map(img => `
+        <div class="df-gallery-card">
+            <img src="${URL.createObjectURL(img)}" alt="${escapeHtml(img.name)}" class="df-gallery-thumb" />
+            <button type="button"
+                    class="df-gallery-x"
+                    data-id="${img.name}"
+                    aria-label="Remove image">
+                ×
+            </button>
+            <div class="df-gallery-meta">
+                <div class="df-gallery-name" title="${escapeHtml(img.name)}">
+                    ${escapeHtml(img.name)}
+                </div>
+                <div class="df-gallery-size">
+                    ${formatBytes(img.size)}
+                </div>
+            </div>
+        </div>
+    `).join('');
+
+            gallery.querySelectorAll('.df-gallery-x').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const dt = new DataTransfer();
+
+                    const id = btn.dataset.id;
+                    galleryItems = Array.from(fileInput.files).filter(item => {
+                        if (item.name !== id) {
+                            dt.items.add(item);
+                            return;
+                        }
+
+                        return item;
+                    });
+                    fileInput.files = dt.files;
+                    renderGallery();
+                });
+            });
+        }
 
         dropzone.addEventListener('click', () => fileInput.click());
 
@@ -252,51 +259,14 @@
             e.preventDefault();
             dropzone.classList.remove('drag-over');
             addFiles(e.dataTransfer.files);
+
         });
 
         fileInput.addEventListener('change', e => {
+            console.log(fileInput.files)
             addFiles(e.target.files);
-            fileInput.value = '';
         });
 
-        function editorToolbarHtml(minimal) {
-            const btn = (icon, cmd, title) => `<button type="button" class="df-editor-btn" data-cmd="${cmd || ''}" title="${title}">${ico(icon, 15)}</button>`;
-            let html = '<div class="df-editor-toolbar">';
-            html += btn('bold', 'bold', 'Bold');
-            html += btn('italic', 'italic', 'Italic');
-            html += btn('underline', 'underline', 'Underline');
-            if (!minimal) html += btn('list', 'insertUnorderedList', 'Bullet list');
-            if (!minimal) html += btn('listOrdered', 'insertOrderedList', 'Numbered list');
-            html += btn('link', 'link', 'Insert link');
-            if (!minimal) html += btn('undo', 'undo', 'Undo');
-            if (!minimal) html += btn('redo', 'redo', 'Redo');
-            html += '</div>';
-            return html;
-        }
-        function wireEditor(container, bodyId, onChangeCb) {
-            const body = container.querySelector('#' + bodyId);
-            container.querySelectorAll('.df-editor-btn').forEach(btn => {
-                btn.addEventListener('mousedown', e => e.preventDefault());
-                btn.addEventListener('click', () => {
-                    const cmd = btn.getAttribute('data-cmd');
-                    if (cmd === 'link') {
-                        const url = window.prompt('Enter URL');
-                        if (url) document.execCommand('createLink', false, url);
-                    } else {
-                        document.execCommand(cmd, false, null);
-                    }
-                    body.focus();
-                    if (onChangeCb) onChangeCb(body.innerHTML);
-                });
-            });
-            if (onChangeCb) body.addEventListener('input', () => onChangeCb(body.innerHTML));
-        }
-
-        ClassicEditor
-            .create(document.querySelector('#editor'))
-            .catch(error => {
-                console.error(error);
-            });
     </script>
 
 </x-app-layout>

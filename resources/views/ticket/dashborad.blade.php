@@ -3,6 +3,20 @@ Ticket Management Dashboard
 Client-side search, filter, and sort via Alpine.js.
 Create lives on /tickets/create. Update / Delete / status changes are admin-only.
 --}}
+
+@php
+    $status = [
+        'pending' => 'background:var(--amber-bg);color:var(--amber-text);',
+        'in_progress' => 'background:var(--blue-bg);color:var(--blue-text);',
+        'completed' => 'background:var(--green-bg);color:var(--green-text);'
+    ];
+
+    $status_dot = [
+        'pending' => 'background:var(--amber-dot);',
+        'in_progress' => 'background:var(--blue-dot);',
+        'completed' => 'background:color:var(--green-dot);'
+    ];
+@endphp
 <x-app-layout>
     <x-slot name="header">
         <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
@@ -73,55 +87,81 @@ Create lives on /tickets/create. Update / Delete / status changes are admin-only
                                 <th style="width:60px;"></th>
                             </tr>
                         </thead>
-
+                        {{-- @dd($ticket) --}}
                         <tbody>
-                            <tr>
-                                <td><span class="df-stub df-mono">12345</span></td>
-                                <td style="font-weight:600;max-width:220px;">Sample Ticket Title</td>
-                                <td style="color:var(--text-muted);max-width:260px;">
-                                    Sample ticket description...
-                                </td>
-                                <td class="df-mono" style="color:var(--text-muted);font-size:13px;">
-                                    Jan 15, 2026
-                                </td>
-                                <td>
-                                    <span class="badge badge-success">Open</span>
-                                </td>
-                                <td>
-                                    <div class="df-dropdown">
-                                        <button class="df-icon-btn row-menu-btn" style="width:30px;height:30px;"
-                                            data-id="12345">
-                                            ⋮
-                                        </button>
+                            @foreach ($ticket as $t)
+                                <tr>
+                                    <td><span class="df-stub df-mono">{{ $t->id }}</span></td>
+                                    <td style="font-weight:600;max-width:220px;">{{ $t->title }}</td>
+                                    <td style="color:var(--text-muted);max-width:260px;">
+                                        {{ Str::limit($t->description, 20, '...') }}
 
-                                        <div class="df-dropdown-menu" data-menu-for="12345">
-                                            <a href="{{ route('ticket.reply', ['ticket' => 'asdfas']) }}"
-                                                class="df-dropdown-item view-ticket-item" data-id="12345">
-                                                View Ticket
-                                            </a>
+                                    </td>
+                                    <td class="df-mono" style="color:var(--text-muted);font-size:13px;">
+                                        {{ $t->created_at->format('d/m/y h:m') }}
+                                        {{-- {{ dd($t) }} --}}
+                                    </td>
+                                    <td>
+                                        <span class="df-badge" style="{{ $status[$t->status] }}">
+                                            <span class="df-badge-dot" style="{{ $status_dot[$t->status] }}"></span>
+                                            {{ Str::replace('_', " ", $t->status) }}
+                                        </span>
+                                    </td>
+
+
+                                    <td>
+                                        <div class="df-dropdown">
+                                            <button class="df-icon-btn row-menu-btn" style="width:30px;height:30px;"
+                                                data-id="12345">
+                                                ⋮
+                                            </button>
+
+                                            <div class="df-dropdown-menu" data-menu-for="12345">
+                                                <a href="{{ route('ticket.reply', ['ticket' => $t]) }}"
+                                                    class="df-dropdown-item view-ticket-item" data-id="12345">
+                                                    View Ticket
+                                                </a>
+                                            </div>
                                         </div>
-                                    </div>
-                                </td>
-                            </tr>
+                                    </td>
+                                </tr>
+                            @endforeach
 
                             <!-- Repeat <tr> for additional rows -->
                         </tbody>
                     </table>
 
                     <div class="df-pagination" style="border-top:1px solid var(--border);">
+
                         <div class="df-pagination-info">
-                            Showing 1–10 of 50
+                            Showing {{ $ticket->firstItem() ?? 0 }}–{{ $ticket->lastItem() ?? 0 }}
+                            of {{ $ticket->total() }}
                         </div>
 
-                        <div class="df-pagination-controls" id="paginationControls">
+                        <div class="df-pagination-controls">
 
+                            {{-- Previous --}}
+                            <a href="{{ $ticket->previousPageUrl() }}"
+                                class="df-page-btn {{ $ticket->onFirstPage() ? 'disabled' : '' }}">
+                                &laquo;
+                            </a>
 
-                            <button class="df-page-btn" data-page="prev" disabled>&laquo;</button>
-                            <button class="df-page-btn active" data-page="1">1</button>
-                            <button class="df-page-btn " data-page="1">2</button>
-                            <button class="df-page-btn " data-page="1">3</button>
-                            <button class="df-page-btn" data-page="next" disabled>&raquo;</button>
+                            {{-- Page Numbers --}}
+                            @foreach ($ticket->getUrlRange(1, $ticket->lastPage()) as $page => $url)
+                                <a href="{{ $url }}"
+                                    class="df-page-btn {{ $page == $ticket->currentPage() ? 'active' : '' }}">
+                                    {{ $page }}
+                                </a>
+                            @endforeach
+
+                            {{-- Next --}}
+                            <a href="{{ $ticket->nextPageUrl() }}"
+                                class="df-page-btn {{ $ticket->hasMorePages() ? '' : 'disabled' }}">
+                                &raquo;
+                            </a>
+
                         </div>
+
                     </div>
                 </div>
             </div>

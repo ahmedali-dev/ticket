@@ -101,6 +101,10 @@ body {
         background 0.25s ease,
         color 0.25s ease;
 }
+
+a.disabled {
+    display: none;
+}
 .df-display {
     font-family: "Space Grotesk", "Inter", sans-serif;
     letter-spacing: -0.01em;

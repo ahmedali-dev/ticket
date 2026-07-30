@@ -1,8 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\Media;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class TicketController extends Controller
 {
@@ -12,11 +14,13 @@ class TicketController extends Controller
     public function index()
     {
         // dd(auth()->user()->type);
-        $admin = auth()->user()->type === "admin" ? new Ticket() : auth()->user()->tickets();
-        // $query = Ticket::query();
+        $ticket = auth()->user()->type === "admin" ?
+            Ticket::latest()->paginate(10) :
+            auth()->user()->tickets()->latest()->paginate(10);
 
-        // dd($admin->get());
-        return view("ticket.dashborad");
+
+
+        return view("ticket.dashborad", ['ticket' => $ticket]);
     }
 
     /**
@@ -30,38 +34,81 @@ class TicketController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+
+    public function formatFileSize(int|float $bytes, int $decimals = 2): string
+    {
+        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+
+        if ($bytes <= 0) {
+            return '0 B';
+        }
+
+        $factor = floor(log($bytes, 1024));
+
+        return sprintf(
+            "%.{$decimals}f %s",
+            $bytes / (1024 ** $factor),
+            $units[$factor]
+        );
+    }
     public function store(Request $request)
     {
-
         $data = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
 
             'images' => 'nullable|array|max:5',
-            'images.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'images.*' => 'file|mimes:jpg,jpeg,png,webp,pdf,mp4,mp3,mov|max:5120',
         ]);
+        $data['id'] = Ticket::count() + 1;
+        $media = [];
         if ($request->hasFile("images")) {
             foreach ($request->file('images') as $file) {
-                $path = $file->store('tickets', 'public');
-                // dump($path);
+                $filename = Str::orderedUuid() . time() . "." . $file->getClientOriginalExtension();
+                $path = $file->storeAs('tickets', $filename, 'public');
 
+
+                array_push($media, [
+                    'uuid' => Str::orderedUuid(),
+                    "ticket_id" => $data['id'],
+                    'type' => $file->getMimeType(),
+                    'path' => $path,
+                    'size' => $this->formatFileSize($file->getSize()),
+                ]);
             }
         }
-
-        $data['id'] = Ticket::count() + 1;
-
-
         $request->user()->tickets()->create($data);
+        Media::insert($media);
+        // dd(Media::all());
+
+
+
+        return to_route('ticket.index');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Request $request, string $ticket)
     {
-        //
-    }
+        $isAdmin = $request->user()->type === 'admin';
 
+        $t = $isAdmin
+            ? Ticket::findOrFail($ticket)
+            : $request->user()->tickets()->findOrFail($ticket);
+
+        if ($isAdmin && $t->status !== Ticket::STATUS_IN_PROGRESS) {
+
+            $t->status = Ticket::STATUS_IN_PROGRESS;
+            $t->save();
+        }
+
+        $t->ticketView()->create(['user_id' => auth()->user()->id, $t->id]);
+        // $t->media();
+        return view('ticket.reply', [
+            'ticket' => $t,
+        ]);
+    }
     /**
      * Show the form for editing the specified resource.
      */
