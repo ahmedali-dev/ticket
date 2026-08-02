@@ -84,9 +84,10 @@
             </div>
           @endforeach
 
-          <a href=""
+          <a href="{{ route('module.create') }}"
             class="flex justify-center items-center  w-[calc(100%-10px)] mx-auto my-4 px-4 bg-blue-600 rounded-md text-md text-white h-[3rem]">Add
-            New Module</a>
+            New Module
+          </a>
 
 
           <div class="section">

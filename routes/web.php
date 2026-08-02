@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReplyController;
 use App\Http\Controllers\TicketController;
@@ -43,6 +44,11 @@ Route::middleware(['auth'])->group(function () {
     // training center
     // ------------------------------------
     Route::resource('/training', TrainingController::class);
+
+    // ------------------------------------
+    // module
+    // ------------------------------------
+    Route::get('/module', [ModuleController::class, 'create'])->name('module.create');
 });
 
 Route::get('/dashboard', function () {
@@ -55,4 +61,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
