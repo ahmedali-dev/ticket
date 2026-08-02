@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Training;
 use Illuminate\Http\Request;
 
 class TrainingController extends Controller
@@ -11,7 +12,8 @@ class TrainingController extends Controller
      */
     public function index()
     {
-        return view('training.index');
+        $training = Training::all();
+        return view('training.index', ['trainings' => $training]);
     }
 
     /**
@@ -19,7 +21,7 @@ class TrainingController extends Controller
      */
     public function create()
     {
-        //
+        return view('training.create');
     }
 
     /**
@@ -27,15 +29,20 @@ class TrainingController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'title' => 'required|string',
+        ]);
+
+        Training::create($data);
+        return to_route('training.index')->with('success', 'add new training section');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Training $training)
     {
-        //
+        return view('training.show', ['training' => $training]);
     }
 
     /**
