@@ -1,22 +1,19 @@
-{{--
-Ticket Management Dashboard
-Client-side search, filter, and sort via Alpine.js.
-Create lives on /tickets/create. Update / Delete / status changes are admin-only.
---}}
-
 @php
     $status = [
         'pending' => 'background:var(--amber-bg);color:var(--amber-text);',
         'in_progress' => 'background:var(--blue-bg);color:var(--blue-text);',
-        'completed' => 'background:var(--green-bg);color:var(--green-text);'
+        'completed' => 'background:var(--green-bg);color:var(--green-text);',
     ];
 
     $status_dot = [
         'pending' => 'background:var(--amber-dot);',
         'in_progress' => 'background:var(--blue-dot);',
-        'completed' => 'background:color:var(--green-dot);'
+        'completed' => 'background:color:var(--green-dot);',
     ];
+
+    $status_arr = ['all', 'pending', 'in_progress', 'completed'];
 @endphp
+
 <x-app-layout>
     <x-slot name="header">
         <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
@@ -43,24 +40,48 @@ Create lives on /tickets/create. Update / Delete / status changes are admin-only
             </div>
             <div class="df-filters-row"
                 style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap;">
-                <div class="df-filters-left" style="display:flex;gap:10px;flex:1;flex-wrap:wrap;">
-                    <div style="position:relative;flex:1 1 220px;max-width:320px;">
-                        {{-- <span
+                <form action="{{ route('ticket.search') }}" method="POST">
+                    <div class="df-filters-left" style="display:flex;gap:10px;flex:1;flex-wrap:wrap;">
+                        @csrf
+                        <div style="position:relative;flex:1 1 220px;max-width:320px;">
+                            {{-- <span
                             style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-faint);">search</span>
                         --}}
-                        <input id="searchInput" class="df-input" style="width:100%;padding-left:34px;"
-                            placeholder="Search by ID, title, or description" value="" />
+                            <input name="search" id="searchInput" class="df-input"
+                                style="width:100%;padding-left:34px;" placeholder="Search by ID, title, or description"
+                                value="{{ old('search', request('search')) }}" />
+                        </div>
+                        <div style="position:relative;">
+                            <span
+                                style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-faint);pointer-events:none;"></span>
+                            <input name="date" id="dateInput" type="date" class="df-input"
+                                style="padding-left:34px;" value="{{ old('date', request('date')) }}" />
+                        </div>
+                        <select id="statusSelect" name="status" class="df-select">
+                            <option value="all"
+                                {{ old('status', request('status', 'all')) === 'all' ? 'selected' : '' }}>All</option>
+                            @foreach ($status_arr as $s)
+                                <option value="{{ $s }}"
+                                    {{ old('status', request('status')) === $s ? 'selected' : '' }}>
+                                    {{ Str::replace('_', ' ', $s) }}
+                                </option>
+                            @endforeach
+                        </select>
+
+                        <button class="df-btn df-btn-primary">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-search-icon lucide-search">
+                                <path d="m21 21-4.34-4.34" />
+                                <circle cx="11" cy="11" r="8" />
+                            </svg>
+                        </button>
                     </div>
-                    <div style="position:relative;">
-                        <span
-                            style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-faint);pointer-events:none;"></span>
-                        <input id="dateInput" type="date" class="df-input" style="padding-left:34px;" value="" />
-                    </div>
-                    <select id="statusSelect" class="df-select">
-                        <option value="">hello</option>
-                    </select>
-                </div>
-                <a href="{{ route('ticket.create') }}" class="df-btn df-btn-primary" id="addTicketBtn">Add Ticket</a>
+                </form>
+                @if (auth()->user()->type !== 'admin')
+                    <a href="{{ route('ticket.create') }}" class="df-btn df-btn-primary" id="addTicketBtn">Add
+                        Ticket</a>
+                @endif
             </div>
             <div id="tableContainer">
 
@@ -104,22 +125,23 @@ Create lives on /tickets/create. Update / Delete / status changes are admin-only
                                     <td>
                                         <span class="df-badge" style="{{ $status[$t->status] }}">
                                             <span class="df-badge-dot" style="{{ $status_dot[$t->status] }}"></span>
-                                            {{ Str::replace('_', " ", $t->status) }}
+                                            {{ Str::replace('_', ' ', $t->status) }}
                                         </span>
                                     </td>
 
 
                                     <td>
-                                        <div class="df-dropdown">
-                                            <button class="df-icon-btn row-menu-btn" style="width:30px;height:30px;"
-                                                data-id="12345">
+                                        <div class="df-dropdown" id="menu">
+                                            <button onclick="openMenu(this)" class="df-icon-btn row-menu-btn" data-id="{{ $t->id }}"
+                                                style="width:30px;height:30px;">
                                                 ⋮
                                             </button>
 
-                                            <div class="df-dropdown-menu" data-menu-for="12345">
+                                            <div class="df-dropdown-menu" id='dropdown'
+                                                data-menu-id="{{ $t->id }}">
                                                 <a href="{{ route('ticket.reply', ['ticket' => $t]) }}"
-                                                    class="df-dropdown-item view-ticket-item" data-id="12345">
-                                                    View Ticket
+                                                class="df-dropdown-item view-ticket-item">
+                                                View Ticket
                                                 </a>
                                             </div>
                                         </div>
@@ -169,15 +191,21 @@ Create lives on /tickets/create. Update / Delete / status changes are admin-only
     </div>
 
     <script>
-        const container = document.getElementById('tableContainer');
 
-        container.querySelectorAll('.row-menu-btn').forEach(btn => btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const id = btn.getAttribute('data-id');
-            const menu = container.querySelector(`.df-dropdown-menu[data-menu-for="${id}"]`);
-            const wasOpen = menu.classList.contains('open');
-            container.querySelectorAll('.df-dropdown-menu').forEach(m => m.classList.remove('open'));
-            if (!wasOpen) menu.classList.add('open');
-        }));
+        const openMenu = (e) => {
+            // Close all dropdowns
+
+            // e.stopPropagation()
+            document.querySelectorAll('.df-dropdown-menu').forEach(menu => {
+                menu.classList.remove('open');
+            });
+
+            // Open the selected dropdown
+            dropdown = document.querySelector(
+                `#dropdown[data-menu-id="${e.dataset.id}"]`
+            );
+            console.log(dropdown)
+            dropdown.classList.add('open');
+        }
     </script>
 </x-app-layout>

@@ -1,9 +1,10 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReplyController;
 use App\Http\Controllers\TicketController;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\TrainingController;
 Route::get('/', function () {
     return view('welcome');
 });
@@ -23,14 +24,25 @@ Route::get('/lang/{locale}', function ($locale) {
 //     Route::delete('/ticket/{ticket}', [TicketController::class, 'destroy'])->name('ticket.destroy');
 // });
 
-
-ROUTE::middleware(['auth'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::get('/ticket', [TicketController::class, 'index'])->name('ticket.index');
 
     Route::get('/ticket/{ticket}/reply', [TicketController::class, 'show'])->name('ticket.reply');
 
     Route::get('/ticket/create', [TicketController::class, 'create'])->name('ticket.create');
     Route::post('/ticket', [TicketController::class, 'store'])->name('ticket.store');
+    Route::post('/ticket/search', [TicketController::class, 'search'])->name('ticket.search');
+    Route::Post('/ticket/{ticket}/close', [TicketController::class, 'update'])->name('ticket.update');
+    // ------------------------------------
+    // reply
+    // ------------------------------------
+    Route::post('/reply/{ticket}', [ReplyController::class, 'store'])
+        ->name('reply.store');
+
+    // ------------------------------------
+    // training center
+    // ------------------------------------
+    Route::resource('/training', TrainingController::class);
 });
 
 Route::get('/dashboard', function () {
@@ -43,4 +55,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';
