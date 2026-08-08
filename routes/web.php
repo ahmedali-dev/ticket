@@ -42,6 +42,8 @@ Route::middleware(['auth'])->group(function () {
     // ------------------------------------
     // training center
     // ------------------------------------
+    Route::get('/training/{training}/{module}', [TrainingController::class, 'showModule'])
+        ->name('training.module_show');
     Route::resource('/training', TrainingController::class);
     // ------------------------------------
     // module
@@ -61,4 +63,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

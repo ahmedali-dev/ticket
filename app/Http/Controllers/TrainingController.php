@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Media;
+use App\Models\Module;
 use App\Models\Training;
 use App\Models\TrainingMedia;
 use Illuminate\Http\Request;
@@ -28,7 +29,7 @@ class TrainingController extends Controller
         }
 
         $trainings = $trainings->latest()->get();
-//        dd($trainings);
+        //        dd($trainings);
 
         return view('training.index', ['trainings' => $trainings, 'isAdmin' => $isAdmin]);
     }
@@ -85,7 +86,7 @@ class TrainingController extends Controller
                 "module_id" => null
             ]);
         }
-//        dd($data);
+        //        dd($data);
 
         return to_route('training.index')->with('success', 'Training created!');
 
@@ -96,6 +97,7 @@ class TrainingController extends Controller
      */
     public function show(Training $training)
     {
+
         if (auth()->user()->type == 'user' && !$training->active) {
             return to_route('training.index')->with('error', 'You are not allowed to access this training!');
         }
@@ -103,6 +105,15 @@ class TrainingController extends Controller
         return view('training.show', ['training' => $training, 'module' => $module]);
     }
 
+    public function showModule(Training $training, Module $module)
+    {
+        if (auth()->user()->type == 'user' && !$training->active) {
+            return to_route('training.index')->with('error', 'You are not allowed to access this training!');
+        }
+        // dd($module->media->id);
+        return view('training.show', ['training' => $training, 'module' => $module]);
+
+    }
     /**
      * Show the form for editing the specified resource.
      */

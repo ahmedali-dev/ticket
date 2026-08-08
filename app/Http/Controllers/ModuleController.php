@@ -12,10 +12,12 @@ class ModuleController extends Controller
     {
         $data = $request->validate([
             'title' => 'required|string',
-            'media' => ['required',
+            'media' => [
+                'required',
                 'file',
                 'mimes:jpg,jpeg,png,gif,svg,pdf,mp4,webm,mov',
-                'max:51200'],
+                'max:51200'
+            ],
             'training_id' => 'required|exists:trainings,id'
         ]);
 
@@ -33,6 +35,7 @@ class ModuleController extends Controller
 
 
 
+        // dd($media);
         $module = Module::create([
             'title' => $data['title'],
             'media_id' => $media->id,

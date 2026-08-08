@@ -17,18 +17,18 @@ class Training extends Model
         'id',
     ];
 
-    public function user():belongsTo
+    public function user(): belongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function media():HasMany
+    public function media(): HasMany
     {
         return $this->hasMany(TrainingMedia::class, 'training_id');
     }
 
-    public function module():hasMany
+    public function module(): hasMany
     {
-        return $this->hasMany(Module::class);
+        return $this->hasMany(Module::class, 'training_id');
     }
 }
