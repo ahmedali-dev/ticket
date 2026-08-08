@@ -12,7 +12,15 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                display: ['Sora', 'ui-sans-serif', 'sans-serif'],
+                sans: ['Inter', 'ui-sans-serif', 'sans-serif','Figtree', ...defaultTheme.fontFamily.sans],
+            },
+            boxShadow: {
+                soft: '0 6px 16px -4px rgba(17,24,39,0.10), 0 2px 4px rgba(17,24,39,0.05)',
+                lift: '0 20px 40px -12px rgba(11,43,38,0.18)',
+            },
+            borderRadius: {
+                xl2: '16px',
             },
         },
     },

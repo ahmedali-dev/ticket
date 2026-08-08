@@ -43,6 +43,12 @@ Route::middleware(['auth'])->group(function () {
     // training center
     // ------------------------------------
     Route::resource('/training', TrainingController::class);
+    // ------------------------------------
+    // module
+    // ------------------------------------
+    Route::Post('/module', [\App\Http\Controllers\ModuleController::class, 'store'])->name('module.store');
+
+
 });
 
 Route::get('/dashboard', function () {

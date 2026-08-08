@@ -11,16 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('trainings', function (Blueprint $table) {
+        Schema::create('modules', function (Blueprint $table) {
             $table->id();
             $table->string('title');
+            $table->foreignId('media_id')->constrained('training_media')->cascadeOnDelete();
+            $table->foreignId('training_id')->constrained('trainings')->cascadeOnDelete();
             $table->unsignedInteger('order')->default(0);
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->boolean('active')->default(false);
-            $table->foreignId('media_id')->nullable()->constrained('training_media')->cascadeOnDelete();
             $table->timestamps();
         });
-
     }
 
     /**
@@ -28,8 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('training_modules');
-        Schema::dropIfExists('training_chapters');
-        Schema::dropIfExists('trainings');
+        Schema::dropIfExists('modules');
     }
 };

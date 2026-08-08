@@ -11,16 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('trainings', function (Blueprint $table) {
+        Schema::create('chapters', function (Blueprint $table) {
             $table->id();
             $table->string('title');
             $table->unsignedInteger('order')->default(0);
+            $table->foreignId('module_id')->constrained()->cascadeOnDelete();
+            $table->string('date')->default("0:0");
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->boolean('active')->default(false);
-            $table->foreignId('media_id')->nullable()->constrained('training_media')->cascadeOnDelete();
             $table->timestamps();
         });
-
     }
 
     /**
@@ -28,8 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('training_modules');
-        Schema::dropIfExists('training_chapters');
-        Schema::dropIfExists('trainings');
+        Schema::dropIfExists('chapters');
     }
 };

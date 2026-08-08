@@ -1,6 +1,8 @@
+@props(['trainings'=>[], 'isAdmin' => false])
+
 <x-app-layout>
 
-        <x-slot name="header">
+    <x-slot name="header">
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
                 <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-100 leading-tight">
@@ -14,377 +16,103 @@
         </div>
     </x-slot>
 
-<div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
 
-  <!-- ============ SIDEBAR ============ -->
-<div class="shell">
+    <!-- ============ SIDEBAR ============ -->
+    <main class="flex-1 max-w-[1400px] w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-8">
 
-    <aside class="sidebar" id="sidebar">
-    <div class="sidebar-scroll">
-      <div class="course-card">
-        <div class="course-card-top">
-          <div class="progress-ring">
-            <svg viewBox="0 0 58 58"><circle class="track" cx="29" cy="29" r="24"></circle><circle class="fill" id="ringFill" cx="29" cy="29" r="24" stroke-dasharray="150.8" stroke-dashoffset="131.2"></circle></svg>
-            <div class="pct" id="ringPct">13%</div>
-          </div>
-          <div>
-            <div class="course-card-title" data-en="UX/UI Design Foundations" data-ar="أساسيات تصميم واجهات وتجربة المستخدم">UX/UI Design Foundations</div>
-            <div class="course-card-sub" data-en="Instructor: Laila Haddad" data-ar="المدرّبة: ليلى حداد">Instructor: Laila Haddad</div>
-          </div>
-        </div>
-        <div class="course-card-progress-label">
-          <span data-en="Course progress" data-ar="تقدّم الدورة">Course progress</span>
-          <span id="progressText">1 / 8</span>
-        </div>
-        <div class="bar-track"><div class="bar-fill" id="progressBarFill" style="width: 13%;"></div></div>
-      </div>
-
-      <div class="sidebar-search">
-        <div class="search-box">
-          <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-          <input id="moduleSearch" type="text" data-en-ph="Search modules..." data-ar-ph="ابحث في الوحدات..." placeholder="Search modules...">
-        </div>
-      </div>
-
-      <nav id="sectionsWrap"><div class="section open">
-      <button class="section-head">
-        <svg class="section-chevron icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-        <div class="section-head-text">
-          <div class="section-title">Design Fundamentals</div>
-          <div class="section-count">3 modules</div>
-        </div>
-        <span class="section-badge">1/3</span>
-      </button>
-      <div class="module-list"><button class="module"><span class="module-status done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><polyline points="20 6 9 17 4 12"></polyline></svg></span><div class="module-body"><div class="module-title">What is Visual Design?</div><div class="module-meta">8:12</div></div></button><button class="module active"><span class="module-status todo"></span><div class="module-body"><div class="module-title">Intro to Visual Hierarchy</div><div class="module-meta">21:40</div></div></button><button class="module"><span class="module-status todo"></span><div class="module-body"><div class="module-title">Grid Systems &amp; Alignment</div><div class="module-meta">10:05</div></div></button></div>
-    </div><div class="section">
-      <button class="section-head">
-        <svg class="section-chevron icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-        <div class="section-head-text">
-          <div class="section-title">Color &amp; Typography</div>
-          <div class="section-count">3 modules</div>
-        </div>
-        <span class="section-badge">0/3</span>
-      </button>
-      <div class="module-list"><button class="module"><span class="module-status todo"></span><div class="module-body"><div class="module-title">Color Theory Basics</div><div class="module-meta">9:30</div></div></button><button class="module locked" disabled=""><span class="module-status locked-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><rect x="5" y="11" width="14" height="9" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg></span><div class="module-body"><div class="module-title">Choosing Font Pairs</div><div class="module-meta">7:18</div></div></button><button class="module locked" disabled=""><span class="module-status locked-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><rect x="5" y="11" width="14" height="9" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg></span><div class="module-body"><div class="module-title">Accessible Contrast</div><div class="module-meta">6:44</div></div></button></div>
-    </div><div class="section">
-      <button class="section-head">
-        <svg class="section-chevron icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-        <div class="section-head-text">
-          <div class="section-title">Prototyping</div>
-          <div class="section-count">2 modules</div>
-        </div>
-        <span class="section-badge">0/2</span>
-      </button>
-      <div class="module-list"><button class="module locked" disabled=""><span class="module-status locked-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><rect x="5" y="11" width="14" height="9" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg></span><div class="module-body"><div class="module-title">From Wireframe to Prototype</div><div class="module-meta">14:02</div></div></button><button class="module locked" disabled=""><span class="module-status locked-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><rect x="5" y="11" width="14" height="9" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg></span><div class="module-body"><div class="module-title">Usability Testing 101</div><div class="module-meta">11:27</div></div></button></div>
-    </div></nav>
-    </div>
-
-    <div class="sidebar-footer">
-      <button class="btn btn-primary" id="continueBtn">
-        <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
-        <span data-en="Continue Learning" data-ar="متابعة التعلّم">Continue Learning</span>
-      </button>
-    </div>
-  </aside>
-
-
-
-  <main class="main">
-    <div class="breadcrumb" id="breadcrumb">
-      <a href="#" data-en="Home" data-ar="الرئيسية">Home</a>
-      <span class="sep">/</span>
-      <a href="#" data-en="Design" data-ar="التصميم">Design</a>
-      <span class="sep">/</span>
-      <a href="#" data-en="UX/UI Design Foundations" data-ar="أساسيات تصميم واجهات وتجربة المستخدم">UX/UI Design Foundations</a>
-      <span class="sep">/</span>
-      <span class="current" id="breadcrumbCurrent">Intro to Visual Hierarchy</span>
-    </div>
-
-    <!-- Video player -->
-    <div class="player" id="player">
-      <div class="player-badge" data-en="HD" data-ar="جودة عالية">HD</div>
-      <div class="chapter-label" id="chapterLabel">Introduction</div>
-      <div class="player-poster">
-        <button class="play-big" id="playBig" aria-label="Play video">
-          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="7 4 20 12 7 20 7 4"></polygon></svg>
-        </button>
-      </div>
-      <div class="player-controls">
-        <div class="progress-row">
-          <span class="time-label" id="timeCurrent">0:00</span>
-          <div class="seek-wrap" id="seekWrap">
-            <input type="range" class="seek" id="seek" min="0" max="100" value="0" step="0.1">
-            <div class="seek-chapters" id="seekChapters"><div class="chapter-tick" style="inset-inline-start: 58%;"></div><div class="chapter-tick" style="inset-inline-start: 94%;"></div></div>
-            <div class="seek-tooltip" id="seekTooltip" style="inset-inline-start: 14px;">
-              <div class="seek-tooltip-thumb"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="7 4 20 12 7 20 7 4"></polygon></svg></div>
-              <div class="seek-tooltip-time" id="seekTooltipTime">0:19</div>
-              <div class="seek-tooltip-chapter" id="seekTooltipChapter">Introduction</div>
+        <!-- Page header -->
+        <section class="flex items-start justify-between gap-6 flex-wrap">
+            <div>
+                <h1 class="text-2xl sm:text-3xl font-bold">Courses</h1>
+                <p class="text-slate-500 text-sm mt-2">Manage all courses available on your learning platform.</p>
             </div>
-          </div>
-          <span class="time-label" id="timeDuration">21:40</span>
-        </div>
-        <div class="controls-row">
-          <button class="ctl-btn" id="playBtn" aria-label="Play/Pause">
-            <svg class="playIcon" viewBox="0 0 24 24" fill="currentColor"><polygon points="7 4 20 12 7 20 7 4"></polygon></svg>
-            <svg class="pauseIcon" viewBox="0 0 24 24" fill="currentColor" style="display:none"><rect x="6" y="4" width="4" height="16" rx="1"></rect><rect x="14" y="4" width="4" height="16" rx="1"></rect></svg>
-          </button>
-          <div class="volume-wrap">
-            <button class="ctl-btn" id="muteBtn" aria-label="Mute">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="4 9 8 9 12 5 12 19 8 15 4 15 4 9"></polygon><path d="M16 8.5a4 4 0 0 1 0 7"></path></svg>
-            </button>
-            <input type="range" class="volume-slider" id="volume" min="0" max="100" value="75">
-          </div>
-          <div class="spacer"></div>
-          <select class="speed-select" id="speedSelect" aria-label="Playback speed">
-            <option value="0.5">0.5x</option>
-            <option value="0.75">0.75x</option>
-            <option value="1" selected="">1x</option>
-            <option value="1.25">1.25x</option>
-            <option value="1.5">1.5x</option>
-            <option value="2">2x</option>
-          </select>
-          <button class="ctl-btn" id="fullscreenBtn" aria-label="Fullscreen">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"></path></svg>
-          </button>
-        </div>
-      </div>
-    </div>
+            @if($isAdmin)
+                <a href="{{ route('training.create') }}"
+                   class="inline-flex items-center gap-2 rounded-xl bg-teal-700 text-white font-semibold text-sm px-5 py-3 shadow-soft hover:bg-teal-900 hover:shadow-lift hover:-translate-y-0.5 transition-all w-full sm:w-auto justify-center">
+                    <span aria-hidden="true">➕</span> Add New Course
+                </a>
+            @endif
+        </section>
 
-    <!-- Lesson header -->
-    <div class="lesson-head">
-      <div>
-        <h1 class="lesson-title" id="lessonTitle">Intro to Visual Hierarchy</h1>
-        <p class="lesson-desc" id="lessonDesc">Learn how spacing, scale, and contrast guide the eye through a screen, and practice building a clear reading order for a mobile app layout.</p>
-      </div>
-      <div class="lesson-actions">
-        <button class="btn btn-outline btn-sm" id="downloadBtn">
-          <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0-4-4m4 4 4-4"></path><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"></path></svg>
-          <span data-en="Resources" data-ar="الموارد">Resources</span>
-        </button>
-        <button class="btn btn-outline btn-sm" id="shareBtn">
-          <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><path d="M8.6 10.5 15.4 6.5M8.6 13.5l6.8 4"></path></svg>
-          <span data-en="Share" data-ar="مشاركة">Share</span>
-        </button>
-      </div>
-    </div>
+        <!-- Toolbar: search + filters -->
+        <form action="{{ route('training.index') }}" method="get">
+            <section class="flex flex-col sm:flex-row gap-4 sm:items-center" aria-label="Search and filter courses">
+                <div class="relative flex-1 min-w-[220px]">
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none"
+                      aria-hidden="true">🔍</span>
+                    <label for="course-search" class="sr-only">Search courses</label>
+                    <input type="search" id="course-search" name="search" placeholder="Search courses..."
+                           class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 bg-white text-sm placeholder:text-slate-400 focus:outline-none focus:border-violet-500 focus:ring-4 focus:ring-violet-500/20 transition">
+                </div>
+                <div>
+                    <button class="w-[max-content] rounded-lg shadow-lg shadow-blue-200 p-2 bg-blue-600" type="submit">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                             stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                             class="lucide lucide-search-icon lucide-search">
+                            <path d="m21 21-4.34-4.34"/>
+                            <circle cx="11" cy="11" r="8"/>
+                        </svg>
+                    </button>
+                </div>
+            </section>
+        </form>
 
-    <div class="info-row">
-      <div class="info-pill">
-        <span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg></span>
-        <span><span class="pill-label" data-en="Duration" data-ar="المدة">Duration</span><b>21:40</b></span>
-      </div>
-      <div class="info-pill">
-        <span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="8" r="3.5"></circle><path d="M5 20c1.2-3.6 4-5.5 7-5.5s5.8 1.9 7 5.5"></path></svg></span>
-        <span><span class="pill-label" data-en="Instructor" data-ar="المدرّب">Instructor</span><b data-en="Laila Haddad" data-ar="ليلى حداد">Laila Haddad</b></span>
-      </div>
-      <div class="info-pill">
-        <span class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="4" y="5" width="16" height="16" rx="2"></rect><path d="M8 3v4M16 3v4M4 10h16"></path></svg></span>
-        <span><span class="pill-label" data-en="Published" data-ar="تاريخ النشر">Published</span><b data-en="June 14, 2026" data-ar="14 يونيو 2026">June 14, 2026</b></span>
-      </div>
-    </div>
-
-    <!-- Hint card -->
-    <div class="chapters-card">
-      <div class="chapters-head">
-        <div class="chapters-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="7" height="6" rx="1.5"></rect><path d="M13 6h8M13 10h8"></path><rect x="3" y="14" width="7" height="6" rx="1.5"></rect><path d="M13 15h8M13 19h8"></path></svg>
-          <span data-en="Chapters" data-ar="فصول الفيديو">Chapters</span>
-        </div>
-        <span class="chapters-count" id="chaptersCount">3 chapters</span>
-      </div>
-      <div id="chaptersList">
-    <button class="chapter-row current" data-start="0">
-      <div class="chapter-thumb">
-        <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="7 4 20 12 7 20 7 4"></polygon></svg>
-        <span class="chapter-time-badge">0:00</span>
-      </div>
-      <div class="chapter-row-body">
-        <div class="chapter-row-title">Introduction</div>
-        <div class="chapter-row-range">0:00 – 12:34</div>
-      </div>
-      <span class="chapter-row-play">
-        <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="7 4 20 12 7 20 7 4"></polygon></svg>
-      </span>
-    </button>
-    <button class="chapter-row" data-start="754">
-      <div class="chapter-thumb">
-        <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="7 4 20 12 7 20 7 4"></polygon></svg>
-        <span class="chapter-time-badge">12:34</span>
-      </div>
-      <div class="chapter-row-body">
-        <div class="chapter-row-title">Project Full Demo</div>
-        <div class="chapter-row-range">12:34 – 20:22</div>
-      </div>
-      <span class="chapter-row-play">
-        <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="7 4 20 12 7 20 7 4"></polygon></svg>
-      </span>
-    </button>
-    <button class="chapter-row" data-start="1222">
-      <div class="chapter-thumb">
-        <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="7 4 20 12 7 20 7 4"></polygon></svg>
-        <span class="chapter-time-badge">20:22</span>
-      </div>
-      <div class="chapter-row-body">
-        <div class="chapter-row-title">More Demo</div>
-        <div class="chapter-row-range">20:22 – 21:40</div>
-      </div>
-      <span class="chapter-row-play">
-        <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="7 4 20 12 7 20 7 4"></polygon></svg>
-      </span>
-    </button></div>
-    </div>
-
-    <!-- Prev/Next -->
-    <div class="nav-row">
-      <button class="nav-card prev" id="prevBtn" style="visibility: visible;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6" id="prevArrow"></polyline></svg>
-        <div class="nav-card-text">
-          <div class="nav-card-label" data-en="Previous lesson" data-ar="الدرس السابق">Previous lesson</div>
-          <div class="nav-card-title" id="prevTitle">What is Visual Design?</div>
-        </div>
-      </button>
-      <button class="nav-card next" id="nextBtn" style="visibility: visible;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6" id="nextArrow"></polyline></svg>
-        <div class="nav-card-text">
-          <div class="nav-card-label" data-en="Next lesson" data-ar="الدرس التالي">Next lesson</div>
-          <div class="nav-card-title" id="nextTitle">Grid Systems &amp; Alignment</div>
-        </div>
-      </button>
-    </div>
-
-    <!-- Comments -->
-    <section class="comments">
-      <div class="comments-head">
-        <h2 class="comments-title" data-en="Discussion" data-ar="النقاش">Discussion</h2>
-        <select class="sort-select" id="sortSelect">
-          <option value="newest" data-en="Newest" data-ar="الأحدث">Newest</option>
-          <option value="oldest" data-en="Oldest" data-ar="الأقدم">Oldest</option>
-          <option value="liked" data-en="Most Liked" data-ar="الأكثر إعجابًا">Most Liked</option>
-        </select>
-      </div>
-
-      <div class="comment-form">
-        <div class="avatar" style="background:var(--primary)">SA</div>
-        <div style="flex:1">
-          <textarea id="commentInput" data-en-ph="Ask a question or share a thought..." data-ar-ph="اطرح سؤالاً أو شارك فكرة..." placeholder="Ask a question or share a thought..."></textarea>
-          <div class="comment-form-actions">
-            <button class="btn btn-primary btn-sm" id="postCommentBtn" data-en="Post" data-ar="نشر">Post</button>
-          </div>
-        </div>
-      </div>
-
-      <div id="commentsList">
-  <div class="comment" data-id="c1">
-    <div class="avatar" style="background:#0F6E66">OF</div>
-    <div class="comment-body">
-      <div class="comment-headrow">
-        <span class="comment-name">Omar Fadel</span>
-        <span class="comment-time">2h ago</span>
-      </div>
-      <p class="comment-text">The 60-30-10 tip finally made hierarchy click for me. Using it on my portfolio redesign now.</p>
-      <div class="comment-actions">
-        <button class="comment-action like-btn " data-id="c1">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z"></path></svg>
-          <span>14</span>
-        </button>
-        <button class="comment-action reply-btn" data-id="c1">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 17 4 12 9 7"></polyline><path d="M20 18v-2a4 4 0 0 0-4-4H4"></path></svg>
-          <span data-en="Reply" data-ar="ردّ">Reply</span>
-        </button>
-      </div>
-
-      <div class="reply-input-row" id="replyInput-c1">
-        <div class="avatar" style="background:var(--primary); width:30px;height:30px;font-size:11px;">SA</div>
-        <input type="text" data-en-ph="Write a reply..." data-ar-ph="اكتب ردًا..." placeholder="Write a reply..." id="replyText-c1">
-        <button class="btn btn-primary btn-sm" data-reply-submit="c1" data-en="Reply" data-ar="ردّ">Reply</button>
-      </div>
-
-      <button class="reply-toggle" data-toggle="c1">
-        <span data-en="View 1 reply" data-ar="عرض 1 ردود">View 1 reply</span>
-      </button>
-      <div class="replies" id="replies-c1">
-
-  <div class="comment" data-id="c1r1">
-    <div class="avatar" style="background:#D4972F">LH</div>
-    <div class="comment-body">
-      <div class="comment-headrow">
-        <span class="comment-name">Laila Haddad</span>
-        <span class="comment-time">1h ago</span>
-      </div>
-      <p class="comment-text">Love hearing that — post a screenshot in the community tab if you'd like feedback!</p>
-      <div class="comment-actions">
-        <button class="comment-action like-btn " data-id="c1r1">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z"></path></svg>
-          <span>5</span>
-        </button>
-
-      </div>
-
-    </div>
-  </div>
-      </div>
-
-    </div>
-  </div>
-  <div class="comment" data-id="c2">
-    <div class="avatar" style="background:#7C5CFF">SA2</div>
-    <div class="comment-body">
-      <div class="comment-headrow">
-        <span class="comment-name">Sara Al-Otaibi</span>
-        <span class="comment-time">1d ago</span>
-      </div>
-      <p class="comment-text">Could you cover how hierarchy changes on smaller screens in a future lesson?</p>
-      <div class="comment-actions">
-        <button class="comment-action like-btn " data-id="c2">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z"></path></svg>
-          <span>9</span>
-        </button>
-        <button class="comment-action reply-btn" data-id="c2">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 17 4 12 9 7"></polyline><path d="M20 18v-2a4 4 0 0 0-4-4H4"></path></svg>
-          <span data-en="Reply" data-ar="ردّ">Reply</span>
-        </button>
-      </div>
-
-      <div class="reply-input-row" id="replyInput-c2">
-        <div class="avatar" style="background:var(--primary); width:30px;height:30px;font-size:11px;">SA</div>
-        <input type="text" data-en-ph="Write a reply..." data-ar-ph="اكتب ردًا..." placeholder="Write a reply..." id="replyText-c2">
-        <button class="btn btn-primary btn-sm" data-reply-submit="c2" data-en="Reply" data-ar="ردّ">Reply</button>
-      </div>
+        <!-- Course grid -->
+        <section aria-label="Course list">
+            <div class="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-6">
 
 
-    </div>
-  </div>
-  <div class="comment" data-id="c3">
-    <div class="avatar" style="background:#1E8E5A">YN</div>
-    <div class="comment-body">
-      <div class="comment-headrow">
-        <span class="comment-name">Yousef Nasser</span>
-        <span class="comment-time">2d ago</span>
-      </div>
-      <p class="comment-text">Clear and to the point. The mobile app example really helped.</p>
-      <div class="comment-actions">
-        <button class="comment-action like-btn " data-id="c3">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z"></path></svg>
-          <span>3</span>
-        </button>
-        <button class="comment-action reply-btn" data-id="c3">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 17 4 12 9 7"></polyline><path d="M20 18v-2a4 4 0 0 0-4-4H4"></path></svg>
-          <span data-en="Reply" data-ar="ردّ">Reply</span>
-        </button>
-      </div>
+                @forelse($trainings as $training)
+                    <!-- Course card 1 -->
 
-      <div class="reply-input-row" id="replyInput-c3">
-        <div class="avatar" style="background:var(--primary); width:30px;height:30px;font-size:11px;">SA</div>
-        <input type="text" data-en-ph="Write a reply..." data-ar-ph="اكتب ردًا..." placeholder="Write a reply..." id="replyText-c3">
-        <button class="btn btn-primary btn-sm" data-reply-submit="c3" data-en="Reply" data-ar="ردّ">Reply</button>
-      </div>
+                    <article
+                        class="bg-white border border-slate-200 rounded-xl2 overflow-hidden flex flex-col hover:shadow-lift hover:-translate-y-1 hover:border-transparent transition-all">
+                        <a href="{{ route('training.show', $training) }}">
+                            <div
+                                class="relative aspect-video bg-gradient-to-br from-teal-100 to-violet-100 overflow-hidden">
+                            <span
+                                class="absolute top-3 left-3 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wide text-white bg-teal-700/90 {{$training->active ? '' : '!bg-amber-600/90 '}}">{{$training->active ? 'Published' : 'hidden'}}</span>
+                                {{--                                @dd($training->media[0])--}}
+                                @if(isset($training->media[0]->path))
 
+                                    <img class="w-full h-full object-cover"
+                                         src="{{Storage::url($training->media[0]->path)}}"
+                                         alt="Laptop displaying colorful data charts, representing the UX Design Fundamentals course">
+                                @else
+                                    <img class="w-full h-full object-cover"
+                                         src="data:image/png;base64,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"
+                                         alt="Laptop displaying colorful data charts, representing the UX Design Fundamentals course">
+                                @endif
+                            </div>
+                            <div class="p-5 flex flex-col gap-3 flex-1">
+                                <h3 class="text-[17px] font-bold font-display">{{ $training->title }}</h3>
+                                {{--                            <p class="text-slate-500 text-[13.5px] clamp-2">Learn the core principles of user experience--}}
+                                {{--                                design, from research to wireframing to usability testing.</p>--}}
+                                <div
+                                    class="flex items-center gap-4 text-slate-500 text-xs mt-auto pt-2 border-t border-dashed border-slate-200">
+                                    <span
+                                        class="flex items-center gap-1">📘 {{ $training->module->count() }} Modules</span>
+                                    <span
+                                        class="flex items-center gap-1">🗓️ {{$training->created_at->format('y/m/d')}}</span>
+                                </div>
+                            </div>
+                        </a>
+                        <div class="px-5 pb-5">
+                            <a href="edit-course.html"
+                               class="flex items-center justify-center gap-2 w-full rounded-xl border border-slate-200 text-slate-700 font-semibold text-sm py-2.5 hover:bg-slate-100 hover:border-slate-300 transition-colors">✏️
+                                Edit</a>
+                        </div>
+                    </article>
+                @empty
+                    <div class="m-auto my-3 text-xl">No Data Found</div>
+                @endforelse
 
-    </div>
-  </div></div>
-    </section>
-  </main>
-</div>
+            </div>
+        </section>
 
+        <!-- Pagination -->
+
+    </main>
 
 </x-app-layout>
