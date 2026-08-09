@@ -5,6 +5,7 @@ use App\Http\Controllers\ReplyController;
 use App\Http\Controllers\TicketController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TrainingController;
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -24,7 +25,7 @@ Route::get('/lang/{locale}', function ($locale) {
 //     Route::delete('/ticket/{ticket}', [TicketController::class, 'destroy'])->name('ticket.destroy');
 // });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'active'])->group(function () {
     Route::get('/ticket', [TicketController::class, 'index'])->name('ticket.index');
 
     Route::get('/ticket/{ticket}/reply', [TicketController::class, 'show'])->name('ticket.reply');
@@ -50,8 +51,31 @@ Route::middleware(['auth'])->group(function () {
     // ------------------------------------
     Route::Post('/module', [\App\Http\Controllers\ModuleController::class, 'store'])->name('module.store');
 
+    // ------------------------------------
+    // chapter
+    // ------------------------------------
+    Route::Post('/chapter', [\App\Http\Controllers\ChpaterController::class, 'store'])->name('chapter.store');
+
+    // ------------------------------------
+    // users
+    // ------------------------------------
+    Route::get('/users', [\App\Http\Controllers\UsersController::class, 'index'])->name('users.index');
+    Route::get('/users/add', [\App\Http\Controllers\UsersController::class, 'create'])->name('users.create');
+    Route::post('/users', [\App\Http\Controllers\UsersController::class, 'store'])->name('users.store');
+    Route::patch('/users/{user}', [\App\Http\Controllers\UsersController::class, 'toggleStatus'])
+        ->name('users.toggle-status');
+
+    // ------------------------------------
+    // company
+    // ------------------------------------
+    Route::get('/company', [\App\Http\Controllers\CompanyController::class, 'index'])->name('company.index');
+    Route::post('/company', [\App\Http\Controllers\CompanyController::class, 'store'])->name('company.store');
+    Route::get('/company/{company}/edit', [\App\Http\Controllers\CompanyController::class, 'edit'])->name('company.edit');
+    Route::put('/company/{company}', [\App\Http\Controllers\CompanyController::class, 'update'])->name('company.update');
+    Route::get('/company/{company}', [\App\Http\Controllers\CompanyController::class, 'show'])->name('company.show');
 
 });
+
 
 Route::get('/dashboard', function () {
     return view('dashboard');

@@ -91,6 +91,7 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
+                                <th>Company</th>
                                 <th>Title</th>
                                 <th>Description</th>
                                 <th class="sortable" data-sort="date">
@@ -113,6 +114,7 @@
                             @foreach ($ticket as $t)
                                 <tr>
                                     <td><span class="df-stub df-mono">{{ $t->id }}</span></td>
+                                    <td>{{ $t->user->company->name ?? '_' }}</td>
                                     <td style="font-weight:600;max-width:220px;">{{ $t->title }}</td>
                                     <td style="color:var(--text-muted);max-width:260px;">
                                         {{ Str::limit($t->description, 20, '...') }}

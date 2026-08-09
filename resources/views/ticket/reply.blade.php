@@ -11,10 +11,10 @@
                 </p>
             </div>
             <a href="{{ route('ticket.index') }}"
-                class="inline-flex items-center gap-2 self-start rounded-xl border border-gray-300 bg-white px-3.5 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">
+               class="inline-flex items-center gap-2 self-start rounded-xl border border-gray-300 bg-white px-3.5 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">
                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
-                    aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                     aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
                 </svg>
                 Back
             </a>
@@ -45,8 +45,12 @@
             <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">
 
                 <div>
-                    <span class="df-stub df-mono">{{ $ticket->id }}</span>
-
+                    <div class="flex items-center justify-center gap-2">
+                        <span class="df-stub df-mono">
+                            {{ $ticket->id }}
+                        </span>
+                        <span class="block mx-2">{{ $ticket->user->company->name }}</span>
+                    </div>
                     <h1 class="df-display" style="font-size:22px;font-weight:700;margin:10px 0 6px;">
                         {{ $ticket->titile }}
                     </h1>
@@ -61,7 +65,6 @@
                     <span class="df-badge-dot" style="{{ $status_dot[$ticket->status] }}"></span>
                     {{ Str::replace('_', ' ', $ticket->status) }}
                 </span>
-
 
 
             </div>
@@ -104,7 +107,6 @@
             </div>
 
 
-
             <!-- Description -->
             <div
                 style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);font-size:14.5px;line-height:1.7;color:var(--text);">
@@ -118,26 +120,29 @@
                 <div class="df-gallery" style="grid-template-columns:repeat(auto-fill, minmax(120px,1fr));">
                     @foreach ($ticket->media as $media)
                         <img src="{{ Storage::url($media->path) }}" alt="screenshot-error.png"
-                            class="df-gallery-thumb lightbox-trigger"
-                            data-src="https://picsum.photos/seed/t1042a/400/300"
-                            style="height:100px;border-radius:10px;cursor:zoom-in;border:1px solid var(--border);">
+                             class="df-gallery-thumb lightbox-trigger"
+                             data-src="https://picsum.photos/seed/t1042a/400/300"
+                             style="height:100px;border-radius:10px;cursor:zoom-in;border:1px solid var(--border);">
                     @endforeach
                 </div>
             </div>
 
             <div class="df-viewlog">
-                <div class="df-field-label" style="margin-bottom:10px;"><svg class="ico"
-                        style="width:15px;height:15px" viewBox="0 0 24 24">
+                <div class="df-field-label" style="margin-bottom:10px;">
+                    <svg class="ico"
+                         style="width:15px;height:15px" viewBox="0 0 24 24">
                         <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"></path>
                         <circle cx="12" cy="12" r="3"></circle>
-                    </svg> Viewed By</div>
+                    </svg>
+                    Viewed By
+                </div>
                 <div class="df-viewlog-list" id="viewLogList">
 
 
                     @foreach ($ticket->ticketView as $view)
                         <div class="df-viewlog-item">
                             <span class="df-viewlog-dot"
-                                style="{{ $view->user->type == 'admin' ? 'background:var(--blue-dot)' : 'background:var(--green-dot);' }}"></span>
+                                  style="{{ $view->user->type == 'admin' ? 'background:var(--blue-dot)' : 'background:var(--green-dot);' }}"></span>
                             <span>
                                 <strong
                                     style="color:var(--text);">{{ Auth()->user()->id == $view->user->id ? 'my' : $view->user->name . '(Admin)' }}</strong>
@@ -204,7 +209,7 @@
                 <label class="df-field-label">Description <span class="df-req">*</span></label>
                 <textarea class="df-input w-full h-[10rem]" name="description" id="reply"></textarea>
                 @error('description')
-                    <div class="df-error-text" id="fileError">{{ $message }}</div>
+                <div class="df-error-text" id="fileError">{{ $message }}</div>
                 @enderror
             </div>
 
@@ -214,7 +219,7 @@
                     <form action="{{ route('ticket.update', ['ticket' => $ticket]) }}" method='post'>
                         @csrf
                         <button class="df-btn df-btn-danger" type="submit"
-                            style="color:var(--danger);border-color:var(--border);">
+                                style="color:var(--danger);border-color:var(--border);">
                             Close Ticket
                         </button>
                     </form>
@@ -272,12 +277,12 @@
             }
 
             function appendReply({
-                id,
-                body,
-                user_name,
-                user_type,
-                created_at
-            }) {
+                                     id,
+                                     body,
+                                     user_name,
+                                     user_type,
+                                     created_at
+                                 }) {
                 // Guard against double-append: the socket broadcast can arrive before
                 // this fetch's own response resolves, so the same id may already be rendered.
                 if (document.querySelector(`[data-id="${id}"]`)) {
@@ -424,4 +429,5 @@
                 };
             }
         </script>
+
 </x-app-layout>

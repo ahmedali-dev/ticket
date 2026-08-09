@@ -16,7 +16,7 @@ class ModuleController extends Controller
                 'required',
                 'file',
                 'mimes:jpg,jpeg,png,gif,svg,pdf,mp4,webm,mov',
-                'max:51200'
+                'max:102400'
             ],
             'training_id' => 'required|exists:trainings,id'
         ]);

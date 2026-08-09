@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 class Module extends Model
 {
@@ -15,5 +16,9 @@ class Module extends Model
     public function media(): hasOne
     {
         return $this->hasOne(TrainingMedia::class, 'module_id');
+    }
+
+    public function chapters(): HasMany {
+        return $this->hasMany(Chapter::class);
     }
 }

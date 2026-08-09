@@ -5,7 +5,7 @@ import ticketDashboard from "./ticket-dashboard";
 import createTicketForm from "./create-ticket-form";
 
 window.Alpine = Alpine;
-console.log("w");
+
 document.addEventListener("alpine:init", () => {
 	Alpine.data("ticketDashboard", ticketDashboard);
 	Alpine.data("createTicketForm", createTicketForm);

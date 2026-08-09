@@ -50,6 +50,19 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        if (!Auth::user()->status) {
+            $email = Auth::user()->status;
+            Auth::logout();
+
+            $this->session()->invalidate();
+            $this->session()->regenerateToken();
+
+            throw ValidationException::withMessages([
+                'email' => 'Your account has been disabled. Please contact an administrator. '. $email,
+            ]);
+        }
+
+
         RateLimiter::clear($this->throttleKey());
     }
 
