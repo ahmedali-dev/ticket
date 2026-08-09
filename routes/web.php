@@ -34,9 +34,10 @@ Route::middleware(['auth', 'active'])->group(function () {
     // ------------------------------------
     // training center
     // ------------------------------------
+    Route::resource('/training', TrainingController::class);
+
     Route::get('/training/{training}/{module}', [TrainingController::class, 'showModule'])
         ->name('training.module_show');
-    Route::resource('/training', TrainingController::class);
     // ------------------------------------
     // module
     // ------------------------------------
@@ -53,7 +54,9 @@ Route::middleware(['auth', 'active'])->group(function () {
     Route::get('/users', [\App\Http\Controllers\UsersController::class, 'index'])->name('users.index');
     Route::get('/users/add', [\App\Http\Controllers\UsersController::class, 'create'])->name('users.create');
     Route::post('/users', [\App\Http\Controllers\UsersController::class, 'store'])->name('users.store');
-    Route::patch('/users/{user}', [\App\Http\Controllers\UsersController::class, 'toggleStatus'])
+    Route::get('/user/{user}', [\App\Http\Controllers\UsersController::class, 'edit'])->name('users.edit');
+    Route::put('/user/{user}', [\App\Http\Controllers\UsersController::class, 'update'])->name('users.update');
+    Route::patch('/users/status/{user}', [\App\Http\Controllers\UsersController::class, 'toggleStatus'])
         ->name('users.toggle-status');
 
     // ------------------------------------

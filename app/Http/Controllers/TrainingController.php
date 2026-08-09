@@ -7,6 +7,7 @@ use App\Models\Module;
 use App\Models\Training;
 use App\Models\TrainingMedia;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class TrainingController extends Controller
@@ -117,19 +118,68 @@ class TrainingController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Training $training)
     {
-        //
+        $media = $training->media()->first();
+        return view('training.edit', compact('training', 'media'));
+    }
+
+    public function update(Request $request, Training $training)
+    {
+        $data = $request->validate([
+            'title' => 'required|string',
+            'active' => 'required|boolean',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:6048',
+            'remove_image' => 'nullable|boolean',
+        ]);
+
+        $training->update([
+            'title' => $data['title'],
+            'active' => $data['active'],
+        ]);
+
+        // Fetch once, explicitly, instead of relying on the cached magic property
+        $media = $training->media()->first();
+
+        $shouldRemove = $request->boolean('remove_image');
+
+        if ($request->hasFile('image')) {
+            // Replace: delete old file + row (if any), store new one
+            if ($media !== null) {
+                $this->deleteMediaFile($media);
+            }
+
+            $mediaId = Str::orderedUuid();
+            $extension = $request->file('image')->getClientOriginalExtension();
+            $filename = Str::slug($data['title']) . '-' . $mediaId . '.' . $extension;
+            $path = $request->file('image')->storeAs('training', $filename, 'public');
+
+            TrainingMedia::create([
+                'type' => $request->file('image')->getMimeType(),
+                'size' => $this->formatFileSize($request->file('image')->getSize(), 2),
+                'path' => $path,
+                'training_id' => $training->id,
+                'module_id' => null
+            ]);
+        } elseif ($shouldRemove && $media !== null) {
+            // Remove only, no replacement
+            $this->deleteMediaFile($media);
+        }
+
+        return to_route('training.index')->with('success', 'Training updated!');
     }
 
     /**
-     * Update the specified resource in storage.
+     * Safely delete a TrainingMedia's file from disk (if it exists) and its DB row.
      */
-    public function update(Request $request, string $id)
+    private function deleteMediaFile(TrainingMedia $media): void
     {
-        //
-    }
+        if ($media->path && Storage::disk('public')->exists($media->path)) {
+            Storage::disk('public')->delete($media->path);
+        }
 
+        $media->delete();
+    }
     /**
      * Remove the specified resource from storage.
      */
