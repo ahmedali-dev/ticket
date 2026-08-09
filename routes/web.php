@@ -16,15 +16,6 @@ Route::get('/lang/{locale}', function ($locale) {
     return back();
 })->name('lang.switch');
 
-// Route::middleware(['auth'])->group(function () {
-//     Route::get('/ticket', [TicketController::class, 'index'])->name('ticket.index');
-//     Route::get('/tickets/create', [TicketController::class, 'create'])->name('ticket.create');
-//     Route::post('/tickets', [TicketController::class, 'store'])->name('ticket.store');
-//     Route::post('/ticket/{ticket}/reply', [TicketController::class, 'reply'])->name('ticket.reply');
-//     Route::put('/ticket/{ticket}', [TicketController::class, 'update'])->name('ticket.update');
-//     Route::delete('/ticket/{ticket}', [TicketController::class, 'destroy'])->name('ticket.destroy');
-// });
-
 Route::middleware(['auth', 'active'])->group(function () {
     Route::get('/ticket', [TicketController::class, 'index'])->name('ticket.index');
 
