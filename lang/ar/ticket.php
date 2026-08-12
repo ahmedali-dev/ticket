@@ -1,83 +1,143 @@
 <?php
 
 return [
-    'management' => 'إدارة التذاكر',
-    'management_subtitle' => 'ابحث وصفِّ وأدر تذاكرك',
-    'search_placeholder' => 'البحث في التذاكر...',
-    'all_statuses' => 'كل الحالات',
-    'clear' => 'مسح',
-    'clear_filters' => 'مسح الفلاتر',
-    'add_ticket' => '+ إضافة تذكرة',
-    'no_tickets' => 'لا توجد تذاكر',
-    'no_tickets_hint' => 'ابدأ بإنشاء أول تذكرة لك.',
-    'no_tickets_filter_hint' => 'جرّب تعديل البحث أو الفلاتر.',
-    'create_first' => 'أنشئ تذكرتك الأولى',
-    'showing' => 'عرض',
-    'of' => 'من',
-    'tickets' => 'تذاكر',
-    'id' => 'المعرّف',
-    'title' => 'العنوان',
-    'owner' => 'المالك',
-    'description' => 'الوصف',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Ticket Management
+    |--------------------------------------------------------------------------
+    */
+
+    'ticket_management' => 'إدارة التذاكر',
+
+    'search_filter_manage_tickets' =>
+        'البحث عن التذاكر وتصفيتها وإدارتها',
+
+    'tickets' => 'التذاكر',
+
+    'search' => 'بحث',
+
+    'search_by_id_title_description' =>
+        'البحث برقم التذكرة أو العنوان أو الوصف',
+
     'date' => 'التاريخ',
-    'status' => 'الحالة',
+
+    'all' => 'الكل',
+
+    'add_ticket' => 'إضافة تذكرة',
+
+    'view_ticket' => 'عرض التذكرة',
+
     'actions' => 'الإجراءات',
-    'update' => 'تحديث',
-    'delete' => 'حذف',
-    'reply' => 'رد',
-    'view_replies' => 'عرض الردود',
-    'cancel' => 'إلغاء',
-    'save' => 'حفظ التغييرات',
-    'delete_confirm_title' => 'حذف التذكرة؟',
-    'delete_confirm_body' => 'سيتم حذف :title نهائياً. لا يمكن التراجع عن هذا الإجراء.',
-    'update_ticket' => 'تحديث التذكرة',
-    'editing_ticket' => 'تعديل التذكرة #:id',
-    'status_admin_hint' => 'يمكن للمسؤولين فقط تغيير حالة التذكرة.',
-    'status_pending' => 'قيد الانتظار',
-    'status_in_progress' => 'قيد المعالجة',
-    'status_completed' => 'مكتملة',
 
-    'create_title' => 'إنشاء تذكرة',
-    'create_subtitle' => 'املأ النموذج أدناه لإرسال تذكرة دعم.',
+    'no_tickets_found' => 'لم يتم العثور على أي تذاكر',
+
+    'id' => 'الرقم',
+
+    'company' => 'الشركة',
+
+    'title' => 'العنوان',
+
+    'description' => 'الوصف',
+
+    'created_date' => 'تاريخ الإنشاء',
+
+    'status' => 'الحالة',
+
+    'pending' => 'قيد الانتظار',
+
+    'in_progress' => 'قيد التنفيذ',
+
+    'completed' => 'مكتملة',
+
+    'showing' => 'عرض',
+
+    'of' => 'من',
+
+    'previous' => 'السابق',
+
+    'next' => 'التالي',
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Create Ticket
+    |--------------------------------------------------------------------------
+    */
+
+    'create_ticket' => 'إنشاء تذكرة',
+
+    'create_ticket_description' =>
+        'قم بملء النموذج أدناه لإرسال تذكرة دعم.',
+
     'back' => 'رجوع',
+
+    'submit_new_support_request' =>
+        'إرسال طلب دعم جديد.',
+
     'ticket_title' => 'عنوان التذكرة',
-    'ticket_title_placeholder' => 'أدخل عنوان التذكرة',
-    'description_label' => 'الوصف',
-    'description_placeholder' => 'صف مشكلتك...',
-    'image_optional' => 'صورة',
-    'optional' => '(اختياري)',
-    'image_hint' => 'JPG أو JPEG أو PNG أو WEBP · بحد أقصى 5 ميجابايت',
-    'drop_title' => 'اسحب وأفلت صورة هنا',
-    'or' => 'أو',
-    'click_browse' => 'انقر للاختيار',
-    'remove' => 'إزالة',
-    'uploading' => 'جاري الرفع…',
-    'submit' => 'إرسال التذكرة',
-    'submitting' => 'جاري الإرسال…',
 
-    'created' => 'تم إرسال التذكرة بنجاح.',
-    'updated' => 'تم تحديث التذكرة بنجاح.',
-    'deleted' => 'تم حذف التذكرة بنجاح.',
-    'replied' => 'تم إرسال الرد بنجاح.',
-    'admin_cannot_create' => 'لا يمكن للمسؤولين إنشاء تذاكر. يمكنك الرد على تذاكر المستخدمين بدلاً من ذلك.',
+    'enter_ticket_title' =>
+        'أدخل عنوان التذكرة',
 
-    'reply_title' => 'الرد على التذكرة',
-    'reply_subtitle' => 'التذكرة #:id — :title',
-    'reply_placeholder' => 'اكتب ردك للمستخدم…',
-    'reply_send' => 'إرسال الرد',
-    'reply_empty' => 'لا توجد ردود بعد.',
-    'conversation' => 'المحادثة',
-    'you' => 'أنت',
+    'attachments' => 'المرفقات',
+
+    'click_to_browse_or_drag' =>
+        'انقر لاختيار الملفات أو اسحب الصور وأفلتها هنا',
+
+    'allowed_file_types' =>
+        'JPG أو JPEG أو PNG أو WEBP · بحد أقصى 5 ميجابايت لكل ملف',
+
+    'remove_image' => 'إزالة الصورة',
+
+    'submit_ticket' => 'إرسال التذكرة',
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Ticket Reply / Details
+    |--------------------------------------------------------------------------
+    */
+
+    'reply' => 'الرد',
+
+    'supporting' => 'الدعم',
+
+    'ticket_details' => 'تفاصيل التذكرة',
+
+    'created' => 'تم الإنشاء',
+
+    'progress' => 'التقدم',
+
+    'uploaded_images' => 'الصور المرفقة',
+
+    'viewed_by' => 'تمت المشاهدة بواسطة',
+
+    'my' => 'أنا',
+
     'admin' => 'مسؤول',
-    'user' => 'مستخدم',
-    'original_message' => 'الرسالة الأصلية',
 
-    'validation' => [
-        'title_required' => 'يرجى إدخال عنوان التذكرة.',
-        'description_required' => 'يرجى وصف مشكلتك.',
-        'image_image' => 'يجب أن يكون الملف صورة.',
-        'image_mimes' => 'الصيغ المدعومة: JPG و JPEG و PNG و WEBP.',
-        'image_max' => 'يجب ألا يتجاوز حجم الصورة 5 ميجابايت.',
-        'reply_required' => 'يرجى إدخال نص الرد.',
-    ],
+    'opened_this_ticket' => 'قام بفتح هذه التذكرة',
+
+    'conversation' => 'المحادثة',
+
+    'write_reply' => 'اكتب ردك',
+
+    'close_ticket' => 'إغلاق التذكرة',
+
+    'cancel' => 'إلغاء',
+
+    'send_reply' => 'إرسال الرد',
+
+    'sending' => 'جارٍ الإرسال...',
+
+    'failed_retry' => 'فشل الإرسال — إعادة المحاولة',
+
+    'failed_to_send_reply' => 'فشل إرسال الرد.',
+
+    'something_went_wrong' =>
+        'حدث خطأ أثناء إرسال ردك.',
+
+    'new_reply_from' => 'رد جديد من',
+
 ];

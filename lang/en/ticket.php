@@ -1,83 +1,143 @@
 <?php
 
 return [
-    'management' => 'Ticket Management',
-    'management_subtitle' => 'Search, filter, and manage your tickets',
-    'search_placeholder' => 'Search tickets...',
-    'all_statuses' => 'All Statuses',
-    'clear' => 'Clear',
-    'clear_filters' => 'Clear filters',
-    'add_ticket' => '+ Add Ticket',
-    'no_tickets' => 'No tickets found',
-    'no_tickets_hint' => 'Get started by creating your first ticket.',
-    'no_tickets_filter_hint' => 'Try adjusting your search or filters.',
-    'create_first' => 'Create Your First Ticket',
-    'showing' => 'Showing',
-    'of' => 'of',
-    'tickets' => 'tickets',
-    'id' => 'ID',
-    'title' => 'Title',
-    'owner' => 'Owner',
-    'description' => 'Description',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Ticket Management
+    |--------------------------------------------------------------------------
+    */
+
+    'ticket_management' => 'Ticket Management',
+
+    'search_filter_manage_tickets' =>
+        'Search, filter, and manage your tickets',
+
+    'tickets' => 'Tickets',
+
+    'search' => 'Search',
+
+    'search_by_id_title_description' =>
+        'Search by ID, title, or description',
+
     'date' => 'Date',
-    'status' => 'Status',
+
+    'all' => 'All',
+
+    'add_ticket' => 'Add Ticket',
+
+    'view_ticket' => 'View Ticket',
+
     'actions' => 'Actions',
-    'update' => 'Update',
-    'delete' => 'Delete',
-    'reply' => 'Reply',
-    'view_replies' => 'View replies',
-    'cancel' => 'Cancel',
-    'save' => 'Save Changes',
-    'delete_confirm_title' => 'Delete ticket?',
-    'delete_confirm_body' => 'This will permanently remove :title. This action cannot be undone.',
-    'update_ticket' => 'Update Ticket',
-    'editing_ticket' => 'Editing ticket #:id',
-    'status_admin_hint' => 'Only administrators can change ticket status.',
-    'status_pending' => 'Pending',
-    'status_in_progress' => 'In Progress',
-    'status_completed' => 'Completed',
 
-    'create_title' => 'Create Ticket',
-    'create_subtitle' => 'Fill out the form below to submit a support ticket.',
+    'no_tickets_found' => 'No tickets found',
+
+    'id' => 'ID',
+
+    'company' => 'Company',
+
+    'title' => 'Title',
+
+    'description' => 'Description',
+
+    'created_date' => 'Created Date',
+
+    'status' => 'Status',
+
+    'pending' => 'Pending',
+
+    'in_progress' => 'In Progress',
+
+    'completed' => 'Completed',
+
+    'showing' => 'Showing',
+
+    'of' => 'of',
+
+    'previous' => 'Previous',
+
+    'next' => 'Next',
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Create Ticket
+    |--------------------------------------------------------------------------
+    */
+
+    'create_ticket' => 'Create Ticket',
+
+    'create_ticket_description' =>
+        'Fill out the form below to submit a support ticket.',
+
     'back' => 'Back',
+
+    'submit_new_support_request' =>
+        'Submit a new support request.',
+
     'ticket_title' => 'Ticket Title',
-    'ticket_title_placeholder' => 'Enter ticket title',
-    'description_label' => 'Description',
-    'description_placeholder' => 'Describe your issue...',
-    'image_optional' => 'Image',
-    'optional' => '(optional)',
-    'image_hint' => 'JPG, JPEG, PNG, or WEBP · Max 5 MB',
-    'drop_title' => 'Drag & Drop an image here',
-    'or' => 'or',
-    'click_browse' => 'Click to browse',
-    'remove' => 'Remove',
-    'uploading' => 'Uploading…',
-    'submit' => 'Submit Ticket',
-    'submitting' => 'Submitting…',
 
-    'created' => 'Ticket submitted successfully.',
-    'updated' => 'Ticket updated successfully.',
-    'deleted' => 'Ticket deleted successfully.',
-    'replied' => 'Reply sent successfully.',
-    'admin_cannot_create' => 'Administrators cannot create tickets. You can reply to user tickets instead.',
+    'enter_ticket_title' =>
+        'Enter ticket title',
 
-    'reply_title' => 'Reply to ticket',
-    'reply_subtitle' => 'Ticket #:id — :title',
-    'reply_placeholder' => 'Write your reply to the user…',
-    'reply_send' => 'Send Reply',
-    'reply_empty' => 'No replies yet.',
-    'conversation' => 'Conversation',
-    'you' => 'You',
+    'attachments' => 'Attachments',
+
+    'click_to_browse_or_drag' =>
+        'Click to browse or drag and drop images',
+
+    'allowed_file_types' =>
+        'JPG, JPEG, PNG or WEBP · up to 5 MB each',
+
+    'remove_image' => 'Remove image',
+
+    'submit_ticket' => 'Submit Ticket',
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Ticket Reply / Details
+    |--------------------------------------------------------------------------
+    */
+
+    'reply' => 'Reply',
+
+    'supporting' => 'Supporting',
+
+    'ticket_details' => 'Ticket Details',
+
+    'created' => 'Created',
+
+    'progress' => 'Progress',
+
+    'uploaded_images' => 'Uploaded Images',
+
+    'viewed_by' => 'Viewed By',
+
+    'my' => 'My',
+
     'admin' => 'Admin',
-    'user' => 'User',
-    'original_message' => 'Original message',
 
-    'validation' => [
-        'title_required' => 'Please enter a ticket title.',
-        'description_required' => 'Please describe your issue.',
-        'image_image' => 'The file must be an image.',
-        'image_mimes' => 'Supported formats: JPG, JPEG, PNG, WEBP.',
-        'image_max' => 'The image must not be larger than 5 MB.',
-        'reply_required' => 'Please enter a reply message.',
-    ],
+    'opened_this_ticket' => 'opened this ticket',
+
+    'conversation' => 'Conversation',
+
+    'write_reply' => 'Write your reply',
+
+    'close_ticket' => 'Close Ticket',
+
+    'cancel' => 'Cancel',
+
+    'send_reply' => 'Send Reply',
+
+    'sending' => 'Sending...',
+
+    'failed_retry' => 'Failed — Retry',
+
+    'failed_to_send_reply' => 'Failed to send reply.',
+
+    'something_went_wrong' =>
+        'Something went wrong sending your reply.',
+
+    'new_reply_from' => 'New reply from',
+
 ];
