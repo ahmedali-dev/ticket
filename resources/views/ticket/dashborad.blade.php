@@ -46,8 +46,15 @@
 
     <div id="pageRoot">
 
+
         <div class="df-page">
 
+
+            @if (session('error'))
+                <div class="mb-4 rounded-lg bg-red-100 border border-red-300 px-4 py-3 text-red-700">
+                    {{ __(session('error')) }}
+                </div>
+            @endif
             {{-- =================================================
                 PAGE TITLE
             ================================================== --}}
@@ -60,30 +67,26 @@
                     margin-bottom:22px;
                     gap:16px;
                     flex-wrap:wrap;
-                "
-            >
+                ">
 
                 <div>
 
-                    <h1
-                        class="df-display"
+                    <h1 class="df-display"
                         style="
                             font-size:26px;
                             font-weight:700;
                             margin:0;
-                        "
-                    >
+                        ">
                         {{ __('ticket.tickets') }}
                     </h1>
 
-                    <p
-                        id="ticketCountLine"
+                    <p id="ticketCountLine"
                         style="
                             color:var(--text-muted);
                             font-size:14px;
                             margin:4px 0 0;
-                        "
-                    ></p>
+                        ">
+                    </p>
 
                 </div>
 
@@ -94,8 +97,7 @@
                 FILTERS
             ================================================== --}}
 
-            <div
-                class="df-filters-row"
+            <div class="df-filters-row"
                 style="
                     display:flex;
                     justify-content:space-between;
@@ -103,25 +105,19 @@
                     gap:12px;
                     margin-bottom:18px;
                     flex-wrap:wrap;
-                "
-            >
+                ">
 
-                <form
-                    action="{{ route('ticket.search') }}"
-                    method="POST"
-                >
+                <form action="{{ route('ticket.search') }}" method="POST">
 
                     @csrf
 
-                    <div
-                        class="df-filters-left"
+                    <div class="df-filters-left"
                         style="
                             display:flex;
                             gap:10px;
                             flex:1;
                             flex-wrap:wrap;
-                        "
-                    >
+                        ">
 
                         {{-- Search --}}
                         <div
@@ -129,97 +125,60 @@
                                 position:relative;
                                 flex:1 1 220px;
                                 max-width:320px;
-                            "
-                        >
+                            ">
 
-                            <input
-                                name="search"
-                                id="searchInput"
-                                class="df-input"
+                            <input name="search" id="searchInput" class="df-input"
                                 style="
                                     width:100%;
                                     padding-inline-start:34px;
                                 "
                                 placeholder="{{ __('ticket.search_by_id_title_description') }}"
-                                value="{{ old('search', request('search')) }}"
-                            />
+                                value="{{ old('search', request('search')) }}" />
 
                         </div>
 
 
                         {{-- Date --}}
-                        <div
-                            style="position:relative;"
-                        >
+                        <div style="position:relative;">
 
-                            <input
-                                name="date"
-                                id="dateInput"
-                                type="date"
-                                class="df-input"
+                            <input name="date" id="dateInput" type="date" class="df-input"
                                 style="
                                     padding-inline-start:34px;
                                 "
-                                value="{{ old('date', request('date')) }}"
-                            />
+                                value="{{ old('date', request('date')) }}" />
 
                         </div>
 
 
                         {{-- Status --}}
-                        <select
-                            id="statusSelect"
-                            name="status"
-                            class="df-select"
-                        >
+                        <select id="statusSelect" name="status" class="df-select">
 
-                            <option
-                                value="all"
-                                {{ old('status', request('status', 'all')) === 'all' ? 'selected' : '' }}
-                            >
+                            <option value="all"
+                                {{ old('status', request('status', 'all')) === 'all' ? 'selected' : '' }}>
                                 {{ __('ticket.all') }}
                             </option>
 
                             @foreach ($status_arr as $s)
-
                                 @if ($s !== 'all')
-
-                                    <option
-                                        value="{{ $s }}"
-                                        {{ old('status', request('status')) === $s ? 'selected' : '' }}
-                                    >
+                                    <option value="{{ $s }}"
+                                        {{ old('status', request('status')) === $s ? 'selected' : '' }}>
                                         {{ __('ticket.' . $s) }}
                                     </option>
-
                                 @endif
-
                             @endforeach
 
                         </select>
 
 
                         {{-- Search Button --}}
-                        <button
-                            type="submit"
-                            class="df-btn df-btn-primary"
-                            title="{{ __('ticket.search') }}"
-                            aria-label="{{ __('ticket.search') }}"
-                        >
+                        <button type="submit" class="df-btn df-btn-primary" title="{{ __('ticket.search') }}"
+                            aria-label="{{ __('ticket.search') }}">
 
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                class="lucide lucide-search-icon lucide-search"
-                            >
-                                <path d="m21 21-4.34-4.34"/>
-                                <circle cx="11" cy="11" r="8"/>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-search-icon lucide-search">
+                                <path d="m21 21-4.34-4.34" />
+                                <circle cx="11" cy="11" r="8" />
                             </svg>
 
                         </button>
@@ -231,15 +190,9 @@
 
                 {{-- Add Ticket --}}
                 @if (auth()->user()->type !== 'admin')
-
-                    <a
-                        href="{{ route('ticket.create') }}"
-                        class="df-btn df-btn-primary"
-                        id="addTicketBtn"
-                    >
+                    <a href="{{ route('ticket.create') }}" class="df-btn df-btn-primary" id="addTicketBtn">
                         {{ __('ticket.add_ticket') }}
                     </a>
-
                 @endif
 
             </div>
@@ -257,70 +210,66 @@
 
                         <thead>
 
-                        <tr>
+                            <tr>
 
-                            <th>
-                                {{ __('ticket.id') }}
-                            </th>
+                                <th>
+                                    {{ __('ticket.id') }}
+                                </th>
 
-                            <th>
-                                {{ __('ticket.company') }}
-                            </th>
+                                <th>
+                                    {{ __('ticket.username') }}
+                                </th>
 
-                            <th>
-                                {{ __('ticket.title') }}
-                            </th>
+                                <th>
+                                    {{ __('ticket.phone') }}
+                                </th>
 
-                            <th>
-                                {{ __('ticket.description') }}
-                            </th>
+                                <th>
+                                    {{ __('ticket.company') }}
+                                </th>
+
+                                <th>
+                                    {{ __('ticket.title') }}
+                                </th>
 
 
-                            {{-- Created Date --}}
-                            <th
-                                class="sortable"
-                                data-sort="date"
-                            >
+                                {{-- Created Date --}}
+                                <th class="sortable" data-sort="date">
 
                                     <span
                                         style="
                                             display:inline-flex;
                                             align-items:center;
                                             gap:4px;
-                                        "
-                                    >
+                                        ">
 
                                         {{ __('ticket.created_date') }}
 
                                     </span>
 
-                            </th>
+                                </th>
 
 
-                            {{-- Status --}}
-                            <th
-                                class="sortable"
-                                data-sort="status"
-                            >
+                                {{-- Status --}}
+                                <th class="sortable" data-sort="status">
 
                                     <span
                                         style="
                                             display:inline-flex;
                                             align-items:center;
                                             gap:4px;
-                                        "
-                                    >
+                                        ">
 
                                         {{ __('ticket.status') }}
 
                                     </span>
 
-                            </th>
+                                </th>
 
 
-                            <th style="width:60px;"></th>
+                                <th style="width:60px;"></th>
 
-                        </tr>
+                            </tr>
 
                         </thead>
 
@@ -331,145 +280,125 @@
 
                         <tbody>
 
-                        @forelse ($ticket as $t)
+                            @forelse ($ticket as $t)
+                                <tr>
 
-                            <tr>
-
-                                {{-- ID --}}
-                                <td>
+                                    {{-- ID --}}
+                                    <td>
 
                                         <span class="df-stub df-mono">
                                             {{ $t->id }}
                                         </span>
 
-                                </td>
+                                    </td>
+
+                                    {{-- username --}}
+                                    <td>
+                                        {{ $t->user->name ?? '_' }}
+                                    </td>
 
 
-                                {{-- Company --}}
-                                <td>
-                                    {{ $t->user->company->name ?? '_' }}
-                                </td>
+
+                                    {{-- phone --}}
+                                    <td>
+                                        {{ $t->user->phone ?? '_' }}
+                                    </td>
 
 
-                                {{-- Title --}}
-                                <td
-                                    style="
-                                            font-weight:600;
-                                            max-width:220px;
-                                        "
-                                >
-                                    {{ $t->title }}
-                                </td>
+
+                                    {{-- Company --}}
+                                    <td>
+                                        {{ $t->user->company->name ?? '_' }}
+                                    </td>
 
 
-                                {{-- Description --}}
-                                <td
-                                    style="
+
+
+                                    {{-- Description --}}
+                                    <td
+                                        style="
                                             color:var(--text-muted);
                                             max-width:260px;
-                                        "
-                                >
+                                        ">
 
-                                    {{ Str::limit($t->description, 20, '...') }}
+                                        {{ Str::limit($t->description, 20, '...') }}
 
-                                </td>
+                                    </td>
 
 
-                                {{-- Created Date --}}
-                                <td
-                                    class="df-mono"
-                                    style="
+                                    {{-- Created Date --}}
+                                    <td class="df-mono"
+                                        style="
                                             color:var(--text-muted);
                                             font-size:13px;
-                                        "
-                                >
+                                        ">
 
-                                    {{ $t->created_at->format('d/m/y h:m') }}
+                                        {{ $t->created_at->format('d/m/y h:m') }}
 
-                                </td>
+                                    </td>
 
 
-                                {{-- Status --}}
-                                <td>
+                                    {{-- Status --}}
+                                    <td>
 
-                                        <span
-                                            class="df-badge"
-                                            style="{{ $status[$t->status] ?? '' }}"
-                                        >
+                                        <span class="df-badge" style="{{ $status[$t->status] ?? '' }}">
 
-                                            <span
-                                                class="df-badge-dot"
-                                                style="{{ $status_dot[$t->status] ?? '' }}"
-                                            ></span>
+                                            <span class="df-badge-dot"
+                                                style="{{ $status_dot[$t->status] ?? '' }}"></span>
 
                                             {{ __('ticket.' . $t->status) }}
 
                                         </span>
 
-                                </td>
+                                    </td>
 
 
-                                {{-- Actions --}}
-                                <td>
+                                    {{-- Actions --}}
+                                    <td>
 
-                                    <div
-                                        class="df-dropdown"
-                                        id="menu-{{ $t->id }}"
-                                    >
+                                        <div class="df-dropdown" id="menu-{{ $t->id }}">
 
-                                        <button
-                                            type="button"
-                                            onclick="openMenu(this)"
-                                            class="df-icon-btn row-menu-btn"
-                                            data-id="{{ $t->id }}"
-                                            style="
+                                            <button type="button" onclick="openMenu(this)"
+                                                class="df-icon-btn row-menu-btn" data-id="{{ $t->id }}"
+                                                style="
                                                     width:30px;
                                                     height:30px;
                                                 "
-                                            aria-label="{{ __('ticket.actions') }}"
-                                        >
-                                            ⋮
-                                        </button>
+                                                aria-label="{{ __('ticket.actions') }}">
+                                                ⋮
+                                            </button>
 
 
-                                        <div
-                                            class="df-dropdown-menu"
-                                            data-menu-id="{{ $t->id }}"
-                                        >
+                                            <div class="df-dropdown-menu" data-menu-id="{{ $t->id }}">
 
-                                            <a
-                                                href="{{ route('ticket.reply', ['ticket' => $t]) }}"
-                                                class="df-dropdown-item view-ticket-item"
-                                            >
-                                                {{ __('ticket.view_ticket') }}
-                                            </a>
+                                                <a href="{{ route('ticket.reply', ['ticket' => $t]) }}"
+                                                    class="df-dropdown-item view-ticket-item">
+                                                    {{ __('ticket.view_ticket') }}
+                                                </a>
+
+                                            </div>
 
                                         </div>
 
-                                    </div>
+                                    </td>
 
-                                </td>
+                                </tr>
 
-                            </tr>
+                            @empty
 
-                        @empty
+                                <tr>
 
-                            <tr>
-
-                                <td
-                                    colspan="7"
-                                    style="
+                                    <td colspan="7"
+                                        style="
                                             text-align:center;
                                             padding:30px;
                                             color:var(--text-muted);
-                                        "
-                                >
-                                    {{ __('ticket.no_tickets_found') }}
-                                </td>
+                                        ">
+                                        {{ __('ticket.no_tickets_found') }}
+                                    </td>
 
-                            </tr>
-
-                        @endforelse
+                                </tr>
+                            @endforelse
 
                         </tbody>
 
@@ -480,12 +409,10 @@
                         PAGINATION
                     ================================================== --}}
 
-                    <div
-                        class="df-pagination"
+                    <div class="df-pagination"
                         style="
                             border-top:1px solid var(--border);
-                        "
-                    >
+                        ">
 
                         <div class="df-pagination-info">
 
@@ -507,34 +434,26 @@
                         <div class="df-pagination-controls">
 
                             {{-- Previous --}}
-                            <a
-                                href="{{ $ticket->previousPageUrl() }}"
+                            <a href="{{ $ticket->previousPageUrl() }}"
                                 class="df-page-btn {{ $ticket->onFirstPage() ? 'disabled' : '' }}"
-                                aria-label="{{ __('ticket.previous') }}"
-                            >
+                                aria-label="{{ __('ticket.previous') }}">
                                 &laquo;
                             </a>
 
 
                             {{-- Page Numbers --}}
                             @foreach ($ticket->getUrlRange(1, $ticket->lastPage()) as $page => $url)
-
-                                <a
-                                    href="{{ $url }}"
-                                    class="df-page-btn {{ $page == $ticket->currentPage() ? 'active' : '' }}"
-                                >
+                                <a href="{{ $url }}"
+                                    class="df-page-btn {{ $page == $ticket->currentPage() ? 'active' : '' }}">
                                     {{ $page }}
                                 </a>
-
                             @endforeach
 
 
                             {{-- Next --}}
-                            <a
-                                href="{{ $ticket->nextPageUrl() }}"
+                            <a href="{{ $ticket->nextPageUrl() }}"
                                 class="df-page-btn {{ $ticket->hasMorePages() ? '' : 'disabled' }}"
-                                aria-label="{{ __('ticket.next') }}"
-                            >
+                                aria-label="{{ __('ticket.next') }}">
                                 &raquo;
                             </a>
 
@@ -556,12 +475,11 @@
     ========================================================== --}}
 
     <script>
-
         /*
-        |--------------------------------------------------------------------------
-        | Open Ticket Row Menu
-        |--------------------------------------------------------------------------
-        */
+            |--------------------------------------------------------------------------
+            | Open Ticket Row Menu
+            |--------------------------------------------------------------------------
+            */
 
         function openMenu(button) {
 
@@ -603,7 +521,7 @@
         |--------------------------------------------------------------------------
         */
 
-        document.addEventListener('click', function (event) {
+        document.addEventListener('click', function(event) {
 
             if (
                 !event.target.closest('.row-menu-btn') &&
@@ -642,7 +560,6 @@
                 total + ' {{ __('ticket.tickets') }}';
 
         }
-
     </script>
 
 </x-app-layout>

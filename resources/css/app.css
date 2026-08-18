@@ -112,11 +112,11 @@ a.disabled {
 	display: none;
 }
 .df-display {
-	font-family: "Space Grotesk", "Inter", sans-serif;
+	font-family: inherit;
 	letter-spacing: -0.01em;
 }
 .df-mono {
-	font-family: "IBM Plex Mono", ui-monospace, monospace;
+	font-family: inherit;
 }
 svg.ico {
 	width: 16px;
@@ -371,6 +371,11 @@ html[lang='ar'] .df-table thead tr th{
 	z-index: 30;
 	overflow: hidden;
 	display: none;
+}
+
+html[lang='ar'] .df-dropdown-menu {
+    right: unset;
+    left: 0;
 }
 .df-dropdown-menu.open {
 	display: block;
@@ -921,14 +926,14 @@ html[dir="ltr"] .df-step-label {
 }
 
 html[lang="ar"] :is(body, button, input, textarea, select) {
-	font-family: "Tajawal", "Manrope", sans-serif;
-}
+    font-family: "Noto Sans Arabic", sans-serif;
+    font-optical-sizing: auto;}
 html[lang="ar"] h1,
 html[lang="ar"] h2,
 html[lang="ar"] h3,
 html[lang="ar"] .brand-name {
-	font-family: "Tajawal", sans-serif;
-}
+    font-family: "Noto Sans Arabic", sans-serif;
+    font-optical-sizing: auto;}
 
 * {
 	box-sizing: border-box;
@@ -938,7 +943,8 @@ html[lang="ar"] .brand-name {
 body {
 	background: var(--bg);
 	color: var(--text);
-	font-family: var(--font-body);
+    font-family: "Noto Sans Arabic", sans-serif;
+    font-optical-sizing: auto;
 	line-height: 1.55;
 	-webkit-font-smoothing: antialiased;
 	min-height: 100vh;
@@ -2256,4 +2262,86 @@ html[dir="rtl"] .nav-card.prev {
 	outline: 2px solid var(--primary);
 	outline-offset: 2px;
 	border-radius: 6px;
+}
+
+/* ==========================================================================
+   Ticket Workspace — Color Palette
+   Include before any component styles that reference these variables.
+   ========================================================================== */
+
+:root {
+    /* ---------- Neutrals: surfaces ---------- */
+    --page: #F6F7FB;
+    --surface: #FFFFFF;
+    --surface-sunken: #FAFBFD;
+    --border: #E3E6ED;
+    --border-strong: #CBD1DE;
+
+    /* ---------- Neutrals: text ---------- */
+    --text: #12172B;
+    --text-muted: #66708A;
+    --text-faint: #9AA2B8;
+
+    /* ---------- Brand: actions & active states only ---------- */
+    --brand: #2F5CFF;
+    --brand-hover: #2748D1;
+    --brand-soft: #EEF1FF;
+
+    /* ---------- Status: pending ---------- */
+    --amber-bg: #FFF3DF;
+    --amber-text: #92620C;
+    --amber-dot: #F0A73F;
+
+    /* ---------- Status: in progress ---------- */
+    --teal-bg: #E3F6F6;
+    --teal-text: #0E5B62;
+    --teal-dot: #14B8A6;
+
+    /* ---------- Status: completed ---------- */
+    --green-bg: #E7F8EC;
+    --green-text: #157F3C;
+    --green-dot: #22C55E;
+
+    /* ---------- Utility ---------- */
+    --danger: #DC2626;
+    --danger-soft: #FEF2F2;
+
+    --whatsapp-text: #15803D;
+    --whatsapp-bg: #ECFDF3;
+    --whatsapp-border: #BBF7D0;
+}
+
+/* ==========================================================================
+   Dark mode — toggled via <html class="dark">
+   ========================================================================== */
+
+html.dark {
+    --page: #0B0F19;
+    --surface: #121726;
+    --surface-sunken: #0F1420;
+    --border: #232A3D;
+    --border-strong: #323B54;
+
+    --text: #E8EAF3;
+    --text-muted: #8B93A7;
+    --text-faint: #5B6478;
+
+    --brand: #6C8CFF;
+    --brand-hover: #8AA3FF;
+    --brand-soft: #1A2036;
+
+    --amber-bg: #2B2211;
+    --amber-text: #F0A73F;
+    /* --amber-dot unchanged — dots stay saturated in both modes */
+
+    --teal-bg: #0F2626;
+    --teal-text: #2DD4C4;
+
+    --green-bg: #10261A;
+    --green-text: #4ADE80;
+
+    --danger-soft: #2A1616;
+
+    --whatsapp-bg: #10261A;
+    --whatsapp-border: #1F4D33;
 }

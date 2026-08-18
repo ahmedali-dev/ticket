@@ -34,6 +34,10 @@ return [
 
     'id' => 'الرقم',
 
+    'username' => 'اسم المستخدم',
+
+    "phone" => 'رقم الهادف',
+
     'company' => 'الشركة',
 
     'title' => 'العنوان',
@@ -140,4 +144,8 @@ return [
 
     'new_reply_from' => 'رد جديد من',
 
+
+
+    // permision
+    'not_all_add_ticket' => 'لا يمكنك اضافه تذكره'
 ];

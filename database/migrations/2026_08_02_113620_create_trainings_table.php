@@ -27,7 +27,9 @@ return new class extends Migration
      * Reverse the migrations.
      */
     public function down(): void
+    
     {
+        
         Schema::dropIfExists('training_modules');
         Schema::dropIfExists('training_chapters');
         Schema::dropIfExists('trainings');

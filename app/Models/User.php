@@ -17,6 +17,8 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public const TYPE_USER = 'user';
 
+    public const TYPE_SUPERADMIN = 'super_admin';
+
     public const TYPE_ADMIN = 'admin';
 
     /**
@@ -61,7 +63,18 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Ticket::class);
     }
 
-    public function company(): BelongsTo{
+    public function company(): BelongsTo
+    {
         return $this->belongsTo(Company::class, 'company_id');
+    }
+
+    public function isUser(): bool
+    {
+        return $this->type === self::TYPE_USER;
+    }
+
+    public function isSuperadmin(): bool
+    {
+        return $this->type === self::TYPE_SUPERADMIN;
     }
 }

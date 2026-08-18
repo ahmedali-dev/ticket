@@ -17,14 +17,13 @@ Route::get('/lang/{locale}', function ($locale) {
 })->name('lang.switch');
 
 Route::middleware(['auth', 'active'])->group(function () {
+
     Route::get('/ticket', [TicketController::class, 'index'])->name('ticket.index');
-
     Route::get('/ticket/{ticket}/reply', [TicketController::class, 'show'])->name('ticket.reply');
-
-    Route::get('/ticket/create', [TicketController::class, 'create'])->name('ticket.create');
+    Route::get('/ticket/create', [TicketController::class, 'create'])->name('ticket.create')->middleware(['isUser']);
     Route::post('/ticket', [TicketController::class, 'store'])->name('ticket.store');
     Route::post('/ticket/search', [TicketController::class, 'search'])->name('ticket.search');
-    Route::Post('/ticket/{ticket}/close', [TicketController::class, 'update'])->name('ticket.update');
+    Route::Post('/ticket/{ticket}/close', [TicketController::class, 'update'])->name('ticket.update')->middleware(['isAdmin']);
     // ------------------------------------
     // reply
     // ------------------------------------
@@ -41,7 +40,7 @@ Route::middleware(['auth', 'active'])->group(function () {
     // ------------------------------------
     // module
     // ------------------------------------
-    Route::Post('/module', [\App\Http\Controllers\ModuleController::class, 'store'])->name('module.store');
+    Route::Post('/module', [\App\Http\Controllers\ModuleController::class, 'store'])->name('module.store')->middleware(['isAdmin']);
 
     // ------------------------------------
     // chapter

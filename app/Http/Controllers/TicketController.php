@@ -15,10 +15,11 @@ class TicketController extends Controller
      */
     public function index()
     {
-        // dd(auth()->user()->type);
-        $ticket = auth()->user()->type === 'admin' ?
-            Ticket::latest()->paginate(10) :
-            auth()->user()->tickets()->latest()->paginate(10);
+        $user = auth()->user();
+
+        $ticket = $user->isAdmin()
+        ? Ticket::latest()->paginate(10)
+        : auth()->user()->tickets()->latest()->paginate(10);
 
         return view('ticket.dashborad', ['ticket' => $ticket]);
     }
@@ -80,7 +81,6 @@ class TicketController extends Controller
         Media::insert($media);
         // dd(Media::all());
 
-
         return to_route('ticket.index');
     }
 
@@ -139,7 +139,6 @@ class TicketController extends Controller
         $ticket->status = Ticket::STATUS_COMPLETED;
         $ticket->save();
 
-
         // dd($ticket);
         return back();
     }
@@ -152,7 +151,8 @@ class TicketController extends Controller
         //
     }
 
-    public function search(Request $request){
+    public function search(Request $request)
+    {
         $data = $request->validate([
             'search' => 'nullable|string|max:255',
             'date' => 'nullable|date',
