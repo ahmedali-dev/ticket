@@ -22,3 +22,7 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+/whatsapp-service/node_modules/
+/whatsapp-service/.auth/
+/whatsapp-service/.cache/
+/whatsapp-service/.sent.jsonl

@@ -56,16 +56,14 @@
         PAGE
     ========================================================== --}}
 
-    <div class="py-8">
+    <div class="ticket-create-page py-8">
 
         <div class="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8">
 
-            <div
-                class="overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800"
-            >
+            <div class="ticket-create-card overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
 
                 <div
-                    class="df-page"
+                    class="df-page ticket-create-content"
                     style="max-width:760px;"
                 >
 
@@ -106,7 +104,7 @@
                         action="{{ route('ticket.store') }}"
                         enctype="multipart/form-data"
                         id="createForm"
-                        style="padding:26px;"
+                        class="ticket-create-form"
                     >
 
                         @csrf
@@ -116,7 +114,7 @@
                             Ticket Title
                         ================================================== --}}
 
-                        <div style="margin-bottom:22px;">
+                        <div class="ticket-form-field" style="margin-bottom:22px;">
 
                             <label class="df-field-label">
 
@@ -157,11 +155,11 @@
                             Description
                         ================================================== --}}
 
-                        <div style="margin-bottom:22px;">
+                        <div class="ticket-form-field" style="margin-bottom:22px;">
 
                             <label class="df-field-label">
 
-                                {{ __('ticket.description_required') }}
+                                {{ __('ticket.description') }}
 
                                 <span class="df-req">
                                     *
@@ -171,7 +169,7 @@
 
 
                             <textarea
-                                class="df-input w-full h-[10rem]"
+                                class="df-input ticket-description-input w-full h-[10rem]"
                                 name="description"
                                 id="description"
                             >{{ old('description') }}</textarea>
@@ -194,7 +192,7 @@
                             Attachments
                         ================================================== --}}
 
-                        <div style="margin-bottom:8px;">
+                        <div class="ticket-form-field" style="margin-bottom:8px;">
 
                             <label class="df-field-label">
 
@@ -208,33 +206,17 @@
                                 id="dropzone"
                             >
 
-                                <div
-                                    style="
-                                        color:var(--primary);
-                                        margin-bottom:8px;
-                                    "
-                                >
+                                <div class="ticket-upload-icon">
                                     📤
                                 </div>
 
 
-                                <div
-                                    style="
-                                        font-weight:600;
-                                        font-size:14px;
-                                    "
-                                >
+                                <div class="ticket-upload-title">
                                     {{ __('ticket.click_to_browse_or_drag') }}
                                 </div>
 
 
-                                <div
-                                    style="
-                                        color:var(--text-muted);
-                                        font-size:12.5px;
-                                        margin-top:4px;
-                                    "
-                                >
+                                <div class="ticket-upload-help">
                                     {{ __('ticket.allowed_file_types') }}
                                 </div>
 
@@ -291,13 +273,7 @@
                             Submit
                         ================================================== --}}
 
-                        <div
-                            style="
-                                display:flex;
-                                justify-content:flex-end;
-                                margin-top:26px;
-                            "
-                        >
+                        <div class="ticket-submit-row">
 
                             <button
                                 class="df-btn df-btn-primary"
@@ -396,6 +372,15 @@
         const gallery =
             document.getElementById('gallery');
 
+        let selectedFiles = [];
+        let previewUrls = [];
+
+        function syncFiles() {
+            const transfer = new DataTransfer();
+            selectedFiles.forEach(file => transfer.items.add(file));
+            fileInput.files = transfer.files;
+        }
+
 
         /*
         |--------------------------------------------------------------------------
@@ -410,7 +395,7 @@
 
             // Keep existing files
             Array
-                .from(fileInput.files)
+                .from(selectedFiles)
                 .forEach(file => {
 
                     dt.items.add(file);
@@ -431,6 +416,8 @@
             // Update input
             fileInput.files = dt.files;
 
+            selectedFiles = Array.from(dt.files);
+
 
             renderGallery();
 
@@ -445,23 +432,35 @@
 
         function renderGallery() {
 
+            previewUrls.forEach(url => URL.revokeObjectURL(url));
+            previewUrls = [];
+
             gallery.innerHTML =
                 Array
-                    .from(fileInput.files)
-                    .map(file => `
+                    .from(selectedFiles)
+                    .map((file, index) => {
+                        const url = URL.createObjectURL(file);
+                        previewUrls.push(url);
+                        let preview;
+                        if (file.type.startsWith('image/')) {
+                            preview = `<img src="${url}" alt="${escapeHtml(file.name)}" class="df-gallery-thumb" />`;
+                        } else if (file.type.startsWith('video/')) {
+                            preview = `<video src="${url}" controls preload="metadata" class="df-gallery-thumb"></video>`;
+                        } else if (file.type.startsWith('audio/')) {
+                            preview = `<audio src="${url}" controls preload="metadata" class="ticket-file-audio"></audio>`;
+                        } else {
+                            preview = `<a href="${url}" target="_blank" rel="noopener" class="ticket-file-preview">${escapeHtml(file.name.split('.').pop().toUpperCase())}</a>`;
+                        }
+                        return `
 
                         <div class="df-gallery-card">
 
-                            <img
-                                src="${URL.createObjectURL(file)}"
-                                alt="${escapeHtml(file.name)}"
-                                class="df-gallery-thumb"
-                            />
+                            ${preview}
 
                             <button
                                 type="button"
                                 class="df-gallery-x"
-                                data-id="${escapeHtml(file.name)}"
+                                data-index="${index}"
                                 aria-label="{{ __('ticket.remove_image') }}"
                             >
                                 ×
@@ -484,7 +483,8 @@
 
                         </div>
 
-                    `)
+                    `;
+                    })
                     .join('');
 
 
@@ -500,28 +500,8 @@
 
                     button.addEventListener('click', () => {
 
-                        const dt =
-                            new DataTransfer();
-
-                        const id =
-                            button.dataset.id;
-
-
-                        Array
-                            .from(fileInput.files)
-                            .forEach(file => {
-
-                                if (file.name !== id) {
-
-                                    dt.items.add(file);
-
-                                }
-
-                            });
-
-
-                        fileInput.files =
-                            dt.files;
+                        selectedFiles.splice(Number(button.dataset.index), 1);
+                        syncFiles();
 
 
                         renderGallery();
@@ -541,7 +521,9 @@
 
         dropzone.addEventListener(
             'click',
-            () => fileInput.click()
+            event => {
+                if (event.target !== fileInput) fileInput.click();
+            }
         );
 
 
@@ -619,10 +601,12 @@
                     event.target.files
                 );
 
-                event.target.value = '';
-
             }
         );
+
+        window.addEventListener('pagehide', () => {
+            previewUrls.forEach(url => URL.revokeObjectURL(url));
+        });
 
 
         /*

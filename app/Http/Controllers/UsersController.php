@@ -30,7 +30,7 @@ class UsersController extends Controller
             'password' => ['required', 'string', 'min:8'],
             'status' => ['required', Rule::in(['active', 'disabled'])],
             'company_id' => ['nullable', 'exists:companies,id'],
-            'phone' => ['nullable', 'numeric', 'digits:9'],
+            'phone' => ['nullable', 'string', 'max:32', 'regex:/^\+?[0-9 ()-]{8,32}$/'],
             'type' => ['nullable', 'string', Rule::in('user', 'admin')]
         ]);
 
@@ -40,7 +40,7 @@ class UsersController extends Controller
             'password' => Hash::make($validated['password']),
             'status' => $validated['status'] == 'active',
             'company_id' => $validated['company_id'] ?? null,
-            'phone' => $validated['phone'],
+            'phone' => $validated['phone'] ?? null,
             'type' => $validated['type']
         ]);
 
@@ -85,7 +85,7 @@ class UsersController extends Controller
             'password' => ['nullable', 'string', 'min:8'],
             'status' => ['required', Rule::in(['active', 'disabled'])],
             'company_id' => ['nullable', 'exists:companies,id'],
-            'phone' => ['nullable', 'numeric', 'digits:9'],
+            'phone' => ['nullable', 'string', 'max:32', 'regex:/^\+?[0-9 ()-]{8,32}$/'],
             'type' => ['nullable', 'string', Rule::in(['user', 'admin'])]
         ]);
 
@@ -95,7 +95,7 @@ class UsersController extends Controller
             'password' => !empty($validated['password']) ? Hash::make($validated['password']) : $user->password,
             'status' => $validated['status'] == 'active',
             'company_id' => $validated['company_id'] ?? null,
-            'phone' => $validated['phone'],
+            'phone' => $validated['phone'] ?? null,
             'type' => $validated['type']
         ]);
 

@@ -17,6 +17,8 @@ Route::get('/lang/{locale}', function ($locale) {
 })->name('lang.switch');
 
 Route::middleware(['auth', 'active'])->group(function () {
+    Route::get('/whatsapp', [\App\Http\Controllers\WhatsAppController::class, 'index'])->name('whatsapp.index');
+    Route::get('/whatsapp/status', [\App\Http\Controllers\WhatsAppController::class, 'status'])->name('whatsapp.status');
 
     Route::get('/ticket', [TicketController::class, 'index'])->name('ticket.index');
     Route::get('/ticket/{ticket}/reply', [TicketController::class, 'show'])->name('ticket.reply');
@@ -41,6 +43,8 @@ Route::middleware(['auth', 'active'])->group(function () {
     // module
     // ------------------------------------
     Route::Post('/module', [\App\Http\Controllers\ModuleController::class, 'store'])->name('module.store')->middleware(['isAdmin']);
+    Route::put('/module/{module}', [\App\Http\Controllers\ModuleController::class, 'update'])->name('module.update')->middleware(['isAdmin']);
+    Route::delete('/module/{module}', [\App\Http\Controllers\ModuleController::class, 'destroy'])->name('module.destroy')->middleware(['isAdmin']);
 
     // ------------------------------------
     // chapter

@@ -23,23 +23,24 @@
 
 <body class="font-sans antialiased h-full bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
     @include('components.loading-overlay')
-    <div class="m-3 text-xl">{{ auth()->user()->type }}</div>
     <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
         @include('layouts.navigation')
 
-        <!-- Page Heading -->
-        @isset($header)
-            <header class="bg-white shadow dark:bg-gray-800 dark:shadow-none dark:border-b dark:border-gray-700">
-                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                    {{ $header }}
-                </div>
-            </header>
-        @endisset
+        <div class="app-content min-h-screen lg:ms-72">
+            <!-- Page Heading -->
+            @isset($header)
+                <header class="bg-white pt-16 shadow dark:bg-gray-800 dark:shadow-none dark:border-b dark:border-gray-700 lg:pt-0">
+                    <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+                        {{ $header }}
+                    </div>
+                </header>
+            @endisset
 
-        <!-- Page Content -->
-        <main>
-            {{ $slot }}
-        </main>
+            <!-- Page Content -->
+            <main class="{{ isset($header) ? '' : 'pt-16' }} lg:pt-0">
+                {{ $slot }}
+            </main>
+        </div>
     </div>
 
     @stack('scripts')

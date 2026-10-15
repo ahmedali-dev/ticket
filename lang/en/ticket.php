@@ -25,6 +25,8 @@ return [
     'add_ticket' => 'Add Ticket',
 
     'view_ticket' => 'View Ticket',
+    'quick_view' => 'Quick View',
+    'close_preview' => 'Close preview',
 
     'actions' => 'Actions',
 
@@ -76,6 +78,8 @@ return [
 
     'ticket_title' => 'Ticket Title',
 
+    'description_required' => 'Description',
+
     'enter_ticket_title' => 'Enter ticket title',
 
     'attachments' => 'Attachments',
@@ -115,6 +119,14 @@ return [
     'opened_this_ticket' => 'opened this ticket',
 
     'conversation' => 'Conversation',
+    'messages' => 'messages',
+    'your_reply' => 'Your reply',
+    'reply_placeholder' => 'Write a reply to the support team…',
+    'no_replies_yet' => 'No replies yet. Start the conversation below.',
+    'confirm_close' => 'Mark this ticket as completed?',
+    'close_dialog_title' => 'Close this ticket?',
+    'close_dialog_description' => 'Confirm that the issue has been resolved. This ticket will be marked as completed.',
+    'closing' => 'Closing ticket…',
 
     'write_reply' => 'Write your reply',
 

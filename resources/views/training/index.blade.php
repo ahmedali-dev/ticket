@@ -41,7 +41,7 @@
     ========================================================== --}}
 
     <main
-        class="flex-1 max-w-[1400px] w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-8"
+        class="training-library flex-1 max-w-[1400px] w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-8"
     >
 
 
@@ -50,13 +50,14 @@
         ====================================================== --}}
 
         <section
-            class="flex items-start justify-between gap-6 flex-wrap"
+            class="training-library-heading flex items-start justify-between gap-6 flex-wrap"
         >
 
             <div>
 
                 <h1 class="text-2xl sm:text-3xl font-bold">
                     {{ __('training.courses') }}
+                    <span class="training-library-count">{{ $trainings->count() }}</span>
                 </h1>
 
                 <p class="text-slate-500 text-sm mt-2">
@@ -75,7 +76,7 @@
                 >
 
                     <span aria-hidden="true">
-                        ➕
+                        +
                     </span>
 
                     {{ __('training.add_new_course') }}
@@ -92,6 +93,7 @@
         ====================================================== --}}
 
         <form
+            class="training-library-search"
             action="{{ route('training.index') }}"
             method="GET"
         >
@@ -108,7 +110,7 @@
                         class="absolute start-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none"
                         aria-hidden="true"
                     >
-                        🔍
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg>
                     </span>
 
 
@@ -182,7 +184,7 @@
         >
 
             <div
-                class="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-6"
+                class="training-library-grid"
             >
 
 
@@ -193,7 +195,7 @@
                     ================================================== --}}
 
                     <article
-                        class="bg-white border border-slate-200 rounded-xl2 overflow-hidden flex flex-col hover:shadow-lift hover:-translate-y-1 hover:border-transparent transition-all"
+                        class="training-library-card"
                     >
 
                         <a
@@ -202,7 +204,7 @@
 
                             {{-- Course Image --}}
                             <div
-                                class="relative aspect-video bg-gradient-to-br from-teal-100 to-violet-100 overflow-hidden"
+                                class="training-library-cover relative aspect-video bg-gradient-to-br from-teal-100 to-violet-100 overflow-hidden"
                             >
 
                                 {{-- Status --}}
@@ -229,11 +231,7 @@
 
                                 @else
 
-                                    <img
-                                        class="w-full h-full object-cover"
-                                        src="data:image/png;base64,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"
-                                        alt="{{ $training->title }}"
-                                    >
+                                    <div class="training-library-placeholder" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="m2 9 10-5 10 5-10 5L2 9ZM6 11v6c3 3 9 3 12 0v-6M22 9v7"/></svg></div>
 
                                 @endif
 
@@ -262,7 +260,7 @@
 
                                     <span class="flex items-center gap-1">
 
-                                        📘
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="m10 8 6 4-6 4V8Z"/></svg>
 
                                         {{ $training->module->count() }}
 
@@ -273,13 +271,15 @@
 
                                     <span class="flex items-center gap-1">
 
-                                        🗓️
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 11h18"/></svg>
 
-                                        {{ $training->created_at->format('y/m/d') }}
+                                        {{ $training->created_at->format('M d, Y') }}
 
                                     </span>
 
                                 </div>
+
+                                <span class="training-library-open">{{ __('training.open_course') }} <span aria-hidden="true">↗</span></span>
 
                             </div>
 
@@ -299,7 +299,7 @@
                                     class="flex items-center justify-center gap-2 w-full rounded-xl border border-slate-200 text-slate-700 font-semibold text-sm py-2.5 hover:bg-slate-100 hover:border-slate-300 transition-colors"
                                 >
 
-                                    ✏️
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m15 5 4 4M4 20l4-1L20 7a2.8 2.8 0 0 0-4-4L4 15v5Z"/></svg>
 
                                     {{ __('training.edit') }}
 
@@ -315,7 +315,7 @@
                 @empty
 
                     <div
-                        class="m-auto my-3 text-xl"
+                        class="training-library-empty"
                     >
                         {{ __('training.no_data_found') }}
                     </div>

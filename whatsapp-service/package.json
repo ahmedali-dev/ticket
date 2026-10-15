@@ -1,0 +1,13 @@
+{
+  "name": "ticket-whatsapp-bridge",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": { "start": "node server.cjs", "check": "node --check server.cjs" },
+  "overrides": { "basic-ftp": "^6.2.3" },
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "qrcode": "^1.5.4",
+    "whatsapp-web.js": "^1.34.7"
+  }
+}

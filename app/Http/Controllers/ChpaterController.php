@@ -17,6 +17,6 @@ class ChpaterController extends Controller
         $validated['user_id'] = auth()->id();
         $chapter = Chapter::create($validated);
 //        dd($chapter);
-        response()->json(['chapter' => $validated]);
+        return response()->json(['chapter' => $chapter], 201);
     }
 }

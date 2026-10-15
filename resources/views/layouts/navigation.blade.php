@@ -1,561 +1,189 @@
-<nav class="bg-white border-b border-gray-100 dark:bg-gray-800 dark:border-gray-700">
+@php
+    $navItems = [
+        ['route' => 'dashboard', 'label' => __('dashborad'), 'pattern' => 'dashboard', 'admin' => true],
+        ['route' => 'users.index', 'label' => __('users'), 'pattern' => 'users.*', 'admin' => true],
+        ['route' => 'company.index', 'label' => __('company'), 'pattern' => 'company.*', 'admin' => true],
+        ['route' => 'ticket.index', 'label' => __('ticket'), 'pattern' => 'ticket.*', 'admin' => false],
+        ['route' => 'training.index', 'label' => __('training'), 'pattern' => 'training.*', 'admin' => false],
+        ['route' => 'whatsapp.index', 'label' => __('whatsapp.connection'), 'pattern' => 'whatsapp.*', 'admin' => true],
+    ];
 
-    <!-- Main Navigation -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    $visibleNavItems = collect($navItems)->filter(
+        fn (array $item) => ! $item['admin'] || auth()->user()->type === 'admin'
+    );
+@endphp
 
-        <div class="flex justify-between items-center h-16">
+<!-- Mobile top bar -->
+<header class="fixed inset-x-0 top-0 z-40 flex h-16 items-center justify-between border-b border-gray-200 bg-white px-4 dark:border-gray-700 dark:bg-gray-800 lg:hidden">
+    <a href="{{ route('dashboard') }}" class="flex items-center gap-3">
+        <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-100" />
+        <span class="text-sm font-semibold text-gray-800 dark:text-gray-100">{{ config('app.name', 'Laravel') }}</span>
+    </a>
 
-            <!-- Logo + Desktop Navigation -->
-            <div class="flex items-center">
+    <button id="sidebar-toggle" type="button" class="inline-flex items-center justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200" aria-controls="app-sidebar" aria-expanded="false" aria-label="{{ __('Open navigation') }}">
+        <svg id="sidebar-open-icon" class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+        <svg id="sidebar-close-icon" class="hidden h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+    </button>
+</header>
 
-                <!-- Logo -->
-                <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
-                        <x-application-logo
-                            class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-100"
-                        />
-                    </a>
-                </div>
+<!-- Sidebar backdrop for mobile -->
+<div id="sidebar-backdrop" class="fixed inset-0 z-40 hidden bg-gray-900/50 lg:hidden" aria-hidden="true"></div>
 
-                <!-- Desktop Navigation -->
-                <div class="hidden sm:flex items-center gap-2 ms-10">
-
-                    @if (auth()->user()->type === 'admin')
-
-                        <!-- Dashboard -->
-                        <a
-                            href="{{ route('dashboard') }}"
-                            class="nav-link px-3 py-2 rounded-lg text-sm font-medium transition
-                            {{ request()->routeIs('dashboard')
-                                ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400'
-                                : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white'
-                            }}"
-                        >
-                            {{ __('dashborad') }}
-                        </a>
-
-                        <!-- Users -->
-                        <a
-                            href="{{ route('users.index') }}"
-                            class="nav-link px-3 py-2 rounded-lg text-sm font-medium transition
-                            {{ request()->routeIs('users.*')
-                                ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400'
-                                : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white'
-                            }}"
-                        >
-                            {{ __('users') }}
-                        </a>
-
-                        <!-- Company -->
-                        <a
-                            href="{{ route('company.index') }}"
-                            class="nav-link px-3 py-2 rounded-lg text-sm font-medium transition
-                            {{ request()->routeIs('company.*')
-                                ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400'
-                                : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white'
-                            }}"
-                        >
-                            {{ __('company') }}
-                        </a>
-
-                    @endif
-
-
-                    <!-- Ticket -->
-                    <a
-                        href="{{ route('ticket.index') }}"
-                        class="nav-link px-3 py-2 rounded-lg text-sm font-medium transition
-                        {{ request()->routeIs('ticket.*')
-                            ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400'
-                            : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white'
-                        }}"
-                    >
-                        {{ __('ticket') }}
-                    </a>
-
-
-                    <!-- Training -->
-                    <a
-                        href="{{ route('training.index') }}"
-                        class="nav-link px-3 py-2 rounded-lg text-sm font-medium transition
-                        {{ request()->routeIs('training.*')
-                            ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400'
-                            : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white'
-                        }}"
-                    >
-                        {{ __('training') }}
-                    </a>
-
-                </div>
-
-            </div>
-
-
-            <!-- Desktop User Menu -->
-            <div class="hidden sm:flex items-center">
-
-                <div class="relative">
-
-                    <!-- User Button -->
-                    <button
-                        id="user-menu-button"
-                        type="button"
-                        class="flex items-center gap-2 px-3 py-2 rounded-lg
-                        text-sm font-medium text-gray-600
-                        hover:bg-gray-100 hover:text-gray-900
-                        dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white
-                        transition"
-                    >
-
-                        <div>
-                            {{ Auth::user()->name }}
-                        </div>
-
-                        <svg
-                            id="user-menu-arrow"
-                            class="w-4 h-4 transition-transform duration-200"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M19 9l-7 7-7-7"
-                            />
-                        </svg>
-
-                    </button>
-
-
-                    <!-- User Dropdown -->
-                    <div
-                        id="user-menu"
-                        class="hidden absolute end-0 mt-2 w-48
-                        bg-white dark:bg-gray-800
-                        border border-gray-200 dark:border-gray-700
-                        rounded-lg shadow-lg
-                        overflow-hidden z-50"
-                    >
-
-                        <!-- Profile -->
-                        <a
-                            href="{{ route('profile.edit') }}"
-                            class="block px-4 py-2 text-sm
-                            text-gray-700 dark:text-gray-300
-                            hover:bg-gray-100 dark:hover:bg-gray-700"
-                        >
-                            {{ __('Profile') }}
-                        </a>
-
-
-                        <!-- Language -->
-                        <div class="border-t border-gray-100 dark:border-gray-700">
-
-                            <div class="px-4 pt-3 pb-1 text-xs text-gray-400">
-                                {{ __('Language') }}
-                            </div>
-
-                            <a
-                                href="{{ route('lang.switch', 'ar') }}"
-                                class="flex items-center gap-2 px-4 py-2 text-sm
-                                text-gray-700 dark:text-gray-300
-                                hover:bg-gray-100 dark:hover:bg-gray-700"
-                            >
-                                🇸🇦
-                                {{ __('Arabic') }}
-                            </a>
-
-                            <a
-                                href="{{ route('lang.switch', 'en') }}"
-                                class="flex items-center gap-2 px-4 py-2 text-sm
-                                text-gray-700 dark:text-gray-300
-                                hover:bg-gray-100 dark:hover:bg-gray-700"
-                            >
-                                🇬🇧
-                                {{ __('English') }}
-                            </a>
-
-                        </div>
-
-
-                        <!-- Logout -->
-                        <div class="border-t border-gray-100 dark:border-gray-700">
-
-                            <form
-                                method="POST"
-                                action="{{ route('logout') }}"
-                            >
-                                @csrf
-
-                                <button
-                                    type="submit"
-                                    class="w-full text-start px-4 py-2 text-sm
-                                    text-red-600 dark:text-red-400
-                                    hover:bg-gray-100 dark:hover:bg-gray-700"
-                                >
-                                    {{ __('Log Out') }}
-                                </button>
-
-                            </form>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- Mobile Menu Button -->
-            <button
-                id="mobile-menu-button"
-                type="button"
-                class="sm:hidden inline-flex items-center justify-center
-                p-2 rounded-lg
-                text-gray-500 hover:text-gray-700
-                hover:bg-gray-100
-                dark:text-gray-400 dark:hover:text-gray-200
-                dark:hover:bg-gray-700
-                focus:outline-none transition"
-                aria-expanded="false"
-            >
-
-                <!-- Hamburger -->
-                <svg
-                    id="hamburger-icon"
-                    class="w-6 h-6"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M4 6h16M4 12h16M4 18h16"
-                    />
-                </svg>
-
-                <!-- Close -->
-                <svg
-                    id="close-icon"
-                    class="hidden w-6 h-6"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M6 18L18 6M6 6l12 12"
-                    />
-                </svg>
-
-            </button>
-
-        </div>
-
+<!-- Application sidebar -->
+<aside id="app-sidebar" class="fixed inset-y-0 start-0 z-50 flex w-72 {{ app()->getLocale() === 'ar' ? 'translate-x-full' : '-translate-x-full' }} flex-col border-e border-gray-200 bg-white transition-transform duration-200 dark:border-gray-700 dark:bg-gray-800 lg:translate-x-0" aria-label="{{ __('Main navigation') }}">
+    <div class="flex h-16 shrink-0 items-center border-b border-gray-200 px-6 dark:border-gray-700">
+        <a href="{{ route('dashboard') }}" class="flex items-center gap-3">
+            <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-100" />
+            <span class="text-sm font-semibold text-gray-800 dark:text-gray-100">{{ config('app.name', 'Laravel') }}</span>
+        </a>
     </div>
 
+    <button id="sidebar-collapse-toggle" type="button" class="sidebar-collapse-toggle" aria-controls="app-sidebar" aria-expanded="true"
+        data-collapse-label="{{ app()->getLocale() === 'ar' ? 'تصغير القائمة الجانبية' : 'Collapse sidebar' }}"
+        data-expand-label="{{ app()->getLocale() === 'ar' ? 'توسيع القائمة الجانبية' : 'Expand sidebar' }}"
+        aria-label="{{ app()->getLocale() === 'ar' ? 'تصغير القائمة الجانبية' : 'Collapse sidebar' }}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16m7-12-4 4 4 4"/></svg>
+    </button>
 
-    <!-- Mobile Navigation -->
-    <div
-        id="mobile-menu"
-        class="hidden sm:hidden border-t border-gray-100 dark:border-gray-700"
-    >
+    <nav class="flex-1 space-y-1 overflow-y-auto p-4">
+        <p class="mb-3 px-3 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+            {{ __('Navigation') }}
+        </p>
 
-        <div class="px-4 pt-3 pb-4 space-y-1">
-
-            @if (auth()->user()->type === 'admin')
-
-                <!-- Dashboard -->
-                <a
-                    href="{{ route('dashboard') }}"
-                    class="block px-4 py-2 rounded-lg text-sm font-medium
-                    {{ request()->routeIs('dashboard')
-                        ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400'
-                        : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
-                    }}"
-                >
-                    {{ __('dashborad') }}
-                </a>
-
-
-                <!-- Users -->
-                <a
-                    href="{{ route('users.index') }}"
-                    class="block px-4 py-2 rounded-lg text-sm font-medium
-                    {{ request()->routeIs('users.*')
-                        ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400'
-                        : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
-                    }}"
-                >
-                    {{ __('users') }}
-                </a>
-
-
-                <!-- Company -->
-                <a
-                    href="{{ route('company.index') }}"
-                    class="block px-4 py-2 rounded-lg text-sm font-medium
-                    {{ request()->routeIs('company.*')
-                        ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400'
-                        : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
-                    }}"
-                >
-                    {{ __('company') }}
-                </a>
-
-            @endif
-
-
-            <!-- Ticket -->
-            <a
-                href="{{ route('ticket.index') }}"
-                class="block px-4 py-2 rounded-lg text-sm font-medium
-                {{ request()->routeIs('ticket.*')
-                    ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400'
-                    : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
-                }}"
-            >
-                {{ __('ticket') }}
+        @foreach ($visibleNavItems as $item)
+            <a href="{{ route($item['route']) }}" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition {{ request()->routeIs($item['pattern']) ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white' }}">
+                <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    @switch($item['route'])
+                        @case('dashboard')
+                            <rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>
+                            @break
+                        @case('users.index')
+                            <circle cx="9" cy="8" r="3"/><path d="M3 21v-2a6 6 0 0 1 12 0v2M16 5a3 3 0 0 1 0 6M21 21v-2a6 6 0 0 0-4-5.65"/>
+                            @break
+                        @case('company.index')
+                            <rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 7h1m4 0h1M9 11h1m4 0h1M10 21v-6h4v6"/>
+                            @break
+                        @case('ticket.index')
+                            <path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3a2 2 0 0 0 0 4v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-3a2 2 0 0 0 0-4V7Z"/><path d="M15 5v2m0 4v2m0 4v2"/>
+                            @break
+                        @case('training.index')
+                            <path d="m2 9 10-5 10 5-10 5L2 9ZM6 11v6c3 3 9 3 12 0v-6M22 9v7"/>
+                            @break
+                        @case('whatsapp.index')
+                            <path d="M21 11.5a9 9 0 0 1-13.4 7.9L3 21l1.6-4.6A9 9 0 1 1 21 11.5Z"/><path d="M8 8c0 4 4 8 8 8l1-2-3-1-1 1-3-3 1-1-1-3-2 1Z"/>
+                            @break
+                    @endswitch
+                </svg>
+                <span class="sidebar-link-label">{{ $item['label'] }}</span>
             </a>
+        @endforeach
+    </nav>
 
-
-            <!-- Training -->
-            <a
-                href="{{ route('training.index') }}"
-                class="block px-4 py-2 rounded-lg text-sm font-medium
-                {{ request()->routeIs('training.*')
-                    ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400'
-                    : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
-                }}"
-            >
-                {{ __('training') }}
-            </a>
-
+    <div class="shrink-0 border-t border-gray-200 p-4 dark:border-gray-700">
+        <div class="mb-3 flex items-center gap-3">
+            <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-sm font-semibold text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300">
+                {{ str(Auth::user()->name)->substr(0, 1)->upper() }}
+            </div>
+            <div class="min-w-0">
+                <p class="truncate text-sm font-medium text-gray-800 dark:text-gray-100">{{ Auth::user()->name }}</p>
+                <p class="truncate text-xs text-gray-500 dark:text-gray-400">{{ Auth::user()->email }}</p>
+            </div>
         </div>
 
+        <div class="space-y-1">
+            <a href="{{ route('profile.edit') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">
+                <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/></svg>
+                <span class="sidebar-link-label">{{ __('Profile') }}</span>
+            </a>
 
-        <!-- Mobile User Information -->
-        <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-4">
-
-            <div class="mb-4">
-
-                <div class="font-medium text-base text-gray-800 dark:text-gray-100">
-                    {{ Auth::user()->name }}
-                </div>
-
-                <div class="font-medium text-sm text-gray-500 dark:text-gray-400">
-                    {{ Auth::user()->email }}
-                </div>
-
+            <div class="flex items-center gap-2 px-3 py-2 text-xs text-gray-500 dark:text-gray-400">
+                <span>{{ __('Language') }}:</span>
+                <a href="{{ route('lang.switch', 'ar') }}" class="hover:text-indigo-600 dark:hover:text-indigo-400">🇸🇦 {{ __('Arabic') }}</a>
+                <span aria-hidden="true">·</span>
+                <a href="{{ route('lang.switch', 'en') }}" class="hover:text-indigo-600 dark:hover:text-indigo-400">🇬🇧 {{ __('English') }}</a>
             </div>
 
-
-            <div class="space-y-1">
-
-                <!-- Profile -->
-                <a
-                    href="{{ route('profile.edit') }}"
-                    class="block px-4 py-2 rounded-lg text-sm
-                    text-gray-600 hover:bg-gray-100
-                    dark:text-gray-300 dark:hover:bg-gray-700"
-                >
-                    {{ __('Profile') }}
-                </a>
-
-
-                <!-- Arabic -->
-                <a
-                    href="{{ route('lang.switch', 'ar') }}"
-                    class="block px-4 py-2 rounded-lg text-sm
-                    text-gray-600 hover:bg-gray-100
-                    dark:text-gray-300 dark:hover:bg-gray-700"
-                >
-                    🇸🇦 {{ __('Arabic') }}
-                </a>
-
-
-                <!-- English -->
-                <a
-                    href="{{ route('lang.switch', 'en') }}"
-                    class="block px-4 py-2 rounded-lg text-sm
-                    text-gray-600 hover:bg-gray-100
-                    dark:text-gray-300 dark:hover:bg-gray-700"
-                >
-                    🇬🇧 {{ __('English') }}
-                </a>
-
-
-                <!-- Logout -->
-                <form
-                    method="POST"
-                    action="{{ route('logout') }}"
-                >
-                    @csrf
-
-                    <button
-                        type="submit"
-                        class="w-full text-start px-4 py-2 rounded-lg text-sm
-                        text-red-600 dark:text-red-400
-                        hover:bg-gray-100 dark:hover:bg-gray-700"
-                    >
-                        {{ __('Log Out') }}
-                    </button>
-
-                </form>
-
-            </div>
-
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="flex items-center gap-3 w-full rounded-lg px-3 py-2 text-start text-sm text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20">
+                    <svg class="h-5 w-5 shrink-0 rtl:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+                    <span class="sidebar-link-label">{{ __('Log Out') }}</span>
+                </button>
+            </form>
         </div>
-
     </div>
+</aside>
 
-</nav>
-
-
-<!-- Navigation JavaScript -->
 <script>
+    (() => {
+        const toggle = document.getElementById('sidebar-toggle');
+        const sidebar = document.getElementById('app-sidebar');
+        const backdrop = document.getElementById('sidebar-backdrop');
+        const openIcon = document.getElementById('sidebar-open-icon');
+        const closeIcon = document.getElementById('sidebar-close-icon');
 
-    // ==========================================
-    // Mobile Menu
-    // ==========================================
+        if (!toggle || !sidebar || !backdrop) return;
 
-    const mobileMenuButton =
-        document.getElementById('mobile-menu-button');
+        const isRtl = document.documentElement.lang.startsWith('ar');
 
-    const mobileMenu =
-        document.getElementById('mobile-menu');
-
-    const hamburgerIcon =
-        document.getElementById('hamburger-icon');
-
-    const closeIcon =
-        document.getElementById('close-icon');
-
-
-    mobileMenuButton.addEventListener('click', () => {
-
-        const isOpen =
-            !mobileMenu.classList.contains('hidden');
-
-        mobileMenu.classList.toggle('hidden');
-
-        hamburgerIcon.classList.toggle('hidden');
-
-        closeIcon.classList.toggle('hidden');
-
-        mobileMenuButton.setAttribute(
-            'aria-expanded',
-            !isOpen
-        );
-
-    });
-
-
-    // ==========================================
-    // User Dropdown
-    // ==========================================
-
-    const userMenuButton =
-        document.getElementById('user-menu-button');
-
-    const userMenu =
-        document.getElementById('user-menu');
-
-    const userMenuArrow =
-        document.getElementById('user-menu-arrow');
-
-
-    if (userMenuButton) {
-
-        userMenuButton.addEventListener('click', (event) => {
-
-            event.stopPropagation();
-
-            userMenu.classList.toggle('hidden');
-
-            userMenuArrow.classList.toggle('rotate-180');
-
+        const collapseToggle = document.getElementById('sidebar-collapse-toggle');
+        const hoverQuery = window.matchMedia('(min-width: 1024px) and (hover: hover) and (pointer: fine)');
+        let pointerInside = false;
+        const updatePeek = () => {
+            const peek = document.documentElement.classList.contains('sidebar-collapsed') && hoverQuery.matches &&
+                (pointerInside || sidebar.contains(document.activeElement));
+            document.documentElement.classList.toggle('sidebar-peeking', peek);
+        };
+        const setCollapsed = collapsed => {
+            document.documentElement.classList.toggle('sidebar-collapsed', collapsed);
+            document.documentElement.classList.remove('sidebar-peeking');
+            collapseToggle.setAttribute('aria-expanded', String(!collapsed));
+            const label = collapsed ? collapseToggle.dataset.expandLabel : collapseToggle.dataset.collapseLabel;
+            collapseToggle.setAttribute('aria-label', label);
+            collapseToggle.title = label;
+        };
+        try { setCollapsed(localStorage.getItem('ticket.sidebarCollapsed') === 'true'); } catch { setCollapsed(false); }
+        collapseToggle.addEventListener('click', () => {
+            const collapsed = !document.documentElement.classList.contains('sidebar-collapsed');
+            setCollapsed(collapsed);
+            try { localStorage.setItem('ticket.sidebarCollapsed', String(collapsed)); } catch {}
+        });
+        sidebar.addEventListener('mouseenter', () => { pointerInside = true; updatePeek(); });
+        sidebar.addEventListener('mouseleave', () => { pointerInside = false; updatePeek(); });
+        sidebar.addEventListener('focusin', updatePeek);
+        sidebar.addEventListener('focusout', () => requestAnimationFrame(updatePeek));
+        hoverQuery.addEventListener('change', updatePeek);
+        sidebar.querySelectorAll('a, button[type="submit"]').forEach(link => {
+            if (!link.title) link.title = link.textContent.trim();
         });
 
-    }
+        const setOpen = (open) => {
+            sidebar.classList.toggle('-translate-x-full', !open && !isRtl);
+            sidebar.classList.toggle('translate-x-full', !open && isRtl);
+            sidebar.classList.toggle('translate-x-0', open);
+            backdrop.classList.toggle('hidden', !open);
+            openIcon.classList.toggle('hidden', open);
+            closeIcon.classList.toggle('hidden', !open);
+            toggle.setAttribute('aria-expanded', String(open));
+            document.body.classList.toggle('overflow-hidden', open);
+        };
 
-
-    // ==========================================
-    // Close Dropdown When Clicking Outside
-    // ==========================================
-
-    document.addEventListener('click', (event) => {
-
-        if (
-            userMenu &&
-            userMenuButton &&
-            !userMenu.contains(event.target) &&
-            !userMenuButton.contains(event.target)
-        ) {
-
-            userMenu.classList.add('hidden');
-
-            userMenuArrow.classList.remove('rotate-180');
-
-        }
-
-    });
-
-
-    // ==========================================
-    // Close Mobile Menu When Clicking Link
-    // ==========================================
-
-    document
-        .querySelectorAll('#mobile-menu a')
-        .forEach(link => {
-
-            link.addEventListener('click', () => {
-
-                mobileMenu.classList.add('hidden');
-
-                hamburgerIcon.classList.remove('hidden');
-
-                closeIcon.classList.add('hidden');
-
-                mobileMenuButton.setAttribute(
-                    'aria-expanded',
-                    'false'
-                );
-
-            });
-
+        toggle.addEventListener('click', () => {
+            setOpen(toggle.getAttribute('aria-expanded') !== 'true');
         });
 
+        backdrop.addEventListener('click', () => setOpen(false));
 
-    // ==========================================
-    // Close Mobile Menu On Resize
-    // ==========================================
+        sidebar.querySelectorAll('a').forEach((link) => {
+            link.addEventListener('click', () => setOpen(false));
+        });
 
-    window.addEventListener('resize', () => {
-
-        if (window.innerWidth >= 640) {
-
-            mobileMenu.classList.add('hidden');
-
-            hamburgerIcon.classList.remove('hidden');
-
-            closeIcon.classList.add('hidden');
-
-            mobileMenuButton.setAttribute(
-                'aria-expanded',
-                'false'
-            );
-
-        }
-
-    });
-
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 1024) setOpen(false);
+        });
+    })();
 </script>

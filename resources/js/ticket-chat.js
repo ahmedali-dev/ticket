@@ -86,13 +86,17 @@ document.addEventListener('DOMContentLoaded', () => {
         row.dataset.id = id;
 
         row.innerHTML = `
+            <span class="ticket-message-avatar ${userType === 'admin' ? 'is-support' : ''}" aria-hidden="true">${escapeHtml(Array.from(userName || '?')[0].toUpperCase())}</span>
             <div class="df-chat-bubble ${bubbleClass}">
                 <div class="df-chat-meta">${escapeHtml(userName)} &middot; ${formatDate(createdAt)}</div>
                 <div><p>${escapeHtml(body)}</p></div>
             </div>
         `;
 
+        conversationBox.querySelector('[data-conversation-empty]')?.remove();
         conversationBox.appendChild(row);
+        const count = document.getElementById('ticket-message-count');
+        if (count) count.textContent = count.textContent.replace(/^\d+/, String(conversationBox.querySelectorAll('.df-chat-row').length));
         conversationBox.scrollTop = conversationBox.scrollHeight;
     }
 
@@ -200,11 +204,34 @@ document.addEventListener('DOMContentLoaded', () => {
     /* ------------------------------------------------------------------ */
 
     const closeForm = document.getElementById('closeTicketForm');
-    if (closeForm) {
+    const closeDialog = document.getElementById('close-ticket-dialog');
+    const confirmClose = document.getElementById('confirmCloseTicket');
+    const cancelClose = document.getElementById('cancelCloseTicket');
+    let closingConfirmed = false;
+    if (closeForm && closeDialog && confirmClose && cancelClose) {
         closeForm.addEventListener('submit', (e) => {
-            const message = closeForm.querySelector('[data-confirm]')?.dataset.confirm;
-            if (message && !confirm(message)) {
+            if (!closingConfirmed) {
                 e.preventDefault();
+                closeDialog.showModal();
+            }
+        });
+        cancelClose.addEventListener('click', () => closeDialog.close());
+        confirmClose.addEventListener('click', () => {
+            if (closingConfirmed) return;
+            closingConfirmed = true;
+            confirmClose.disabled = true;
+            cancelClose.disabled = true;
+            confirmClose.textContent = confirmClose.dataset.closingLabel;
+            closeForm.requestSubmit();
+        });
+        closeDialog.addEventListener('cancel', event => {
+            if (closingConfirmed) event.preventDefault();
+        });
+        closeDialog.addEventListener('click', event => {
+            const rect = closeDialog.getBoundingClientRect();
+            if (!closingConfirmed && event.target === closeDialog &&
+                (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom)) {
+                closeDialog.close();
             }
         });
     }

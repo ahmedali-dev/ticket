@@ -25,6 +25,15 @@
 
             </div>
 
+            <button id="training-sidebar-toggle" type="button"
+                class="inline-flex items-center justify-center gap-2 self-start rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700 lg:hidden"
+                aria-controls="sidebar" aria-expanded="false">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+                {{ __('training.modules') }}
+            </button>
+
         </div>
 
     </x-slot>
@@ -77,16 +86,18 @@
                 <div class="flex flex-col gap-3 my-6">
 
                     <label
-                        class="flex flex-col w-full bg-gray-200 cursor-pointer h-[100px] rounded-lg items-center justify-center"
+                        class="module-upload-dropzone" data-upload-input="media" tabindex="0"
                         for="media">
 
                         <span class="font-semibold">
-                            {{ __('training.module_title') }}
+                            {{ __('training.drop_video_here') }}
                         </span>
 
                         <span class="text-sm text-gray-500">
-                            {{ __('training.pdf_mp4_mp3') }}
+                            {{ __('training.upload_file_hint') }}
                         </span>
+
+                        <span class="module-upload-selection" data-upload-selection></span>
 
                     </label>
 
@@ -131,7 +142,7 @@
                     </div>
 
 
-                    <input hidden name="media" id="media" type="file" accept=".pdf,.mp4,.mp3">
+                    <input hidden name="media" id="media" type="file" accept=".pdf,.mp4,.webm,.mov">
 
                 </div>
 
@@ -266,6 +277,7 @@
             function showError(message) {
 
                 errorBox.textContent = message;
+                errorBox.hidden = false;
 
                 errorBox.classList.remove('hidden');
 
@@ -288,6 +300,10 @@
             */
 
             function setLoading(isLoading) {
+                form.setAttribute('aria-busy', String(isLoading));
+                media.disabled = isLoading;
+                document.getElementById('title').readOnly = isLoading;
+                document.querySelector('[data-upload-input="media"]').setAttribute('aria-disabled', String(isLoading));
 
                 submitBtn.disabled =
                     isLoading;
@@ -531,6 +547,7 @@
             */
 
             function removeModuleFile() {
+                if (submitBtn.disabled) return;
 
                 preview.innerHTML = '';
 
@@ -540,7 +557,7 @@
                 pdfPreview.hidden =
                     true;
 
-                previewItem.classList.remove(
+                document.getElementById('preview-item').classList.remove(
                     'h-[30rem]'
                 );
 
@@ -588,7 +605,7 @@
                     false;
 
 
-                previewItem.classList.add(
+                document.getElementById('preview-item').classList.add(
                     'h-[30rem]'
                 );
 
@@ -630,7 +647,7 @@
                     false;
 
 
-                previewItem.classList.add(
+                document.getElementById('preview-item').classList.add(
                     'h-[30rem]'
                 );
 
@@ -724,6 +741,8 @@
                 event => {
 
                     event.preventDefault();
+
+                    if (submitBtn.disabled) return;
 
                     clearError();
 
@@ -998,7 +1017,8 @@
 
 
                             const message =
-                                data?.message ||
+                                (xhr.status === 413 ? @json(__('training.server_upload_limit')) : null) ||
+                                Object.values(data?.errors || {}).flat().join(' ') || data?.message ||
                                 @json(__('training.something_went_wrong_uploading'));
 
 
@@ -1057,14 +1077,24 @@
         MAIN SHELL
     ========================================================== --}}
 
-    <div class="shell">
+    <div class="shell training-shell cinema-classroom">
+
+        <header class="cinema-course-heading">
+            <nav aria-label="{{ __('training.courses') }}"><a href="{{ route('training.index') }}">{{ __('training.courses') }}</a><span aria-hidden="true"> / </span><span>{{ $training->title }}</span></nav>
+            <div class="cinema-course-title">
+                <div><p>{{ __('training.training_center') }} · {{ $training->module->count() }} {{ __('training.modules') }}</p><h1>{{ $training->title }}</h1></div>
+                @if (auth()->user()->type === 'admin')
+                    <a class="df-btn df-btn-ghost" href="{{ route('training.edit', $training) }}">{{ __('training.edit_training') }} ↗</a>
+                @endif
+            </div>
+        </header>
 
 
         {{-- =====================================================
             SIDEBAR
         ====================================================== --}}
 
-        <aside class="sidebar" id="sidebar">
+        <aside class="sidebar training-sidebar" id="sidebar">
 
             <div class="sidebar-scroll">
 
@@ -1083,7 +1113,17 @@
                                 {{ $training->title }}
                             </div>
 
-                            <div class="course-card-sub"></div>
+                            <div class="course-card-sub">{{ $training->module->count() }} {{ __('training.modules') }}</div>
+                            @if (auth()->user()->type === 'admin')
+                                <div class="training-course-actions">
+                                    <a href="{{ route('training.edit', $training) }}">{{ __('training.edit') }}</a>
+                                    <form action="{{ route('training.destroy', $training) }}" method="POST" onsubmit="return confirm(@js(__('training.delete_training_confirmation')))">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit">{{ __('training.delete') }}</button>
+                                    </form>
+                                </div>
+                            @endif
 
                         </div>
 
@@ -1127,14 +1167,14 @@
                             class="section mx-auto my-3 w-[calc(100%-10px)] gap-2 rounded-lg flex items-center !border-0 px-3 py-1">
 
                             {{-- Module --}}
-                            <a class="section-head flex-1 rounded-lg {{ request()->routeIs('training.module_show')
-                                ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400'
-                                : '' }}"
+                            <a class="section-head flex-1 rounded-lg {{ $module && $module->id === $m->id ? 'is-selected' : '' }}"
+                                @if ($module && $module->id === $m->id) aria-current="page" @endif
                                 href="{{ route('training.module_show', [
                                     'training' => $training,
                                     'module' => $m,
                                 ]) }}">
 
+                                <span class="training-module-number" aria-hidden="true">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
                                 <div class="section-head-text border-none">
 
                                     <div class="section-title">
@@ -1144,49 +1184,20 @@
                                 </div>
 
                             </a>
-
-
-                            {{-- Admin Actions --}}
-                            @if (auth()->user()->type == 'admin')
-                                {{-- Edit --}}
-                                <a href="{{ route('training.edit', $training) }}"
-                                    class="inline-flex items-center justify-center w-9 h-9 rounded-lg border border-blue-600 text-blue-600 bg-blue-600/10 hover:bg-blue-600 hover:text-white transition-colors"
-                                    title="{{ __('training.edit') }}">
-
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-
-                                    </svg>
-
-                                </a>
-
-
-                                {{-- Delete --}}
-                                <form action="{{ route('training.destroy', $training) }}" method="POST"
-                                    onsubmit="return confirm(@js(__('training.delete_training_confirmation')))">
-
-                                    @csrf
-
-                                    @method('DELETE')
-
-
-                                    <button type="submit" title="{{ __('training.delete') }}"
-                                        class="inline-flex items-center justify-center w-9 h-9 rounded-lg border border-red-600 text-red-600 bg-red-600/10 hover:bg-red-600 hover:text-white transition-colors">
-
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none"
-                                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-
-                                        </svg>
-
+                            @if (auth()->user()->isAdmin())
+                                <details class="training-module-actions">
+                                    <summary aria-label="{{ __('training.module_actions') }}: {{ $m->title }}" title="{{ __('training.module_actions') }}">⋮</summary>
+                                    <div class="module-actions-menu">
+                                    <button type="button" class="module-edit-trigger" data-title="{{ $m->title }}" data-action="{{ route('module.update', $m) }}" data-media-url="{{ $m->media ? Storage::disk('public')->url($m->media->path) : '' }}" data-media-type="{{ $m->media?->type }}" aria-haspopup="dialog" aria-controls="module-edit-dialog" title="{{ __('training.edit') }}" aria-label="{{ __('training.edit') }}: {{ $m->title }}">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m15 5 4 4M4 20l4-1L20 7a2.8 2.8 0 0 0-4-4L4 15v5Z"/></svg>
+                                        {{ __('training.edit') }}
                                     </button>
-
-                                </form>
+                                    <button type="button" class="module-delete-trigger" data-title="{{ $m->title }}" data-action="{{ route('module.destroy', $m) }}" aria-haspopup="dialog" aria-controls="module-delete-dialog" title="{{ __('training.delete') }}" aria-label="{{ __('training.delete') }}: {{ $m->title }}">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/></svg>
+                                        {{ __('training.delete') }}
+                                    </button>
+                                    </div>
+                                </details>
                             @endif
 
                         </div>
@@ -1212,7 +1223,7 @@
             MAIN CONTENT
         ====================================================== --}}
 
-        <main class="main">
+        <main class="main training-main">
 
 
             @if (!empty($module))
@@ -1222,7 +1233,7 @@
                 ================================================== --}}
 
 
-                <div class="player" id="player">
+                <div class="player training-player" id="player">
 
                     @if ($module->media && \Illuminate\Support\Str::contains($module->media->type, 'pdf'))
                         <iframe id="pdf-preview" class="w-full h-[40rem] rounded-lg border border-slate-200"
@@ -1230,7 +1241,7 @@
                     @else
                         <div>
 
-                            <video class="rounded-lg" id="my-video" controls
+                            <video class="training-video rounded-lg" id="my-video" controls
                                 @if ($module->media && $module->media->path) src="{{ Storage::url($module->media->path) }}" @endif></video>
 
                         </div>
@@ -1247,9 +1258,9 @@
 
                     <div>
 
-                        <h1 class="lesson-title" id="lessonTitle">
+                        <h2 class="lesson-title" id="lessonTitle">
                             {{ $module->title }}
-                        </h1>
+                        </h2>
 
                     </div>
 
@@ -1334,7 +1345,7 @@
 
                             @empty
 
-                                <div class="p-3 font-bold">
+                                <div class="chapters-empty p-3 font-bold">
                                     {{ __('training.no_chapter_found') }}
                                 </div>
                             @endforelse
@@ -1346,21 +1357,23 @@
 
                             @if (auth()->user()->type == 'admin')
                                 <dialog id="chapter-dialog"
-                                    class="hidden open:flex m-auto border-0 rounded-xl p-4 open:fixed open:inset-0 w-[500px] max-w-[calc(100%-2rem)] shadow-md shadow-blue-300 border-2 border-gray-300 flex-col items-center justify-center">
+                                    class="chapter-editor-dialog" aria-labelledby="chapter-editor-title" aria-describedby="chapter-editor-help">
 
                                     <form class="w-full p-4" id="chapter-form" method="dialog">
 
                                         @csrf
 
 
-                                        <h1 class="text-xl font-bold">
+                                        <div class="chapter-editor-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="m10 8 6 4-6 4V8Z"/></svg></div>
+                                        <h2 id="chapter-editor-title" class="text-xl font-bold">
                                             {{ __('training.new_chapter') }}
-                                        </h1>
+                                        </h2>
+                                        <p id="chapter-editor-help" class="chapter-editor-help">{{ __('training.chapter_help') }}</p>
 
 
                                         {{-- Error --}}
                                         <div id="chapter-form-error"
-                                            class="hidden mt-3 mb-1 px-3 py-2 rounded-lg bg-red-100 text-red-700 text-sm">
+                                            role="alert" class="hidden mt-3 mb-1 px-3 py-2 rounded-lg bg-red-100 text-red-700 text-sm">
                                         </div>
 
 
@@ -1383,7 +1396,7 @@
                                             <input class="rounded border-2 border-blue-400 px-3 py-3 w-full"
                                                 name="title" id="chapter-title"
                                                 placeholder="{{ __('training.enter_chapter_title') }}" value=""
-                                                type="text">
+                                                type="text" maxlength="255" required>
 
                                         </div>
 
@@ -1396,7 +1409,7 @@
 
                                             <label for="chapter-date" class="font-semibold">
 
-                                                {{ __('training.duration') }}
+                                                {{ __('training.chapter_start_time') }}
 
                                                 <span class="text-gray-400 font-normal">
 
@@ -1413,6 +1426,9 @@
                                                 type="text" pattern="^\d{1,3}:\d{1,2}$"
                                                 title="{{ __('training.duration_format_help') }}">
 
+                                            <button type="button" id="chapter-use-current-time" class="chapter-current-time">{{ __('training.use_current_time') }}</button>
+                                            <small class="chapter-editor-help">{{ __('training.chapter_time_help') }}</small>
+
                                         </div>
 
 
@@ -1422,7 +1438,7 @@
 
                                         <div class="flex items-center justify-around gap-2">
 
-                                            <button commandfor="chapter-dialog" command="close" id="chapter-close"
+                                            <button id="chapter-close"
                                                 type="button"
                                                 class="flex justify-center items-center w-[calc(100%-20px)] mx-auto my-4 px-4 rounded-md text-md h-[3rem] bg-black text-white disabled:opacity-50 disabled:cursor-not-allowed">
                                                 {{ __('training.close') }}
@@ -1612,6 +1628,7 @@
 
 
                                             chapterDialog.showModal();
+                                            chapterTitleInput.focus();
 
                                         }
                                     );
@@ -1640,6 +1657,17 @@
 
                                         }
                                     );
+
+                                    chapterCloseBtn.addEventListener('click', () => chapterDialog.close());
+                                    chapterDialog.addEventListener('cancel', event => {
+                                        if (chapterSubmitBtn.disabled) event.preventDefault();
+                                    });
+                                    document.getElementById('chapter-use-current-time').addEventListener('click', () => {
+                                        const video = document.getElementById('my-video');
+                                        const seconds = Math.floor(video?.currentTime || 0);
+                                        chapterDateInput.value = `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
+                                        chapterDateInput.focus();
+                                    });
 
 
                                     /*
@@ -1877,7 +1905,7 @@
 
                                 <button type="button"
                                     class="add-chapter-btn flex items-center justify-center gap-2 w-[calc(100%-20px)] mx-auto my-2 px-4 h-[2.5rem] rounded-md text-sm text-blue-600 border-2 border-dashed border-blue-300 hover:bg-blue-50"
-                                    data-module-id="{{ $module->id }}">
+                                    data-module-id="{{ $module->id }}" aria-haspopup="dialog" aria-controls="chapter-dialog">
 
                                     +
 
@@ -2444,6 +2472,254 @@
             );
 
         }
+
+        const trainingSidebarToggle = document.getElementById('training-sidebar-toggle');
+        const trainingSidebar = document.getElementById('sidebar');
+        const trainingSidebarBackdrop = document.getElementById('sidebarBackdrop');
+
+        if (trainingSidebarToggle && trainingSidebar && trainingSidebarBackdrop) {
+            const setTrainingSidebarOpen = (open) => {
+                trainingSidebar.classList.toggle('open', open);
+                trainingSidebarBackdrop.classList.toggle('open', open);
+                trainingSidebarToggle.setAttribute('aria-expanded', String(open));
+            };
+
+            trainingSidebarToggle.addEventListener('click', () => {
+                setTrainingSidebarOpen(trainingSidebarToggle.getAttribute('aria-expanded') !== 'true');
+            });
+
+            trainingSidebarBackdrop.addEventListener('click', () => setTrainingSidebarOpen(false));
+
+            trainingSidebar.querySelectorAll('a').forEach((link) => {
+                link.addEventListener('click', () => setTrainingSidebarOpen(false));
+            });
+        }
     </script>
 
+    @if (auth()->user()->isAdmin())
+        <dialog id="module-edit-dialog" class="chapter-editor-dialog" aria-labelledby="module-edit-title">
+            <form id="module-edit-form" method="POST" enctype="multipart/form-data">
+                @csrf @method('PUT')
+                <h2 id="module-edit-title" class="text-xl font-bold">{{ __('training.edit_module') }}</h2>
+                <label for="module-edit-name" class="block mt-5 mb-2">{{ __('training.module_title') }}</label>
+                <input id="module-edit-name" name="title" type="text" required maxlength="255" class="w-full">
+                <label for="module-edit-media" class="block mt-5 mb-2">{{ __('training.replace_module_media') }}</label>
+                <label for="module-edit-media" class="module-upload-dropzone" data-upload-input="module-edit-media" tabindex="0">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 16V3m-5 5 5-5 5 5M4 16v4h16v-4"/></svg>
+                    <strong>{{ __('training.drop_video_here') }}</strong>
+                    <small>{{ __('training.upload_file_hint') }}</small>
+                    <span class="module-upload-selection" data-upload-selection></span>
+                </label>
+                <input id="module-edit-media" name="media" type="file" accept=".mp4,.webm,.mov,.pdf" hidden>
+                <p class="chapter-editor-help">{{ __('training.replace_module_media_help') }}</p>
+                <video id="module-edit-video" controls preload="metadata" hidden class="module-edit-preview"></video>
+                <iframe id="module-edit-pdf" class="module-edit-pdf" title="{{ __('training.pdf_preview') }}" hidden></iframe>
+                <a id="module-edit-file-link" target="_blank" rel="noopener" hidden>{{ __('training.preview') }} ↗</a>
+                <p id="module-edit-error" role="alert" class="df-error-text" hidden></p>
+                <div id="module-edit-progress" class="module-upload-progress" hidden aria-live="polite">
+                    <div class="module-progress-heading"><span id="module-edit-progress-label">{{ __('training.uploading') }}</span><strong id="module-edit-percent">0%</strong></div>
+                    <progress id="module-edit-progress-bar" max="100" value="0" aria-label="{{ __('training.uploading') }}"></progress>
+                    <div class="module-upload-metrics"><span id="module-edit-bytes"></span><span id="module-edit-speed">0 KB/s</span><span id="module-edit-eta"></span></div>
+                    <small>{{ __('training.measured_upload_speed') }}</small>
+                </div>
+                <div class="module-dialog-actions"><button type="button" class="df-btn df-btn-ghost" data-module-close>{{ __('training.cancel') }}</button><button type="submit" class="df-btn df-btn-primary">{{ __('training.update') }}</button></div>
+            </form>
+        </dialog>
+        <dialog id="module-delete-dialog" class="chapter-editor-dialog" aria-labelledby="module-delete-title">
+            <form id="module-delete-form" method="POST">
+                @csrf @method('DELETE')
+                <h2 id="module-delete-title" class="text-xl font-bold">{{ __('training.delete_module') }}</h2>
+                <p class="chapter-editor-help">{{ __('training.delete_module_warning') }}</p>
+                <p id="module-delete-name" class="my-4 font-semibold"></p>
+                <div class="module-dialog-actions"><button type="button" class="df-btn df-btn-ghost" data-module-close autofocus>{{ __('training.cancel') }}</button><button type="submit" class="df-btn module-confirm-delete">{{ __('training.delete') }}</button></div>
+            </form>
+        </dialog>
+        <script>
+            (() => {
+                const maxUploadBytes = 100 * 1024 * 1024;
+                document.querySelectorAll('[data-upload-input]').forEach(zone => {
+                    const input = document.getElementById(zone.dataset.uploadInput);
+                    const editing = input.id === 'module-edit-media';
+                    const errorBox = document.getElementById(editing ? 'module-edit-error' : 'form-error');
+                    const selection = zone.querySelector('[data-upload-selection]');
+                    const report = message => {
+                        errorBox.textContent = message;
+                        errorBox.hidden = false;
+                        errorBox.classList.remove('hidden');
+                    };
+                    const validate = file => {
+                        if (!file) return true;
+                        if (!/\.(mp4|webm|mov|pdf)$/i.test(file.name)) {
+                            report(@json(__('training.upload_type_error')));
+                            return false;
+                        }
+                        if (file.size > maxUploadBytes) {
+                            report(@json(__('training.upload_size_error')));
+                            return false;
+                        }
+                        return true;
+                    };
+                    input.addEventListener('change', event => {
+                        const file = input.files[0];
+                        if (!validate(file)) { input.value = ''; event.stopImmediatePropagation(); return; }
+                        selection.textContent = file ? `${file.name} · ${(file.size / 1048576).toFixed(1)} MB` : '';
+                        errorBox.hidden = true;
+                        errorBox.classList.add('hidden');
+                    }, true);
+                    zone.addEventListener('keydown', event => {
+                        if (input.disabled) { event.preventDefault(); return; }
+                        if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); input.click(); }
+                    });
+                    zone.addEventListener('click', event => { if (input.disabled) event.preventDefault(); });
+                    zone.addEventListener('dragover', event => { event.preventDefault(); zone.classList.add('is-dragging'); });
+                    zone.addEventListener('dragleave', event => { if (!zone.contains(event.relatedTarget)) zone.classList.remove('is-dragging'); });
+                    zone.addEventListener('drop', event => {
+                        event.preventDefault();
+                        zone.classList.remove('is-dragging');
+                        if ((editing && updatingModule) || (!editing && document.getElementById('submit').disabled)) return;
+                        const file = event.dataTransfer.files[0];
+                        if (!file || !validate(file)) return;
+                        const transfer = new DataTransfer();
+                        transfer.items.add(file);
+                        input.files = transfer.files;
+                        input.dispatchEvent(new Event('change', { bubbles: true }));
+                    });
+                    input.closest('dialog').addEventListener('close', () => { selection.textContent = ''; zone.classList.remove('is-dragging'); });
+                });
+                const editDialog = document.getElementById('module-edit-dialog');
+                const mediaInput = document.getElementById('module-edit-media');
+                const mediaPreview = document.getElementById('module-edit-video');
+                const mediaLink = document.getElementById('module-edit-file-link');
+                const pdfPreview = document.getElementById('module-edit-pdf');
+                const editForm = document.getElementById('module-edit-form');
+                const editError = document.getElementById('module-edit-error');
+                let updatingModule = false;
+                editForm.addEventListener('submit', async event => {
+                    event.preventDefault();
+                    if (updatingModule) return;
+                    updatingModule = true;
+                    const uploadData = new FormData(editForm);
+                    editForm.setAttribute('aria-busy', 'true');
+                    mediaInput.disabled = true;
+                    document.getElementById('module-edit-name').readOnly = true;
+                    document.querySelector('[data-upload-input="module-edit-media"]').setAttribute('aria-disabled', 'true');
+                    editError.hidden = true;
+                    const submit = editForm.querySelector('[type="submit"]');
+                    const originalLabel = submit.textContent;
+                    submit.disabled = true;
+                    submit.textContent = @json(__('training.saving'));
+                    editForm.querySelector('[data-module-close]').disabled = true;
+                    try {
+                        const progress = document.getElementById('module-edit-progress');
+                        progress.hidden = false;
+                        document.getElementById('module-edit-progress-bar').value = 0;
+                        document.getElementById('module-edit-percent').textContent = '0%';
+                        document.getElementById('module-edit-speed').textContent = '0 KB/s';
+                        document.getElementById('module-edit-eta').textContent = '';
+                        document.getElementById('module-edit-bytes').textContent = '';
+                        document.getElementById('module-edit-progress-label').textContent = @json(__('training.uploading'));
+                        const data = await new Promise((resolve, reject) => {
+                            const xhr = new XMLHttpRequest();
+                            xhr.open('POST', editForm.action);
+                            xhr.setRequestHeader('Accept', 'application/json');
+                            const started = performance.now();
+                            const bytes = value => value >= 1048576 ? `${(value / 1048576).toFixed(1)} MB` : `${(value / 1024).toFixed(1)} KB`;
+                            xhr.upload.onprogress = event => {
+                                if (!event.lengthComputable) return;
+                                const percent = Math.round(event.loaded / event.total * 100);
+                                const speed = event.loaded / Math.max((performance.now() - started) / 1000, .001);
+                                document.getElementById('module-edit-progress-bar').value = percent;
+                                document.getElementById('module-edit-percent').textContent = `${percent}%`;
+                                document.getElementById('module-edit-bytes').textContent = `${bytes(event.loaded)} / ${bytes(event.total)}`;
+                                document.getElementById('module-edit-speed').textContent = `${bytes(speed)}/s`;
+                                document.getElementById('module-edit-eta').textContent = percent < 100 ? `${Math.ceil((event.total - event.loaded) / speed)}s · ${@json(__('training.left'))}` : '';
+                                if (percent === 100) document.getElementById('module-edit-progress-label').textContent = @json(__('training.processing'));
+                            };
+                            xhr.onload = () => {
+                                let body = {};
+                                try { body = JSON.parse(xhr.responseText); } catch {}
+                                if (xhr.status >= 200 && xhr.status < 300 && body.url) resolve(body);
+                                else reject(new Error((xhr.status === 413 ? @json(__('training.server_upload_limit')) : null) || Object.values(body.errors || {}).flat().join(' ') || body.message || @json(__('training.something_went_wrong'))));
+                            };
+                            xhr.onerror = () => reject(new Error(@json(__('training.network_error'))));
+                            xhr.onabort = () => reject(new Error(@json(__('training.network_error'))));
+                            xhr.send(uploadData);
+                        });
+                        window.location.assign(data.url);
+                    } catch (error) {
+                        editError.textContent = error.message;
+                        editError.hidden = false;
+                        updatingModule = false;
+                        editForm.setAttribute('aria-busy', 'false');
+                        mediaInput.disabled = false;
+                        document.getElementById('module-edit-name').readOnly = false;
+                        document.querySelector('[data-upload-input="module-edit-media"]').setAttribute('aria-disabled', 'false');
+                        submit.disabled = false;
+                        submit.textContent = originalLabel;
+                        editForm.querySelector('[data-module-close]').disabled = false;
+                    }
+                });
+                editDialog.addEventListener('cancel', event => { if (updatingModule) event.preventDefault(); });
+                let previewUrl;
+                let currentUrl = '';
+                let currentType = '';
+                const showMedia = (url, type) => {
+                    const isPdf = type === 'application/pdf';
+                    pdfPreview.hidden = !url || !isPdf;
+                    if (!pdfPreview.hidden) pdfPreview.src = url;
+                    else pdfPreview.removeAttribute('src');
+                    mediaPreview.pause();
+                    mediaPreview.removeAttribute('src');
+                    mediaPreview.hidden = !url || !type.startsWith('video/');
+                    mediaLink.hidden = !url || type.startsWith('video/');
+                    if (!mediaPreview.hidden) mediaPreview.src = url;
+                    if (url) mediaLink.href = url;
+                    else mediaLink.removeAttribute('href');
+                    mediaPreview.load();
+                };
+                mediaInput.addEventListener('change', () => {
+                    if (previewUrl) URL.revokeObjectURL(previewUrl);
+                    const file = mediaInput.files[0];
+                    previewUrl = file ? URL.createObjectURL(file) : null;
+                    const type = file ? (file.type || (/\.pdf$/i.test(file.name) ? 'application/pdf' : '')) : currentType;
+                    showMedia(previewUrl || currentUrl, type);
+                });
+                editDialog.addEventListener('close', () => {
+                    showMedia('', '');
+                    if (previewUrl) URL.revokeObjectURL(previewUrl);
+                    previewUrl = null;
+                    document.getElementById('module-edit-form').reset();
+                    document.getElementById('module-edit-progress').hidden = true;
+                });
+                const menus = document.querySelectorAll('details.training-module-actions');
+                menus.forEach(menu => menu.addEventListener('toggle', () => {
+                    if (menu.open) menus.forEach(other => { if (other !== menu) other.open = false; });
+                }));
+                document.addEventListener('click', event => {
+                    if (!event.target.closest('.training-module-actions')) menus.forEach(menu => menu.open = false);
+                });
+                document.addEventListener('keydown', event => {
+                    if (event.key === 'Escape') menus.forEach(menu => menu.open = false);
+                });
+                document.querySelectorAll('.module-edit-trigger').forEach(button => button.addEventListener('click', () => {
+                    button.closest('details').open = false;
+                    document.getElementById('module-edit-form').action = button.dataset.action;
+                    document.getElementById('module-edit-name').value = button.dataset.title;
+                    editError.hidden = true;
+                    currentUrl = button.dataset.mediaUrl;
+                    currentType = button.dataset.mediaType || '';
+                    showMedia(currentUrl, currentType);
+                    document.getElementById('module-edit-dialog').showModal();
+                    document.getElementById('module-edit-name').focus();
+                }));
+                document.querySelectorAll('.module-delete-trigger').forEach(button => button.addEventListener('click', () => {
+                    button.closest('details').open = false;
+                    document.getElementById('module-delete-form').action = button.dataset.action;
+                    document.getElementById('module-delete-name').textContent = button.dataset.title;
+                    document.getElementById('module-delete-dialog').showModal();
+                }));
+                document.querySelectorAll('[data-module-close]').forEach(button => button.addEventListener('click', () => button.closest('dialog').close()));
+            })();
+        </script>
+    @endif
 </x-app-layout>

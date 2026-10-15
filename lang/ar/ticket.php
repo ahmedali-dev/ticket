@@ -27,6 +27,8 @@ return [
     'add_ticket' => 'إضافة تذكرة',
 
     'view_ticket' => 'عرض التذكرة',
+    'quick_view' => 'عرض سريع',
+    'close_preview' => 'إغلاق المعاينة',
 
     'actions' => 'الإجراءات',
 
@@ -81,6 +83,8 @@ return [
 
     'ticket_title' => 'عنوان التذكرة',
 
+    'description_required' => 'الوصف',
+
     'enter_ticket_title' =>
         'أدخل عنوان التذكرة',
 
@@ -124,6 +128,14 @@ return [
     'opened_this_ticket' => 'قام بفتح هذه التذكرة',
 
     'conversation' => 'المحادثة',
+    'messages' => 'رسائل',
+    'your_reply' => 'ردك',
+    'reply_placeholder' => 'اكتب ردك لفريق الدعم…',
+    'no_replies_yet' => 'لا توجد ردود بعد. ابدأ المحادثة أدناه.',
+    'confirm_close' => 'هل تريد إكمال هذه التذكرة؟',
+    'close_dialog_title' => 'هل تريد إغلاق هذه التذكرة؟',
+    'close_dialog_description' => 'تأكد من حل المشكلة قبل المتابعة. سيتم تغيير حالة التذكرة إلى مكتملة.',
+    'closing' => 'جارٍ إغلاق التذكرة…',
 
     'write_reply' => 'اكتب ردك',
 

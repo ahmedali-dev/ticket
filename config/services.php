@@ -1,6 +1,13 @@
 <?php
 
 return [
+    'whatsapp' => [
+        'enabled' => env('WHATSAPP_ENABLED', false),
+        'url' => env('WHATSAPP_BRIDGE_URL', 'http://127.0.0.1:3001'),
+        'token' => env('WHATSAPP_BRIDGE_TOKEN'),
+        'country_code' => env('WHATSAPP_COUNTRY_CODE', '966'),
+        'ticket_base_url' => env('WHATSAPP_TICKET_BASE_URL', env('APP_URL')),
+    ],
 
     /*
     |--------------------------------------------------------------------------

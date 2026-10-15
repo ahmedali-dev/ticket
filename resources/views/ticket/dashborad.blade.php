@@ -21,7 +21,7 @@
     ========================================================== --}}
     <x-slot name="header">
 
-        <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+        <div class="ticket-page-header flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
 
             <div>
 
@@ -44,7 +44,7 @@
         PAGE
     ========================================================== --}}
 
-    <div id="pageRoot">
+    <div id="pageRoot" class="ticket-page">
 
 
         <div class="df-page">
@@ -59,7 +59,7 @@
                 PAGE TITLE
             ================================================== --}}
 
-            <div
+            <div class="ticket-page-heading"
                 style="
                     display:flex;
                     justify-content:space-between;
@@ -71,6 +71,7 @@
 
                 <div>
 
+                    <div class="ticket-title-line">
                     <h1 class="df-display"
                         style="
                             font-size:26px;
@@ -79,6 +80,11 @@
                         ">
                         {{ __('ticket.tickets') }}
                     </h1>
+
+                    <span class="ticket-count-pill">
+                        {{ $ticket->total() }}
+                    </span>
+                    </div>
 
                     <p id="ticketCountLine"
                         style="
@@ -90,6 +96,12 @@
 
                 </div>
 
+                @if (auth()->user()->type !== 'admin')
+                    <a href="{{ route('ticket.create') }}" class="df-btn df-btn-primary" id="addTicketBtn">
+                        {{ __('ticket.add_ticket') }}
+                    </a>
+                @endif
+
             </div>
 
 
@@ -97,7 +109,7 @@
                 FILTERS
             ================================================== --}}
 
-            <div class="df-filters-row"
+            <div class="df-filters-row ticket-filter-bar"
                 style="
                     display:flex;
                     justify-content:space-between;
@@ -107,7 +119,7 @@
                     flex-wrap:wrap;
                 ">
 
-                <form action="{{ route('ticket.search') }}" method="POST">
+                <form class="ticket-filter-form" action="{{ route('ticket.search') }}" method="POST">
 
                     @csrf
 
@@ -186,14 +198,6 @@
                     </div>
 
                 </form>
-
-
-                {{-- Add Ticket --}}
-                @if (auth()->user()->type !== 'admin')
-                    <a href="{{ route('ticket.create') }}" class="df-btn df-btn-primary" id="addTicketBtn">
-                        {{ __('ticket.add_ticket') }}
-                    </a>
-                @endif
 
             </div>
 
@@ -376,6 +380,33 @@
                                                     {{ __('ticket.view_ticket') }}
                                                 </a>
 
+                                                <button type="button" class="df-dropdown-item ticket-quick-view-button"
+                                                    data-preview-id="ticket-preview-{{ $t->id }}" aria-haspopup="dialog"
+                                                    aria-controls="ticket-quick-view">
+                                                    {{ __('ticket.quick_view') }}
+                                                </button>
+
+                                                <template id="ticket-preview-{{ $t->id }}">
+                                                    <div class="ticket-preview-heading">
+                                                        <span class="df-stub">#{{ $t->id }}</span>
+                                                        <span class="df-badge" style="{{ $status[$t->status] ?? '' }}">
+                                                            {{ __('ticket.' . $t->status) }}
+                                                        </span>
+                                                    </div>
+                                                    <h3 class="ticket-preview-title">{{ $t->title }}</h3>
+                                                    <dl class="ticket-preview-meta">
+                                                        <div><dt>{{ __('ticket.username') }}</dt><dd>{{ $t->user->name ?? '—' }}</dd></div>
+                                                        <div><dt>{{ __('ticket.company') }}</dt><dd>{{ $t->user->company->name ?? '—' }}</dd></div>
+                                                        <div><dt>{{ __('ticket.phone') }}</dt><dd>{{ $t->user->phone ?? '—' }}</dd></div>
+                                                        <div><dt>{{ __('ticket.created_date') }}</dt><dd>{{ $t->created_at->format('d/m/Y H:i') }}</dd></div>
+                                                    </dl>
+                                                    <h4>{{ __('ticket.description') }}</h4>
+                                                    <p class="ticket-preview-description">{{ $t->description }}</p>
+                                                    <div class="ticket-preview-footer">
+                                                        <a href="{{ route('ticket.reply', $t) }}" class="df-btn df-btn-primary">{{ __('ticket.view_ticket') }}</a>
+                                                    </div>
+                                                </template>
+
                                             </div>
 
                                         </div>
@@ -388,13 +419,22 @@
 
                                 <tr>
 
-                                    <td colspan="7"
+                                    <td colspan="8" class="ticket-empty"
                                         style="
                                             text-align:center;
                                             padding:30px;
                                             color:var(--text-muted);
                                         ">
-                                        {{ __('ticket.no_tickets_found') }}
+                                        <div class="ticket-empty-content">
+                                            <span class="ticket-empty-icon" aria-hidden="true">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M7 3.75h10a2.25 2.25 0 0 1 2.25 2.25v12A2.25 2.25 0 0 1 17 20.25H7A2.25 2.25 0 0 1 4.75 18V6A2.25 2.25 0 0 1 7 3.75Z" />
+                                                    <path stroke-linecap="round" d="M8.5 8h7M8.5 11.5h7M8.5 15h4" />
+                                                </svg>
+                                            </span>
+                                            <strong>{{ __('ticket.no_tickets_found') }}</strong>
+                                            <span>{{ __('ticket.search_filter_manage_tickets') }}</span>
+                                        </div>
                                     </td>
 
                                 </tr>
@@ -474,7 +514,39 @@
         JAVASCRIPT
     ========================================================== --}}
 
+    <dialog id="ticket-quick-view" class="ticket-quick-view" aria-labelledby="ticket-quick-view-title">
+        <div class="ticket-preview-toolbar">
+            <h2 id="ticket-quick-view-title">{{ __('ticket.quick_view') }}</h2>
+            <form method="dialog">
+                <button type="submit" class="df-icon-btn" aria-label="{{ __('ticket.close_preview') }}">×</button>
+            </form>
+        </div>
+        <div id="ticket-quick-view-content"></div>
+    </dialog>
+
     <script>
+        const quickViewDialog = document.getElementById('ticket-quick-view');
+        const quickViewContent = document.getElementById('ticket-quick-view-content');
+
+        document.querySelectorAll('.ticket-quick-view-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const template = document.getElementById(button.dataset.previewId);
+                if (!template) return;
+                quickViewContent.replaceChildren(template.content.cloneNode(true));
+                document.querySelectorAll('.df-dropdown-menu.open').forEach(menu => menu.classList.remove('open'));
+                quickViewDialog.showModal();
+            });
+        });
+
+        quickViewDialog.addEventListener('click', event => {
+            const bounds = quickViewDialog.getBoundingClientRect();
+            if (event.target === quickViewDialog &&
+                (event.clientX < bounds.left || event.clientX > bounds.right ||
+                 event.clientY < bounds.top || event.clientY > bounds.bottom)) {
+                quickViewDialog.close();
+            }
+        });
+
         /*
             |--------------------------------------------------------------------------
             | Open Ticket Row Menu

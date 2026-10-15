@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Media;
 use App\Models\Ticket;
+use App\Services\TicketWhatsAppNotifier;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -61,7 +62,7 @@ class TicketController extends Controller
             'images' => 'nullable|array|max:5',
             'images.*' => 'file|mimes:jpg,jpeg,png,webp,pdf,mp4,mp3,mov|max:5120',
         ]);
-        $data['id'] = Ticket::count() + 1;
+        $ticket = $request->user()->tickets()->create($data);
         $media = [];
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $file) {
@@ -70,15 +71,15 @@ class TicketController extends Controller
 
                 array_push($media, [
                     'uuid' => Str::orderedUuid(),
-                    'ticket_id' => $data['id'],
+                    'ticket_id' => $ticket->id,
                     'type' => $file->getMimeType(),
                     'path' => $path,
                     'size' => $this->formatFileSize($file->getSize()),
                 ]);
             }
         }
-        $request->user()->tickets()->create($data);
         Media::insert($media);
+        app(TicketWhatsAppNotifier::class)->created($ticket);
         // dd(Media::all());
 
         return to_route('ticket.index');
@@ -97,8 +98,10 @@ class TicketController extends Controller
 
         if ($isAdmin && $t->status !== Ticket::STATUS_IN_PROGRESS && $t->status !== Ticket::STATUS_COMPLETED) {
 
-            $t->status = Ticket::STATUS_IN_PROGRESS;
-            $t->save();
+            $changed = Ticket::whereKey($t->id)->where('status', Ticket::STATUS_PENDING)
+                ->update(['status' => Ticket::STATUS_IN_PROGRESS, 'updated_at' => now()]);
+            $t->refresh();
+            if ($changed) app(TicketWhatsAppNotifier::class)->statusChanged($t, $request->user(), 'opened');
         }
         // dd(isset($t->ticketView));
 
@@ -136,8 +139,12 @@ class TicketController extends Controller
             return to_route('ticket.index');
         }
 
-        $ticket->status = Ticket::STATUS_COMPLETED;
-        $ticket->save();
+        $changed = Ticket::whereKey($ticket->id)->where('status', '!=', Ticket::STATUS_COMPLETED)
+            ->update(['status' => Ticket::STATUS_COMPLETED, 'updated_at' => now()]);
+        if ($changed) {
+            $ticket->refresh();
+            app(TicketWhatsAppNotifier::class)->statusChanged($ticket, $request->user(), 'closed');
+        }
 
         // dd($ticket);
         return back();

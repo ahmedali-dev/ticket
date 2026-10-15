@@ -9,9 +9,10 @@
 >
     @forelse ($replies as $reply)
         <div class="df-chat-row" style="justify-content:flex-start;" data-id="{{ $reply->id }}">
-            <div class="df-chat-bubble {{ $reply->user->type === 'admin' ? 'df-chat-admin' : 'df-chat-user' }}">
+            <span class="ticket-message-avatar {{ $reply->user?->type === 'admin' ? 'is-support' : '' }}" aria-hidden="true">{{ str($reply->user?->name ?? '?')->substr(0, 1)->upper() }}</span>
+            <div class="df-chat-bubble {{ $reply->user?->type === 'admin' ? 'df-chat-admin' : 'df-chat-user' }}">
                 <div class="df-chat-meta">
-                    {{ $reply->user->name }} &middot; {{ $reply->created_at->format('Y-m-d H:i') }}
+                    {{ $reply->user?->name ?? '—' }} &middot; {{ $reply->created_at->format('Y-m-d H:i') }}
                 </div>
                 <div>
                     <p>{{ $reply->body }}</p>
@@ -19,7 +20,7 @@
             </div>
         </div>
     @empty
-        <p class="df-mono" style="color:var(--text-muted); font-size:13px; text-align:center; padding:24px 0;">
+        <p data-conversation-empty class="df-mono" style="color:var(--text-muted); font-size:13px; text-align:center; padding:24px 0;">
             {{ __('ticket.no_replies_yet') }}
         </p>
     @endforelse

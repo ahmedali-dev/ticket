@@ -32,8 +32,8 @@
             <div class="flex flex-col gap-3 my-4">
                 <label for="phone">Phone</label>
                 <input type="text" class="rounded border-2 border-blue-400 px-3 py-3 w-full" name="phone" id="phone"
-                    value="{{ old('phone') }}" placeholder="+966 5X XXX XXXX" pattern="[0-9]{9}" maxlength="9"
-                    inputmode="numeric">
+                    value="{{ old('phone') }}" placeholder="+966 5X XXX XXXX" maxlength="32"
+                    inputmode="tel">
             </div>
 
             <div class="flex flex-col gap-3 my-4">
