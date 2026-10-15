@@ -32,6 +32,7 @@ class TrainingController extends Controller
         $trainings = $trainings->latest()->get();
         //        dd($trainings);
 
+
         return view('training.index', ['trainings' => $trainings, 'isAdmin' => $isAdmin]);
     }
 
@@ -111,7 +112,7 @@ class TrainingController extends Controller
         if (auth()->user()->type == 'user' && !$training->active) {
             return to_route('training.index')->with('error', 'You are not allowed to access this training!');
         }
-        // dd($module->media->id);
+        // dd($module->media);
         return view('training.show', ['training' => $training, 'module' => $module]);
 
     }

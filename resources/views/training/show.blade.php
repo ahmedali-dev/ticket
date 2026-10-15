@@ -1,6 +1,6 @@
 @props([
     'training' => [],
-    'module' => []
+    'module' => [],
 ])
 
 <x-app-layout>
@@ -35,17 +35,10 @@
     ========================================================== --}}
 
     @if (auth()->user()->type == 'admin')
+        <dialog id="my-dialog"
+            class="hidden open:flex m-auto border-0 rounded-xl p-4 open:fixed open:inset-0 w-[500px] max-w-[calc(100%-2rem)] shadow-md shadow-blue-300 border-2 border-gray-300 flex-col items-center justify-center">
 
-        <dialog
-            id="my-dialog"
-            class="hidden open:flex m-auto border-0 rounded-xl p-4 open:fixed open:inset-0 w-[500px] max-w-[calc(100%-2rem)] shadow-md shadow-blue-300 border-2 border-gray-300 flex-col items-center justify-center"
-        >
-
-            <form
-                class="w-full p-4"
-                id="training-form"
-                method="dialog"
-            >
+            <form class="w-full p-4" id="training-form" method="dialog">
 
                 @csrf
 
@@ -57,10 +50,8 @@
 
 
                 {{-- Error --}}
-                <div
-                    id="form-error"
-                    class="hidden mt-3 mb-1 px-3 py-2 rounded-lg bg-red-100 text-red-700 text-sm"
-                ></div>
+                <div id="form-error" class="hidden mt-3 mb-1 px-3 py-2 rounded-lg bg-red-100 text-red-700 text-sm">
+                </div>
 
 
                 {{-- =================================================
@@ -69,21 +60,12 @@
 
                 <div class="flex flex-col gap-3 my-4">
 
-                    <label
-                        for="title"
-                        class="font-semibold"
-                    >
+                    <label for="title" class="font-semibold">
                         {{ __('training.module_title') }}
                     </label>
 
-                    <input
-                        class="rounded border-2 border-blue-400 px-3 py-3 w-full"
-                        name="title"
-                        id="title"
-                        placeholder="{{ __('training.enter_module_title') }}"
-                        value=""
-                        type="text"
-                    >
+                    <input class="rounded border-2 border-blue-400 px-3 py-3 w-full" name="title" id="title"
+                        placeholder="{{ __('training.enter_module_title') }}" value="" type="text">
 
                 </div>
 
@@ -96,8 +78,7 @@
 
                     <label
                         class="flex flex-col w-full bg-gray-200 cursor-pointer h-[100px] rounded-lg items-center justify-center"
-                        for="media"
-                    >
+                        for="media">
 
                         <span class="font-semibold">
                             {{ __('training.module_title') }}
@@ -114,14 +95,9 @@
 
 
                     {{-- Upload progress --}}
-                    <div
-                        id="progress-wrap"
-                        class="hidden"
-                    >
+                    <div id="progress-wrap" class="hidden">
 
-                        <div
-                            class="flex items-center justify-between text-xs text-gray-500 mb-1"
-                        >
+                        <div class="flex items-center justify-between text-xs text-gray-500 mb-1">
 
                             <span id="progress-label">
                                 {{ __('training.uploading') }}
@@ -136,18 +112,13 @@
 
                         <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
 
-                            <div
-                                id="progress-bar"
-                                class="h-full bg-blue-600 rounded-full transition-all duration-150"
-                                style="width:0%"
-                            ></div>
+                            <div id="progress-bar" class="h-full bg-blue-600 rounded-full transition-all duration-150"
+                                style="width:0%"></div>
 
                         </div>
 
 
-                        <div
-                            class="flex items-center justify-between text-xs text-gray-400 mt-1"
-                        >
+                        <div class="flex items-center justify-between text-xs text-gray-400 mt-1">
 
                             <span id="progress-speed">
                                 0 KB/s
@@ -160,13 +131,7 @@
                     </div>
 
 
-                    <input
-                        hidden
-                        name="media"
-                        id="media"
-                        type="file"
-                        accept=".pdf,.mp4,.mp3"
-                    >
+                    <input hidden name="media" id="media" type="file" accept=".pdf,.mp4,.mp3">
 
                 </div>
 
@@ -175,25 +140,13 @@
                     MEDIA PREVIEW
                 ================================================== --}}
 
-                <div
-                    class="w-full"
-                    id="preview-item"
-                >
+                <div class="w-full" id="preview-item">
 
-                    <iframe
-                        id="pdf-preview"
-                        class="w-full h-full rounded-lg border border-slate-200"
-                        hidden
-                    ></iframe>
+                    <iframe id="pdf-preview" class="w-full h-full rounded-lg border border-slate-200" hidden></iframe>
 
 
-                    <video
-                        id="video-preview"
-                        class="w-full max-h-[500px] rounded-lg border border-slate-200"
-                        playsinline
-                        controls
-                        hidden
-                    ></video>
+                    <video id="video-preview" class="w-full max-h-[500px] rounded-lg border border-slate-200"
+                        playsinline controls hidden></video>
 
                 </div>
 
@@ -204,44 +157,23 @@
 
                 <div class="flex items-center justify-around gap-2 my-4">
 
-                    <button
-                        commandfor="my-dialog"
-                        command="close"
-                        id="close"
-                        type="button"
-                        class="flex justify-center items-center w-[calc(100%-20px)] mx-auto my-4 px-4 rounded-md text-md h-[3rem] bg-black text-white disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
+                    <button commandfor="my-dialog" command="close" id="close" type="button"
+                        class="flex justify-center items-center w-[calc(100%-20px)] mx-auto my-4 px-4 rounded-md text-md h-[3rem] bg-black text-white disabled:opacity-50 disabled:cursor-not-allowed">
                         {{ __('training.close') }}
                     </button>
 
 
-                    <button
-                        id="submit"
-                        type="submit"
-                        class="relative flex justify-center items-center w-[calc(100%-20px)] mx-auto my-4 px-4 bg-blue-600 rounded-md text-md text-white h-[3rem] disabled:opacity-60 disabled:cursor-not-allowed"
-                    >
+                    <button id="submit" type="submit"
+                        class="relative flex justify-center items-center w-[calc(100%-20px)] mx-auto my-4 px-4 bg-blue-600 rounded-md text-md text-white h-[3rem] disabled:opacity-60 disabled:cursor-not-allowed">
 
-                        <svg
-                            id="submit-spinner"
-                            class="hidden animate-spin h-5 w-5 me-2"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                        >
+                        <svg id="submit-spinner" class="hidden animate-spin h-5 w-5 me-2" viewBox="0 0 24 24"
+                            fill="none">
 
-                            <circle
-                                class="opacity-25"
-                                cx="12"
-                                cy="12"
-                                r="10"
-                                stroke="currentColor"
-                                stroke-width="4"
-                            ></circle>
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                stroke-width="4"></circle>
 
-                            <path
-                                class="opacity-75"
-                                fill="currentColor"
-                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                            ></path>
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
 
                         </svg>
 
@@ -264,7 +196,6 @@
         ========================================================== --}}
 
         <script>
-
             const media =
                 document.getElementById('media');
 
@@ -371,9 +302,9 @@
 
 
                 submitLabel.textContent =
-                    isLoading
-                        ? @json(__('training.uploading'))
-                        : @json(__('training.submit'));
+                    isLoading ?
+                    @json(__('training.uploading')) :
+                    @json(__('training.submit'));
 
 
                 progressWrap.classList.toggle(
@@ -499,56 +430,56 @@
                         ${
                     isPdf
                         ? `
-                                    <svg
-                                        class="w-7"
-                                        viewBox="0 0 400 400"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                    >
+                                            <svg
+                                                class="w-7"
+                                                viewBox="0 0 400 400"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                            >
 
-                                        <defs>
-                                            <style>
-                                                .cls-1 {
-                                                    fill: #ff402f;
-                                                }
-                                            </style>
-                                        </defs>
+                                                <defs>
+                                                    <style>
+                                                        .cls-1 {
+                                                            fill: #ff402f;
+                                                        }
+                                                    </style>
+                                                </defs>
 
-                                        <g>
+                                                <g>
 
-                                            <path
-                                                class="cls-1"
-                                                d="M325,105H250a5,5,0,0,1-5-5V25a5,5,0,0,1,10,0V95h70a5,5,0,0,1,0,10Z"
-                                            />
+                                                    <path
+                                                        class="cls-1"
+                                                        d="M325,105H250a5,5,0,0,1-5-5V25a5,5,0,0,1,10,0V95h70a5,5,0,0,1,0,10Z"
+                                                    />
 
-                                            <path
-                                                class="cls-1"
-                                                d="M325,154.83a5,5,0,0,1-5-5V102.07L247.93,30H100A20,20,0,0,0,80,50v98.17a5,5,0,0,1-10,0V50a30,30,0,0,1,30-30H250a5,5,0,0,1,3.54,1.46l75,75A5,5,0,0,1,330,100v49.83A5,5,0,0,1,325,154.83Z"
-                                            />
+                                                    <path
+                                                        class="cls-1"
+                                                        d="M325,154.83a5,5,0,0,1-5-5V102.07L247.93,30H100A20,20,0,0,0,80,50v98.17a5,5,0,0,1-10,0V50a30,30,0,0,1,30-30H250a5,5,0,0,1,3.54,1.46l75,75A5,5,0,0,1,330,100v49.83A5,5,0,0,1,325,154.83Z"
+                                                    />
 
-                                            <path
-                                                class="cls-1"
-                                                d="M300,380H100a30,30,0,0,1-30-30V275a5,5,0,0,1,10,0v75a20,20,0,0,0,20,20H300a20,20,0,0,0,20-20V275a5,5,0,0,1,10,0v75A30,30,0,0,1,300,380Z"
-                                            />
+                                                    <path
+                                                        class="cls-1"
+                                                        d="M300,380H100a30,30,0,0,1-30-30V275a5,5,0,0,1,10,0v75a20,20,0,0,0,20,20H300a20,20,0,0,0,20-20V275a5,5,0,0,1,10,0v75A30,30,0,0,1,300,380Z"
+                                                    />
 
-                                            <path
-                                                class="cls-1"
-                                                d="M275,280H125a5,5,0,0,1,0-10H275a5,5,0,0,1,0,10Z"
-                                            />
+                                                    <path
+                                                        class="cls-1"
+                                                        d="M275,280H125a5,5,0,0,1,0-10H275a5,5,0,0,1,0,10Z"
+                                                    />
 
-                                            <path
-                                                class="cls-1"
-                                                d="M200,330H125a5,5,0,0,1,0-10h75a5,5,0,0,1,0,10Z"
-                                            />
+                                                    <path
+                                                        class="cls-1"
+                                                        d="M200,330H125a5,5,0,0,1,0-10h75a5,5,0,0,1,0,10Z"
+                                                    />
 
-                                            <path
-                                                class="cls-1"
-                                                d="M325,280H75a30,30,0,0,1-30-30V173.17a30,30,0,0,1,30-30h.2l250,1.66a30.09,30.09,0,0,1,29.81,30V250A30,30,0,0,1,325,280ZM75,153.17a20,20,0,0,0-20,20V250a20,20,0,0,0,20,20H325a20,20,0,0,0,20-20V174.83a20.06,20.06,0,0,0-19.88-20l-250-1.66Z"
-                                            />
+                                                    <path
+                                                        class="cls-1"
+                                                        d="M325,280H75a30,30,0,0,1-30-30V173.17a30,30,0,0,1,30-30h.2l250,1.66a30.09,30.09,0,0,1,29.81,30V250A30,30,0,0,1,325,280ZM75,153.17a20,20,0,0,0-20,20V250a20,20,0,0,0,20,20H325a20,20,0,0,0,20-20V174.83a20.06,20.06,0,0,0-19.88-20l-250-1.66Z"
+                                                    />
 
-                                        </g>
+                                                </g>
 
-                                    </svg>
-                                `
+                                            </svg>
+                                        `
                         : ''
                 }
 
@@ -879,12 +810,12 @@
                     xhr.setRequestHeader(
                         'X-CSRF-TOKEN',
                         document
-                            .querySelector(
-                                'meta[name="csrf-token"]'
-                            )
-                            .getAttribute(
-                                'content'
-                            )
+                        .querySelector(
+                            'meta[name="csrf-token"]'
+                        )
+                        .getAttribute(
+                            'content'
+                        )
                     );
 
 
@@ -943,9 +874,9 @@
 
 
                             progressLabel.textContent =
-                                percent < 100
-                                    ? @json(__('training.uploading'))
-                                    : @json(__('training.processing'));
+                                percent < 100 ?
+                                @json(__('training.uploading')) :
+                                @json(__('training.processing'));
 
 
                             if (
@@ -974,23 +905,20 @@
 
 
                                     smoothedSpeed =
-                                        smoothedSpeed === 0
-                                            ? instantSpeed
-                                            : (
-                                                smoothedSpeed * 0.7
-                                                +
-                                                instantSpeed * 0.3
-                                            );
+                                        smoothedSpeed === 0 ?
+                                        instantSpeed :
+                                        (
+                                            smoothedSpeed * 0.7 +
+                                            instantSpeed * 0.3
+                                        );
 
 
                                     progressSpeed.textContent =
                                         formatSpeed(
                                             smoothedSpeed
-                                        )
-                                        +
-                                        ' '
-                                        +
-                                    @json(__('training.avg'));
+                                        ) +
+                                        ' ' +
+                                        @json(__('training.avg'));
 
 
                                     const remainingBytes =
@@ -999,18 +927,18 @@
 
 
                                     const etaSeconds =
-                                        smoothedSpeed > 0
-                                            ? remainingBytes /
-                                            smoothedSpeed
-                                            : Infinity;
+                                        smoothedSpeed > 0 ?
+                                        remainingBytes /
+                                        smoothedSpeed :
+                                        Infinity;
 
 
                                     progressEta.textContent =
-                                        percent < 100
-                                            ? formatEta(
-                                                etaSeconds
-                                            )
-                                            : '';
+                                        percent < 100 ?
+                                        formatEta(
+                                            etaSeconds
+                                        ) :
+                                        '';
 
                                 }
 
@@ -1070,7 +998,7 @@
 
 
                             const message =
-                                    data?.message ||
+                                data?.message ||
                                 @json(__('training.something_went_wrong_uploading'));
 
 
@@ -1114,9 +1042,7 @@
 
                 }
             );
-
         </script>
-
     @endif
 
 
@@ -1124,10 +1050,7 @@
         SIDEBAR BACKDROP
     ========================================================== --}}
 
-    <div
-        class="sidebar-backdrop"
-        id="sidebarBackdrop"
-    ></div>
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
 
 
     {{-- =========================================================
@@ -1141,10 +1064,7 @@
             SIDEBAR
         ====================================================== --}}
 
-        <aside
-            class="sidebar"
-            id="sidebar"
-        >
+        <aside class="sidebar" id="sidebar">
 
             <div class="sidebar-scroll">
 
@@ -1180,35 +1100,16 @@
 
                     <div class="search-box">
 
-                        <svg
-                            class="icon-sm"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                        >
+                        <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 
-                            <circle
-                                cx="11"
-                                cy="11"
-                                r="7"
-                            ></circle>
+                            <circle cx="11" cy="11" r="7"></circle>
 
-                            <line
-                                x1="21"
-                                y1="21"
-                                x2="16.65"
-                                y2="16.65"
-                            ></line>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
 
                         </svg>
 
 
-                        <input
-                            id="moduleSearch"
-                            type="text"
-                            placeholder="{{ __('training.search_modules') }}"
-                        >
+                        <input id="moduleSearch" type="text" placeholder="{{ __('training.search_modules') }}">
 
                     </div>
 
@@ -1222,24 +1123,17 @@
                 <nav id="sectionsWrap">
 
                     @foreach ($training->module as $m)
-
                         <div
-                            class="section mx-auto my-3 w-[calc(100%-10px)] gap-2 rounded-lg flex items-center !border-0 px-3 py-1"
-                        >
+                            class="section mx-auto my-3 w-[calc(100%-10px)] gap-2 rounded-lg flex items-center !border-0 px-3 py-1">
 
                             {{-- Module --}}
-                            <a
-                                class="section-head flex-1 rounded-lg {{ request()->routeIs('training.module_show')
+                            <a class="section-head flex-1 rounded-lg {{ request()->routeIs('training.module_show')
                                 ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400'
-                                :""
-                            }}"
+                                : '' }}"
                                 href="{{ route('training.module_show', [
                                     'training' => $training,
                                     'module' => $m,
-                                ]) }}"
-
-
-                            >
+                                ]) }}">
 
                                 <div class="section-head-text border-none">
 
@@ -1254,28 +1148,16 @@
 
                             {{-- Admin Actions --}}
                             @if (auth()->user()->type == 'admin')
-
                                 {{-- Edit --}}
-                                <a
-                                    href="{{ route('training.edit', $training) }}"
+                                <a href="{{ route('training.edit', $training) }}"
                                     class="inline-flex items-center justify-center w-9 h-9 rounded-lg border border-blue-600 text-blue-600 bg-blue-600/10 hover:bg-blue-600 hover:text-white transition-colors"
-                                    title="{{ __('training.edit') }}"
-                                >
+                                    title="{{ __('training.edit') }}">
 
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        class="w-4 h-4"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                        stroke-width="2"
-                                    >
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
 
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                                        />
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
 
                                     </svg>
 
@@ -1283,63 +1165,40 @@
 
 
                                 {{-- Delete --}}
-                                <form
-                                    action="{{ route('training.destroy', $training) }}"
-                                    method="POST"
-                                    onsubmit="return confirm(@js(__('training.delete_training_confirmation')))"
-                                >
+                                <form action="{{ route('training.destroy', $training) }}" method="POST"
+                                    onsubmit="return confirm(@js(__('training.delete_training_confirmation')))">
 
                                     @csrf
 
                                     @method('DELETE')
 
 
-                                    <button
-                                        type="submit"
-                                        title="{{ __('training.delete') }}"
-                                        class="inline-flex items-center justify-center w-9 h-9 rounded-lg border border-red-600 text-red-600 bg-red-600/10 hover:bg-red-600 hover:text-white transition-colors"
-                                    >
+                                    <button type="submit" title="{{ __('training.delete') }}"
+                                        class="inline-flex items-center justify-center w-9 h-9 rounded-lg border border-red-600 text-red-600 bg-red-600/10 hover:bg-red-600 hover:text-white transition-colors">
 
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            class="w-4 h-4"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
-                                            stroke-width="2"
-                                        >
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
 
-                                            <path
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                            />
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
 
                                         </svg>
 
                                     </button>
 
                                 </form>
-
                             @endif
 
                         </div>
-
                     @endforeach
 
 
                     {{-- Add Module --}}
                     @if (auth()->user()->type == 'admin')
-
-                        <button
-                            id="add_new"
-                            command="show-modal"
-                            commandfor="my-dialog"
-                            class="flex justify-center items-center w-[calc(100%-20px)] mx-auto my-4 px-4 bg-blue-600 rounded-md text-md text-white h-[3rem]"
-                        >
+                        <button id="add_new" command="show-modal" commandfor="my-dialog"
+                            class="flex justify-center items-center w-[calc(100%-20px)] mx-auto my-4 px-4 bg-blue-600 rounded-md text-md text-white h-[3rem]">
                             {{ __('training.add_new_module') }}
                         </button>
-
                     @endif
 
                 </nav>
@@ -1362,38 +1221,19 @@
                     VIDEO / PDF PLAYER
                 ================================================== --}}
 
-                <div
-                    class="player"
-                    id="player"
-                >
 
-                    @if (
-                        $module->media &&
-                        \Illuminate\Support\Str::contains(
-                            $module->media->type,
-                            'pdf'
-                        )
-                    )
+                <div class="player" id="player">
 
-                        <iframe
-                            id="pdf-preview"
-                            class="w-full h-[40rem] rounded-lg border border-slate-200"
-                            src="{{ Storage::url($module->media->path) }}"
-                        ></iframe>
-
+                    @if ($module->media && \Illuminate\Support\Str::contains($module->media->type, 'pdf'))
+                        <iframe id="pdf-preview" class="w-full h-[40rem] rounded-lg border border-slate-200"
+                            src="{{ Storage::url($module->media->path) }}"></iframe>
                     @else
-
                         <div>
 
-                            <video
-                                class="rounded-lg"
-                                id="my-video"
-                                controls
-                                src="{{ Storage::url($module->media->path) }}"
-                            ></video>
+                            <video class="rounded-lg" id="my-video" controls
+                                @if ($module->media && $module->media->path) src="{{ Storage::url($module->media->path) }}" @endif></video>
 
                         </div>
-
                     @endif
 
                 </div>
@@ -1407,10 +1247,7 @@
 
                     <div>
 
-                        <h1
-                            class="lesson-title"
-                            id="lessonTitle"
-                        >
+                        <h1 class="lesson-title" id="lessonTitle">
                             {{ $module->title }}
                         </h1>
 
@@ -1423,13 +1260,7 @@
                     CHAPTERS
                 ================================================== --}}
 
-                @if (
-                    $module->media &&
-                    !\Illuminate\Support\Str::contains(
-                        $module->media->type,
-                        'pdf'
-                    )
-                )
+                @if ($module->media && !\Illuminate\Support\Str::contains($module->media->type, 'pdf'))
 
                     <div class="chapters-card">
 
@@ -1439,32 +1270,14 @@
 
                             <div class="chapters-title">
 
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2.2"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                >
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                                    stroke-linecap="round" stroke-linejoin="round">
 
-                                    <rect
-                                        x="3"
-                                        y="5"
-                                        width="7"
-                                        height="6"
-                                        rx="1.5"
-                                    ></rect>
+                                    <rect x="3" y="5" width="7" height="6" rx="1.5"></rect>
 
                                     <path d="M13 6h8M13 10h8"></path>
 
-                                    <rect
-                                        x="3"
-                                        y="14"
-                                        width="7"
-                                        height="6"
-                                        rx="1.5"
-                                    ></rect>
+                                    <rect x="3" y="14" width="7" height="6" rx="1.5"></rect>
 
                                     <path d="M13 15h8M13 19h8"></path>
 
@@ -1478,10 +1291,7 @@
                             </div>
 
 
-                            <span
-                                class="chapters-count"
-                                id="chaptersCount"
-                            >
+                            <span class="chapters-count" id="chaptersCount">
                                 {{ $module->chapters->count() }}
                                 {{ __('training.chapters') }}
                             </span>
@@ -1497,20 +1307,13 @@
 
 
                             @forelse ($module->chapters as $chapter)
-
-                                <button
-                                    type="button"
-                                    class="chapter-row"
-                                    data-start="{{ $chapter->date }}"
-                                    data-chapter-id="{{ $chapter->id }}"
-                                >
+                                <button type="button" class="chapter-row" data-start="{{ $chapter->date }}"
+                                    data-chapter-id="{{ $chapter->id }}">
 
                                     <div class="chapter-thumb">
 
-                                        <img
-                                            class="chapter-thumb-img w-full h-full object-cover rounded-md"
-                                            alt="{{ $chapter->title }}"
-                                        >
+                                        <img class="chapter-thumb-img w-full h-full object-cover rounded-md"
+                                            alt="{{ $chapter->title }}">
 
                                         <span class="chapter-time-badge">
                                             {{ $chapter->date }}
@@ -1534,7 +1337,6 @@
                                 <div class="p-3 font-bold">
                                     {{ __('training.no_chapter_found') }}
                                 </div>
-
                             @endforelse
 
 
@@ -1543,17 +1345,10 @@
                             ================================================== --}}
 
                             @if (auth()->user()->type == 'admin')
+                                <dialog id="chapter-dialog"
+                                    class="hidden open:flex m-auto border-0 rounded-xl p-4 open:fixed open:inset-0 w-[500px] max-w-[calc(100%-2rem)] shadow-md shadow-blue-300 border-2 border-gray-300 flex-col items-center justify-center">
 
-                                <dialog
-                                    id="chapter-dialog"
-                                    class="hidden open:flex m-auto border-0 rounded-xl p-4 open:fixed open:inset-0 w-[500px] max-w-[calc(100%-2rem)] shadow-md shadow-blue-300 border-2 border-gray-300 flex-col items-center justify-center"
-                                >
-
-                                    <form
-                                        class="w-full p-4"
-                                        id="chapter-form"
-                                        method="dialog"
-                                    >
+                                    <form class="w-full p-4" id="chapter-form" method="dialog">
 
                                         @csrf
 
@@ -1564,19 +1359,14 @@
 
 
                                         {{-- Error --}}
-                                        <div
-                                            id="chapter-form-error"
-                                            class="hidden mt-3 mb-1 px-3 py-2 rounded-lg bg-red-100 text-red-700 text-sm"
-                                        ></div>
+                                        <div id="chapter-form-error"
+                                            class="hidden mt-3 mb-1 px-3 py-2 rounded-lg bg-red-100 text-red-700 text-sm">
+                                        </div>
 
 
                                         {{-- Module ID --}}
-                                        <input
-                                            type="hidden"
-                                            name="module_id"
-                                            id="chapter-module-id"
-                                            value=""
-                                        >
+                                        <input type="hidden" name="module_id" id="chapter-module-id"
+                                            value="">
 
 
                                         {{-- =================================================
@@ -1585,22 +1375,15 @@
 
                                         <div class="flex flex-col gap-3 my-4">
 
-                                            <label
-                                                for="chapter-title"
-                                                class="font-semibold"
-                                            >
+                                            <label for="chapter-title" class="font-semibold">
                                                 {{ __('training.chapter_title') }}
                                             </label>
 
 
-                                            <input
-                                                class="rounded border-2 border-blue-400 px-3 py-3 w-full"
-                                                name="title"
-                                                id="chapter-title"
-                                                placeholder="{{ __('training.enter_chapter_title') }}"
-                                                value=""
-                                                type="text"
-                                            >
+                                            <input class="rounded border-2 border-blue-400 px-3 py-3 w-full"
+                                                name="title" id="chapter-title"
+                                                placeholder="{{ __('training.enter_chapter_title') }}" value=""
+                                                type="text">
 
                                         </div>
 
@@ -1611,10 +1394,7 @@
 
                                         <div class="flex flex-col gap-3 my-4">
 
-                                            <label
-                                                for="chapter-date"
-                                                class="font-semibold"
-                                            >
+                                            <label for="chapter-date" class="font-semibold">
 
                                                 {{ __('training.duration') }}
 
@@ -1627,16 +1407,11 @@
                                             </label>
 
 
-                                            <input
-                                                class="rounded border-2 border-blue-400 px-3 py-3 w-full"
-                                                name="date"
-                                                id="chapter-date"
-                                                placeholder="{{ __('training.duration_format') }}"
-                                                value=""
-                                                type="text"
-                                                pattern="^\d{1,3}:\d{1,2}$"
-                                                title="{{ __('training.duration_format_help') }}"
-                                            >
+                                            <input class="rounded border-2 border-blue-400 px-3 py-3 w-full"
+                                                name="date" id="chapter-date"
+                                                placeholder="{{ __('training.duration_format') }}" value=""
+                                                type="text" pattern="^\d{1,3}:\d{1,2}$"
+                                                title="{{ __('training.duration_format_help') }}">
 
                                         </div>
 
@@ -1647,44 +1422,25 @@
 
                                         <div class="flex items-center justify-around gap-2">
 
-                                            <button
-                                                commandfor="chapter-dialog"
-                                                command="close"
-                                                id="chapter-close"
+                                            <button commandfor="chapter-dialog" command="close" id="chapter-close"
                                                 type="button"
-                                                class="flex justify-center items-center w-[calc(100%-20px)] mx-auto my-4 px-4 rounded-md text-md h-[3rem] bg-black text-white disabled:opacity-50 disabled:cursor-not-allowed"
-                                            >
+                                                class="flex justify-center items-center w-[calc(100%-20px)] mx-auto my-4 px-4 rounded-md text-md h-[3rem] bg-black text-white disabled:opacity-50 disabled:cursor-not-allowed">
                                                 {{ __('training.close') }}
                                             </button>
 
 
-                                            <button
-                                                id="chapter-submit"
-                                                type="submit"
-                                                class="relative flex justify-center items-center w-[calc(100%-20px)] mx-auto my-4 px-4 bg-blue-600 rounded-md text-md text-white h-[3rem] disabled:opacity-60 disabled:cursor-not-allowed"
-                                            >
+                                            <button id="chapter-submit" type="submit"
+                                                class="relative flex justify-center items-center w-[calc(100%-20px)] mx-auto my-4 px-4 bg-blue-600 rounded-md text-md text-white h-[3rem] disabled:opacity-60 disabled:cursor-not-allowed">
 
-                                                <svg
-                                                    id="chapter-submit-spinner"
-                                                    class="hidden animate-spin h-5 w-5 me-2"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                >
+                                                <svg id="chapter-submit-spinner"
+                                                    class="hidden animate-spin h-5 w-5 me-2" viewBox="0 0 24 24"
+                                                    fill="none">
 
-                                                    <circle
-                                                        class="opacity-25"
-                                                        cx="12"
-                                                        cy="12"
-                                                        r="10"
-                                                        stroke="currentColor"
-                                                        stroke-width="4"
-                                                    ></circle>
+                                                    <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                        stroke="currentColor" stroke-width="4"></circle>
 
-                                                    <path
-                                                        class="opacity-75"
-                                                        fill="currentColor"
-                                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                                                    ></path>
+                                                    <path class="opacity-75" fill="currentColor"
+                                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
 
                                                 </svg>
 
@@ -1707,7 +1463,6 @@
                                 ================================================== --}}
 
                                 <script>
-
                                     const chapterDialog =
                                         document.getElementById(
                                             'chapter-dialog'
@@ -1824,9 +1579,9 @@
 
 
                                         chapterSubmitLabel.textContent =
-                                            isLoading
-                                                ? @json(__('training.saving'))
-                                                : @json(__('training.submit'));
+                                            isLoading ?
+                                            @json(__('training.saving')) :
+                                            @json(__('training.submit'));
 
                                     }
 
@@ -1908,8 +1663,7 @@
                                         }
 
 
-                                        const [
-                                            ,
+                                        const [,
                                             minutes,
                                             seconds
                                         ] = match;
@@ -1939,19 +1693,19 @@
 
                                             const title =
                                                 chapterTitleInput
-                                                    .value
-                                                    .trim();
+                                                .value
+                                                .trim();
 
 
                                             const moduleId =
                                                 chapterModuleIdInput
-                                                    .value;
+                                                .value;
 
 
                                             const rawDate =
                                                 chapterDateInput
-                                                    .value
-                                                    .trim();
+                                                .value
+                                                .trim();
 
 
                                             /*
@@ -1996,8 +1750,7 @@
 
                                                 title,
 
-                                                module_id:
-                                                moduleId
+                                                module_id: moduleId
 
                                             };
 
@@ -2020,9 +1773,9 @@
 
                                                 if (
                                                     !/^\d{1,3}:\d{2}$/
-                                                        .test(
-                                                            normalized
-                                                        )
+                                                    .test(
+                                                        normalized
+                                                    )
                                                 ) {
 
                                                     showChapterError(
@@ -2049,33 +1802,28 @@
 
                                                 const response =
                                                     await fetch(
-                                                        '{{ route('chapter.store') }}',
-                                                        {
+                                                        '{{ route('chapter.store') }}', {
                                                             method: 'POST',
 
                                                             headers: {
 
-                                                                'Content-Type':
-                                                                    'application/json',
+                                                                'Content-Type': 'application/json',
 
-                                                                'X-CSRF-TOKEN':
-                                                                    document
-                                                                        .querySelector(
-                                                                            'meta[name="csrf-token"]'
-                                                                        )
-                                                                        .getAttribute(
-                                                                            'content'
-                                                                        ),
+                                                                'X-CSRF-TOKEN': document
+                                                                    .querySelector(
+                                                                        'meta[name="csrf-token"]'
+                                                                    )
+                                                                    .getAttribute(
+                                                                        'content'
+                                                                    ),
 
-                                                                'Accept':
-                                                                    'application/json'
+                                                                'Accept': 'application/json'
 
                                                             },
 
-                                                            body:
-                                                                JSON.stringify(
-                                                                    payload
-                                                                )
+                                                            body: JSON.stringify(
+                                                                payload
+                                                            )
 
                                                         }
                                                     );
@@ -2087,10 +1835,10 @@
 
                                                     const error =
                                                         await response
-                                                            .json()
-                                                            .catch(
-                                                                () => null
-                                                            );
+                                                        .json()
+                                                        .catch(
+                                                            () => null
+                                                        );
 
 
                                                     throw error;
@@ -2108,7 +1856,7 @@
 
 
                                                 const message =
-                                                        error?.message ||
+                                                    error?.message ||
                                                     @json(__('training.something_went_wrong'));
 
 
@@ -2120,7 +1868,6 @@
 
                                         }
                                     );
-
                                 </script>
 
 
@@ -2128,18 +1875,15 @@
                                     ADD CHAPTER BUTTON
                                 ================================================== --}}
 
-                                <button
-                                    type="button"
+                                <button type="button"
                                     class="add-chapter-btn flex items-center justify-center gap-2 w-[calc(100%-20px)] mx-auto my-2 px-4 h-[2.5rem] rounded-md text-sm text-blue-600 border-2 border-dashed border-blue-300 hover:bg-blue-50"
-                                    data-module-id="{{ $module->id }}"
-                                >
+                                    data-module-id="{{ $module->id }}">
 
                                     +
 
                                     {{ __('training.add_chapter') }}
 
                                 </button>
-
                             @endif
 
                         </div>
@@ -2147,9 +1891,7 @@
                     </div>
 
                 @endif
-
             @else
-
                 {{-- =================================================
                     NO DATA
                 ================================================== --}}
@@ -2170,12 +1912,11 @@
     ========================================================== --}}
 
     <script>
-
         /*
-        |--------------------------------------------------------------------------
-        | Duration Parser
-        |--------------------------------------------------------------------------
-        */
+            |--------------------------------------------------------------------------
+            | Duration Parser
+            |--------------------------------------------------------------------------
+            */
 
         function parseDurationToSeconds(
             dateStr
@@ -2188,8 +1929,8 @@
 
             const parts =
                 dateStr
-                    .split(':')
-                    .map(Number);
+                .split(':')
+                .map(Number);
 
 
             if (
@@ -2285,8 +2026,7 @@
 
             myVideo.play()
                 .catch(
-                    () => {
-                    }
+                    () => {}
                 );
 
 
@@ -2310,14 +2050,12 @@
             );
 
 
-            myVideo.scrollIntoView(
-                {
-                    behavior: 'smooth',
+            myVideo.scrollIntoView({
+                behavior: 'smooth',
 
-                    block: 'start'
+                block: 'start'
 
-                }
-            );
+            });
 
         }
 
@@ -2376,7 +2114,7 @@
 
                     for (
                         const row of rows
-                        ) {
+                    ) {
 
                         const rowSeconds =
                             parseDurationToSeconds(
@@ -2541,8 +2279,7 @@
                                 0.85
                             );
 
-                        },
-                        {
+                        }, {
                             once: true
                         }
                     );
@@ -2594,7 +2331,7 @@
 
             for (
                 const row of rows
-                ) {
+            ) {
 
                 const dateStr =
                     row.dataset.start;
@@ -2644,19 +2381,11 @@
         |--------------------------------------------------------------------------
         */
 
-        @if (
-            !empty($module) &&
-            $module->media &&
-            !\Illuminate\Support\Str::contains(
-                $module->media->type,
-                'pdf'
-            )
-        )
+        @if (!empty($module) && $module->media && !\Illuminate\Support\Str::contains($module->media->type, 'pdf'))
 
-        loadChapterPosters(
-            @json(Storage::url($module->media->path))
-        );
-
+            loadChapterPosters(
+                @json(Storage::url($module->media->path))
+            );
         @endif
 
 
@@ -2680,8 +2409,8 @@
 
                     const search =
                         event.target.value
-                            .trim()
-                            .toLowerCase();
+                        .trim()
+                        .toLowerCase();
 
 
                     document
@@ -2693,20 +2422,20 @@
 
                                 const title =
                                     section
-                                        .querySelector(
-                                            '.section-title'
-                                        )
-                                        ?.textContent
-                                        .trim()
-                                        .toLowerCase() || '';
+                                    .querySelector(
+                                        '.section-title'
+                                    )
+                                    ?.textContent
+                                    .trim()
+                                    .toLowerCase() || '';
 
 
                                 section.style.display =
                                     title.includes(
                                         search
-                                    )
-                                        ? ''
-                                        : 'none';
+                                    ) ?
+                                    '' :
+                                    'none';
 
                             }
                         );
@@ -2715,7 +2444,6 @@
             );
 
         }
-
     </script>
 
 </x-app-layout>
